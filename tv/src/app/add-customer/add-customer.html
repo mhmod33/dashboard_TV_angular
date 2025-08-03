@@ -1,0 +1,226 @@
+<div class="add-customer-container">
+    <!-- Header Section -->
+    <div class="page-header">
+        <div class="header-left">
+            <h1>Add Customers</h1>
+        </div>
+        <div class="header-right">
+            <div class="breadcrumb">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                    <polyline points="9,22 9,12 15,12 15,22" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <span>Home > ACAS</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Balance Display -->
+    <div class="balance-display">
+        <div class="balance-info">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" />
+                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </svg>
+            <span>Your Balance: {{ userBalance }}</span>
+        </div>
+    </div>
+
+    <div class="form-container">
+        <!-- Main Form -->
+        <div class="main-form">
+            <form (ngSubmit)="saveCustomer()" #customerForm="ngForm">
+                <!-- Serial Number Field -->
+                <div class="form-group">
+                    <label for="serialNumber" class="form-label">
+                        Serial Number (SN) *
+                    </label>
+                    <input type="text" id="serialNumber" name="serialNumber" [(ngModel)]="customerData.serialNumber"
+                        placeholder="Enter 12 character SN" class="form-input" [class.error]="errors.serialNumber"
+                        (blur)="validateSerialNumber()" maxlength="12">
+                    <div class="error-message" *ngIf="errors.serialNumber">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                            <line x1="15" y1="9" x2="9" y2="15" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                            <line x1="9" y1="9" x2="15" y2="15" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        {{ errors.serialNumber }}
+                    </div>
+                    <div class="hint-message">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                            <line x1="12" y1="17" x2="12.01" y2="17" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        Enter the 12-character SN from the device. Example: 0011223344FF: 0011223344FF
+                    </div>
+                </div>
+
+                <!-- Customer Name Field -->
+                <div class="form-group">
+                    <label for="customerName" class="form-label">
+                        Customer Name *
+                    </label>
+                    <input type="text" id="customerName" name="customerName" [(ngModel)]="customerData.customerName"
+                        placeholder="Enter customer name" class="form-input" [class.error]="errors.customerName"
+                        (blur)="validateCustomerName()">
+                    <div class="error-message" *ngIf="errors.customerName">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                            <line x1="15" y1="9" x2="9" y2="15" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                            <line x1="9" y1="9" x2="15" y2="15" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        {{ errors.customerName }}
+                    </div>
+                </div>
+
+                <!-- Address Field -->
+                <div class="form-group">
+                    <label for="address" class="form-label">
+                        Address
+                    </label>
+                    <input type="text" id="address" name="address" [(ngModel)]="customerData.address"
+                        placeholder="Optimal address" class="form-input">
+                </div>
+
+                <!-- Phone Field -->
+                <div class="form-group">
+                    <label for="phone" class="form-label">
+                        Phone
+                    </label>
+                    <input type="tel" id="phone" name="phone" [(ngModel)]="customerData.phone"
+                        placeholder="Optimal phone number" class="form-input">
+                </div>
+
+                <!-- Plan Duration Section -->
+                <div class="form-group">
+                    <label class="form-label">
+                        Plan Duration *
+                    </label>
+                    <div class="plan-options">
+                        <div *ngFor="let plan of planOptions" class="plan-option"
+                            [class.selected]="isPlanSelected(plan.id)" (click)="selectPlan(plan.id)">
+                            <div class="plan-header">
+                                <span class="plan-name">{{ plan.name }}</span>
+                                <svg *ngIf="isPlanSelected(plan.id)" width="20" height="20" viewBox="0 0 24 24"
+                                    fill="none" xmlns="http://www.w3.org/2000/svg" class="check-icon">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                    <polyline points="22,4 12,14.01 9,11.01" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                            </div>
+                            <div class="plan-value">{{ plan.value }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Status Section -->
+                <div class="form-group">
+                    <label class="form-label">
+                        Payment Status
+                    </label>
+                    <div class="payment-options">
+                        <div *ngFor="let payment of paymentOptions" class="payment-option"
+                            [class.selected]="isPaymentSelected(payment.id)" (click)="selectPaymentStatus(payment.id)">
+                            <span class="payment-name">{{ payment.name }}</span>
+                            <svg *ngIf="isPaymentSelected(payment.id)" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" xmlns="http://www.w3.org/2000/svg" class="check-icon">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                                <polyline points="22,4 12,14.01 9,11.01" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="hint-message">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                            <line x1="12" y1="17" x2="12.01" y2="17" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        Mark if customer has paid or not. You can change this later
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="form-actions">
+                    <button type="submit" class="save-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            <polyline points="17,21 17,13 7,13 7,21" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                            <polyline points="7,3 7,8 15,8" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        Save customer
+                    </button>
+                    <button type="button" class="cancel-btn" (click)="cancelForm()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                            <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Information Sidebar -->
+        <div class="info-sidebar">
+            <div class="info-header">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                    <line x1="12" y1="17" x2="12.01" y2="17" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <span>Information</span>
+            </div>
+
+            <div class="info-content">
+                <p>Please fill out the form to add a new customer.</p>
+                <p>Required fields are marked with *</p>
+            </div>
+
+            <div class="info-box">
+                <div class="info-box-header">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="12" y1="17" x2="12.01" y2="17" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <span>Serial Number</span>
+                </div>
+                <div class="info-box-content">
+                    <p>Please enter the 12-character serial number from the device. Example: 0011223344FF</p>
+                    <p>SN is required for ACAS customers only</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
