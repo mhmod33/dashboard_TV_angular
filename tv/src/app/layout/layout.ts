@@ -13,13 +13,16 @@ import { AuthServiceService } from '../services/auth-service/auth-service.servic
 export class LayoutComponent {
     isSidebarOpen = true;
     showLogoutAlert = false;
-    currentUser = {
-        name: 'Admin User',
-        email: 'admin@egybest.tv',
-        balance: 2500
-    };
-
-    constructor(public router: Router, private authService: AuthServiceService) { }
+  
+    currentUser: { name: string;avatar: string ,balance:number};
+    
+    constructor(public router: Router, private authService: AuthServiceService) { 
+        this.currentUser = {
+            name: this.authService.getUserName() ?? '',
+            balance:2500,
+            avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'
+        };
+    }
 
     toggleSidebar() {
         this.isSidebarOpen = !this.isSidebarOpen;

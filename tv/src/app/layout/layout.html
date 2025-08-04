@@ -196,7 +196,6 @@
                 </div>
                 <div class="user-details">
                     <span class="user-name">{{ currentUser.name }}</span>
-                    <span class="user-email">{{ currentUser.email }}</span>
                 </div>
             </div>
             <button class="logout-btn" (click)="logout()" title="Logout">
@@ -220,7 +219,8 @@
 </div>
 
 <!-- Bootstrap Logout Alert -->
-<div class="alert alert-warning alert-dismissible fade show" role="alert" *ngIf="showLogoutAlert" style="position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;">
+<div class="alert alert-warning alert-dismissible fade show" role="alert" *ngIf="showLogoutAlert"
+    style="position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;">
     <strong>Confirm Logout</strong><br>
     Are you sure you want to logout from the TV Dashboard?
     <div class="mt-3">

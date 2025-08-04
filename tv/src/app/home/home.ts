@@ -1,3 +1,4 @@
+import { AuthServiceService } from './../services/auth-service/auth-service.service';
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -9,11 +10,13 @@ import { CommonModule } from '@angular/common';
     styleUrl: './home.css'
 })
 export class HomeComponent {
-    currentUser = {
-        name: 'Admin User',
-        email: 'admin@egybest.tv',
-        avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'
-    };
+    currentUser: { name: string;avatar: string };
+    constructor(private authService: AuthServiceService) {
+        this.currentUser = {
+            name: this.authService.getUserName() ?? '',
+            avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'
+        };
+     }
 
     stats = [
         { title: 'Total Customers', value: '2,847', change: '+15%', icon: 'users', color: '#667eea' },
