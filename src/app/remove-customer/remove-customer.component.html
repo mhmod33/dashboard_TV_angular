@@ -1,0 +1,48 @@
+<div class="remove-customer-container">
+  <!-- Breadcrumb Navigation -->
+  <div class="breadcrumb-nav">
+    <div class="breadcrumb-content">
+      <i class="fas fa-globe"></i>
+      <span>Home > Remove Customer</span>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Page Title -->
+    <div class="page-header">
+      <h1>Remove Customer by SN</h1>
+    </div>
+
+    <!-- Search Form -->
+    <div class="search-form">
+      <div class="form-field">
+        <label for="deviceSN" class="form-label">
+          Device SN:
+        </label>
+        <input 
+          type="text" 
+          id="deviceSN"
+          formControlName="deviceSN"
+          class="form-input"
+          placeholder="Enter SN (partial or full)"
+        >
+        <div class="error-message" *ngIf="getErrorMessage()">
+          {{ getErrorMessage() }}
+        </div>
+      </div>
+
+      <!-- Search Button -->
+      <div class="form-actions">
+        <button 
+          type="button" 
+          class="btn btn-primary"
+          (click)="searchCustomer()"
+          [disabled]="!removeForm.valid"
+        >
+          Search
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

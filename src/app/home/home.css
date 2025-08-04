@@ -7,6 +7,8 @@
     justify-content: space-between;
     align-items: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    position: relative;
+    z-index: 2;
 }
 
 .header-left h1 {
@@ -24,6 +26,10 @@
 /* Dashboard Content */
 .dashboard-content {
     padding: 32px;
+    flex: 1;
+    min-height: 100%;
+    position: relative;
+    z-index: 2;
 }
 
 /* Stats Section */

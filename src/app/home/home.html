@@ -2,14 +2,19 @@
     <div class="header-left">
         <h1>EgyBest TV Dashboard</h1>
         <p>Welcome back, {{ currentUser.name }}!</p>
+        <p style="color: green;">Home component loaded successfully!</p>
+        <p style="color: blue; font-weight: bold;">DEBUG: Home component is rendering!</p>
     </div>
 </header>
 
 <div class="dashboard-content">
+    <div style="background: yellow; color: black; padding: 10px; margin-bottom: 20px;">DEBUG: Dashboard content is loading!</div>
     <!-- Stats Cards -->
     <section class="stats-section">
+        <div style="background: orange; color: white; padding: 10px; margin-bottom: 20px;">DEBUG: Stats section is loading!</div>
         <div class="stats-grid">
             <div class="stat-card" *ngFor="let stat of stats">
+                <div style="background: purple; color: white; padding: 5px; margin-bottom: 10px;">DEBUG: Stat card for {{ stat.title }}</div>
                 <div class="stat-icon" [style.background-color]="stat.color + '20'">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path [attr.d]="getIconPath(stat.icon)" stroke="currentColor" stroke-width="2"
@@ -29,6 +34,7 @@
 
     <!-- Charts Section -->
     <section class="charts-section">
+        <div style="background: green; color: white; padding: 10px; margin-bottom: 20px;">DEBUG: Charts section is loading!</div>
         <div class="chart-container">
             <div class="chart-header">
                 <h3>TV Service Overview</h3>
@@ -39,6 +45,7 @@
                 </div>
             </div>
             <div class="chart-placeholder">
+                <div style="background: pink; color: black; padding: 5px; margin-bottom: 10px;">DEBUG: Chart placeholder is loading!</div>
                 <svg width="100" height="60" viewBox="0 0 100 60" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M0 50 L20 40 L40 30 L60 20 L80 35 L100 25" stroke="#667eea" stroke-width="2" fill="none" />
                     <path d="M0 50 L20 40 L40 30 L60 20 L80 35 L100 25 L100 60 L0 60 Z" fill="url(#gradient)"

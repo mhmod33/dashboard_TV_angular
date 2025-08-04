@@ -3,6 +3,7 @@
     display: flex;
     height: 100vh;
     font-family: 'Poppins', sans-serif;
+    position: relative;
 }
 
 /* Sidebar */
@@ -16,6 +17,7 @@
     box-shadow: 4px 0 8px rgba(0, 0, 0, 0.1);
     position: relative;
     overflow: hidden;
+    z-index: 10;
 }
 
 .sidebar.collapsed {
@@ -259,6 +261,11 @@
     flex: 1;
     background: #f8fafc;
     overflow-y: auto;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 1;
 }
 
 /* Collapsed Sidebar Styles */

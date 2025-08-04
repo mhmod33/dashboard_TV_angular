@@ -11,4 +11,8 @@ import { CommonModule } from '@angular/common';
 })
 export class AppComponent {
   title = 'Ebybest Admin Dashboard';
+  
+  constructor() {
+    console.log('AppComponent loaded');
+  }
 }

@@ -1,0 +1,47 @@
+<div class="prices-container">
+  <!-- Blue Banner with Note -->
+  <div class="note-banner">
+    <div class="note-content">
+      <i class="fas fa-info-circle"></i>
+      <span>You are editing prices for <strong>Default</strong> (applies to all users without specific prices)</span>
+    </div>
+    <a href="#" class="manage-link">
+      <i class="fas fa-clock"></i>
+      Manage Time Periods
+    </a>
+  </div>
+
+  <!-- Price Configuration Section -->
+  <div class="price-config-section">
+    <h2>Price Configuration</h2>
+    
+    <form [formGroup]="pricesForm" class="prices-form">
+      <div class="price-items">
+        <div class="price-item" *ngFor="let config of priceConfigurations; let i = index">
+          <div class="price-header">
+            <h3>{{ config.duration }}:</h3>
+          </div>
+          <div class="price-input-group">
+            <input 
+              type="number" 
+              [formControlName]="'price' + config.id"
+              class="price-input"
+              placeholder="Enter price"
+            >
+            <div class="price-description">{{ config.description }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <button type="button" class="btn btn-primary" (click)="saveChanges()">
+          Save Changes
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="cancel()">
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

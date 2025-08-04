@@ -1,0 +1,145 @@
+<div class="time-periods-container">
+  <!-- Page Title -->
+  <div class="page-header">
+    <h1>Manage Time Periods</h1>
+  </div>
+
+  <!-- Add New Period Section -->
+  <div class="form-section">
+    <div class="section-header">
+      <h2>Add New Period</h2>
+    </div>
+    
+    <form [formGroup]="timePeriodForm" class="time-period-form">
+      <!-- Period Code Field -->
+      <div class="form-field">
+        <label for="periodCode" class="form-label">
+          Period Code <span class="required">*</span>
+        </label>
+        <input 
+          type="text" 
+          id="periodCode"
+          formControlName="periodCode"
+          class="form-input"
+          placeholder="Enter period code"
+        >
+        <div class="helper-text">
+          Short code like mon1, mon3, etc. Cannot be changed after creation.
+        </div>
+        <div class="error-message" *ngIf="getErrorMessage('periodCode')">
+          {{ getErrorMessage('periodCode') }}
+        </div>
+      </div>
+
+      <!-- Display Name Field -->
+      <div class="form-field">
+        <label for="displayName" class="form-label">
+          Display Name <span class="required">*</span>
+        </label>
+        <input 
+          type="text" 
+          id="displayName"
+          formControlName="displayName"
+          class="form-input"
+          placeholder="Enter display name"
+        >
+        <div class="helper-text">
+          User-friendly name like "1 Month", "3 Months", etc.
+        </div>
+        <div class="error-message" *ngIf="getErrorMessage('displayName')">
+          {{ getErrorMessage('displayName') }}
+        </div>
+      </div>
+
+      <!-- Months Field -->
+      <div class="form-field">
+        <label for="months" class="form-label">
+          Months <span class="required">*</span>
+        </label>
+        <input 
+          type="number" 
+          id="months"
+          formControlName="months"
+          class="form-input"
+          placeholder="Enter number of months"
+        >
+        <div class="helper-text">
+          Number of months for this period.
+        </div>
+        <div class="error-message" *ngIf="getErrorMessage('months')">
+          {{ getErrorMessage('months') }}
+        </div>
+      </div>
+
+      <!-- Days Field -->
+      <div class="form-field">
+        <label for="days" class="form-label">
+          Days <span class="required">*</span>
+        </label>
+        <input 
+          type="number" 
+          id="days"
+          formControlName="days"
+          class="form-input"
+          placeholder="Enter number of days"
+        >
+        <div class="helper-text">
+          Exact number of days for this period.
+        </div>
+        <div class="error-message" *ngIf="getErrorMessage('days')">
+          {{ getErrorMessage('days') }}
+        </div>
+      </div>
+
+      <!-- Display Order Field -->
+      <div class="form-field">
+        <label for="displayOrder" class="form-label">
+          Display Order <span class="required">*</span>
+        </label>
+        <input 
+          type="number" 
+          id="displayOrder"
+          formControlName="displayOrder"
+          class="form-input"
+          placeholder="Enter display order"
+        >
+        <div class="helper-text">
+          Order in which periods are displayed.
+        </div>
+        <div class="error-message" *ngIf="getErrorMessage('displayOrder')">
+          {{ getErrorMessage('displayOrder') }}
+        </div>
+      </div>
+
+      <!-- Active Checkbox -->
+      <div class="form-field checkbox-field">
+        <div class="checkbox-container">
+          <input 
+            type="checkbox" 
+            id="active"
+            formControlName="active"
+            class="form-checkbox"
+          >
+          <label for="active" class="checkbox-label">
+            Active
+          </label>
+        </div>
+        <div class="helper-text">
+          Inactive periods will not be displayed in pricing.
+        </div>
+      </div>
+
+      <!-- Action Button -->
+      <div class="form-actions">
+        <button 
+          type="button" 
+          class="btn btn-primary"
+          (click)="addPeriod()"
+          [disabled]="!timePeriodForm.valid"
+        >
+          Add Period
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

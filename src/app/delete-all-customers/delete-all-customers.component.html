@@ -1,0 +1,92 @@
+<div class="delete-all-customers-container">
+  <!-- Breadcrumb Navigation -->
+  <div class="breadcrumb-nav">
+    <div class="breadcrumb-content">
+      <i class="fas fa-globe"></i>
+      <span>Home > Delete All Customers</span>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Page Title -->
+    <div class="page-header">
+      <h1>Delete All Customers</h1>
+    </div>
+
+    <!-- Warning Section -->
+    <div class="warning-section">
+      <div class="warning-icon">
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+      <div class="warning-content">
+        <h2>⚠️ Warning</h2>
+        <p>This action will permanently delete ALL customers from the system. This action cannot be undone.</p>
+        <ul class="warning-list">
+          <li>All customer data will be permanently removed</li>
+          <li>All payment history will be deleted</li>
+          <li>All subscription information will be lost</li>
+          <li>This action cannot be reversed</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Action Button -->
+    <div class="action-section" *ngIf="!showConfirmation">
+      <button 
+        type="button" 
+        class="btn btn-danger"
+        (click)="showDeleteConfirmation()"
+      >
+        <i class="fas fa-trash"></i>
+        Delete All Customers
+      </button>
+    </div>
+
+    <!-- Confirmation Form -->
+    <div class="confirmation-form" *ngIf="showConfirmation">
+      <div class="confirmation-warning">
+        <h3>Final Confirmation Required</h3>
+        <p>To proceed with deleting all customers, please type the exact text below:</p>
+      </div>
+      
+      <form [formGroup]="deleteForm" class="delete-form">
+        <div class="form-field">
+          <label for="confirmationText" class="form-label">
+            Type exactly: <strong>"DELETE ALL CUSTOMERS"</strong>
+          </label>
+          <input 
+            type="text" 
+            id="confirmationText"
+            formControlName="confirmationText"
+            class="form-input"
+            placeholder="DELETE ALL CUSTOMERS"
+          >
+          <div class="error-message" *ngIf="getErrorMessage()">
+            {{ getErrorMessage() }}
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="form-actions">
+          <button 
+            type="button" 
+            class="btn btn-danger"
+            (click)="confirmDeleteAll()"
+            [disabled]="!deleteForm.valid"
+          >
+            <i class="fas fa-trash"></i>
+            Confirm Delete All
+          </button>
+          <button 
+            type="button" 
+            class="btn btn-secondary"
+            (click)="cancelDelete()"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

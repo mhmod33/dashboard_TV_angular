@@ -3,6 +3,9 @@
   min-height: 100vh;
   font-family: 'Poppins', sans-serif;
   background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  position: relative;
 }
 
 .app-header {
