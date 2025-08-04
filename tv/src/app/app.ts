@@ -10,5 +10,5 @@ import { CommonModule } from '@angular/common';
   styleUrl: './app.css'
 })
 export class AppComponent {
-  title = 'ACAS Admin Dashboard';
+  title = 'Ebybest Admin Dashboard';
 }
