@@ -1,0 +1,61 @@
+/* App Component Styles */
+.app-container {
+  min-height: 100vh;
+  font-family: 'Poppins', sans-serif;
+  background: #f8fafc;
+}
+
+.app-header {
+  background: white;
+  padding: 16px 32px;
+  border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.app-main {
+  padding: 0;
+}
+
+/* Global Styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+  background: #f8fafc;
+}
+
+/* Basic button styles */
+button {
+  cursor: pointer;
+  border: none;
+  outline: none;
+  font-family: inherit;
+}
+
+/* Basic input styles */
+input, select, textarea {
+  font-family: inherit;
+  outline: none;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .app-header {
+    padding: 12px 20px;
+  }
+  
+  .app-header h1 {
+    font-size: 20px;
+  }
+}

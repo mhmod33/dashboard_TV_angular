@@ -1,59 +1,107 @@
-# Tv
+# ACAS Admin Dashboard
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.0.0.
+A simple Angular 19 admin dashboard for managing users and customers.
 
-## Development server
+## Project Structure
 
-To start a local development server, run:
-
-```bash
-ng serve
+```
+tv/src/app/
+├── app.ts              # Main AppComponent
+├── app.html            # App template
+├── app.css             # App styles
+├── app.config.ts       # App configuration
+├── app.routes.ts       # Route definitions
+├── admin-users/        # Admin users page
+├── add-admin/          # Add admin form
+├── customers/          # Customers page
+├── add-customer/       # Add customer form
+├── home/              # Dashboard home
+├── login/             # Login page
+├── layout/            # Layout with sidebar
+├── payment-history/   # Payment history
+├── subadmin/          # Sub admin page
+└── add-subadmin/      # Add sub admin form
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## How to Run
 
-## Code scaffolding
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+2. **Start the development server:**
+   ```bash
+   npm start
+   ```
 
-```bash
-ng generate component component-name
-```
+3. **Open your browser:**
+   Navigate to `http://localhost:4200`
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Key Features
 
-```bash
-ng generate --help
-```
+- **Admin Users Management**: View, add, edit, and delete admin users
+- **Customer Management**: Manage customer accounts
+- **Payment History**: Track payment transactions
+- **Responsive Design**: Works on desktop and mobile
+- **Modern UI**: Clean and user-friendly interface
 
-## Building
+## Components Explained
 
-To build the project run:
+### AppComponent (app.ts)
+- This is the main component that loads first
+- Contains the basic app structure with header and router outlet
+- All other pages are loaded inside this component
 
-```bash
-ng build
-```
+### LayoutComponent (layout/)
+- Provides the sidebar navigation
+- Contains the main navigation menu
+- Shows user information and logout functionality
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+### AdminUsersComponent (admin-users/)
+- Displays a list of admin users in a table
+- Has search and filter functionality
+- Shows user status, balance, and customer count
 
-## Running unit tests
+### AddAdminComponent (add-admin/)
+- Form to create new admin users
+- Includes validation for username, password, and balance
+- Has user type selection (Super Admin, Admin, Sub Admin)
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+## Routing
 
-```bash
-ng test
-```
+The app uses Angular routing to navigate between pages:
 
-## Running end-to-end tests
+- `/login` - Login page
+- `/home` - Dashboard home
+- `/admin-users` - Admin users list
+- `/add-admin` - Add new admin form
+- `/customers` - Customers list
+- `/add-customer` - Add new customer form
+- `/payment-history` - Payment history
+- `/subadmin` - Sub admin management
 
-For end-to-end (e2e) testing, run:
+## Styling
 
-```bash
-ng e2e
-```
+- Uses CSS for styling (no external UI libraries)
+- Responsive design that works on all screen sizes
+- Modern color scheme with purple/blue accents
+- Clean and professional appearance
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+## Beginner Notes
 
-## Additional Resources
+- All components are **standalone** (Angular 19 feature)
+- Uses **TypeScript** for type safety
+- **Two-way binding** with `[(ngModel)]` for forms
+- **Event binding** with `(click)` for buttons
+- **Property binding** with `[class]` for dynamic classes
+- **Structural directives** like `*ngFor` and `*ngIf`
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## Common Angular Concepts Used
+
+1. **Components**: Reusable UI pieces
+2. **Services**: For data management (not used yet, but ready to add)
+3. **Routing**: Navigation between pages
+4. **Forms**: User input handling
+5. **Pipes**: Data transformation (like currency formatting)
+6. **Directives**: DOM manipulation and conditional rendering
