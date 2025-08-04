@@ -1,7 +1,9 @@
+import { SystemService } from './../services/system/system.service';
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Customer } from '../interfaces/customer';
 
 @Component({
     selector: 'app-customers',
@@ -26,44 +28,53 @@ export class CustomersComponent {
     selectedCustomers: string[] = [];
 
     // Sample customers data
-    customers = [
-        {
-            id: '1',
-            name: 'Ahmed Mohamed',
-            deviceSN: 'SN001234',
-            owner: 'Admin',
-            startDate: '2024-01-01',
-            endDate: '2024-02-01',
-            remaining: '15 days',
-            status: 'active',
-            paid: true
-        },
-        {
-            id: '2',
-            name: 'Sarah Ali',
-            deviceSN: 'SN567890',
-            owner: 'Admin',
-            startDate: '2024-01-15',
-            endDate: '2024-02-15',
-            remaining: '30 days',
-            status: 'active',
-            paid: true
-        },
-        {
-            id: '3',
-            name: 'Mohamed Hassan',
-            deviceSN: 'SN123456',
-            owner: 'Admin',
-            startDate: '2023-12-01',
-            endDate: '2024-01-01',
-            remaining: 'Expired',
-            status: 'expired',
-            paid: false
-        }
-    ];
+    // customers = [
+    //     {
+    //         id: '1',
+    //         name: 'Ahmed Mohamed',
+    //         deviceSN: 'SN001234',
+    //         owner: 'Admin',
+    //         startDate: '2024-01-01',
+    //         endDate: '2024-02-01',
+    //         remaining: '15 days',
+    //         status: 'active',
+    //         paid: true
+    //     },
+    //     {
+    //         id: '2',
+    //         name: 'Sarah Ali',
+    //         deviceSN: 'SN567890',
+    //         owner: 'Admin',
+    //         startDate: '2024-01-15',
+    //         endDate: '2024-02-15',
+    //         remaining: '30 days',
+    //         status: 'active',
+    //         paid: true
+    //     },
+    //     {
+    //         id: '3',
+    //         name: 'Mohamed Hassan',
+    //         deviceSN: 'SN123456',
+    //         owner: 'Admin',
+    //         startDate: '2023-12-01',
+    //         endDate: '2024-01-01',
+    //         remaining: 'Expired',
+    //         status: 'expired',
+    //         paid: false
+    //     }
+    // ];
+customers: Customer[] = [];
+    constructor(
+        private router: Router,
+        private systemService:SystemService
+    ) { }
 
-    constructor(private router: Router) { }
-
+    ngOnInit(){
+        this.systemService.allSuperCustomers().subscribe((res)=>{
+            console.log('res',res)
+            this.customers=res.customers
+        })
+    }
     // Filtered customers based on current view
     get filteredCustomers() {
         let filtered = this.customers;
@@ -72,7 +83,7 @@ export class CustomersComponent {
         if (this.searchTerm) {
             filtered = filtered.filter(customer =>
                 customer.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-                customer.deviceSN.toLowerCase().includes(this.searchTerm.toLowerCase())
+                customer.serial_number.toLowerCase().includes(this.searchTerm.toLowerCase())
             );
         }
 
@@ -85,7 +96,7 @@ export class CustomersComponent {
                 filtered = filtered.filter(customer => customer.status === 'expired');
                 break;
             case 'unpaid':
-                filtered = filtered.filter(customer => !customer.paid);
+                filtered = filtered.filter(customer => !customer.status);
                 break;
         }
 

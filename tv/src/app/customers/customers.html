@@ -171,7 +171,7 @@
                     <th>Device SN</th>
                     <th>Owner</th>
                     <th>Dates</th>
-                    <th>Remaining</th>
+                    <th>Registered</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -183,18 +183,18 @@
                     </td>
                     <td>{{ i + 1 }}</td>
                     <td class="customer-name">{{ customer.name }}</td>
-                    <td class="device-sn">{{ customer.deviceSN }}</td>
+                    <td class="device-sn">{{ customer.serial_number }}</td>
                     <td>{{ customer.owner }}</td>
-                    <td class="dates">
+                    <td class="date">
                         <div class="date-range">
-                            <span class="start-date">{{ customer.startDate }}</span>
-                            <span class="date-separator">-</span>
-                            <span class="end-date">{{ customer.endDate }}</span>
+                            <span class="start-date">{{ customer.created_at |date:'medium'}}</span>
+                            <!-- <span class="date-separator">-</span>
+                            <span class="end-date">{{ customer.endDate }}</span> -->
                         </div>
                     </td>
                     <td class="remaining">
                         <span class="remaining-text" [class.expired]="customer.status === 'expired'">
-                            {{ customer.remaining }}
+                            {{ customer.created_at |date:'medium'}}
                         </span>
                     </td>
                     <td class="actions">
