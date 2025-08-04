@@ -12,7 +12,7 @@ import { AuthServiceService } from '../services/auth-service/auth-service.servic
   styleUrl: './login.css'
 })
 export class LoginComponent {
-  email: string = '';
+  name: string = '';
   password: string = '';
   rememberMe: boolean = false;
   showPassword: boolean = false;
@@ -26,8 +26,8 @@ export class LoginComponent {
   ) {
 
     this.loginForm = fb.group({
-      email: ['', Validators.email, Validators.required],
-      password: ['', Validators.required, Validators.minLength(3)]
+      name: ['', [Validators.required]],
+      password: ['', [Validators.required, Validators.minLength(3)]]
     })
   }
 
@@ -49,12 +49,14 @@ export class LoginComponent {
   }
   onLogin(): void {
     if (this.loginForm.valid) {
-      this.isLoading = true;
-      const { email, password } = this.loginForm.value
+      console.log(this.loginForm.value);
 
-      this.authService.login(email, password).subscribe({
+      this.isLoading = true;
+      const { name, password } = this.loginForm.value
+
+      this.authService.login(name, password).subscribe({
         next: () => {
-          this.isLoading= false;
+          this.isLoading = false;
           this.router.navigate(['/home']);
         },
         error: (err) => {
@@ -62,16 +64,16 @@ export class LoginComponent {
           this.passwordValidationMessage = err?.error?.Message || 'Login failed. Please check your credentials.';
         }
       })
-    // Simulate API call
-    // setTimeout(() => {
-    //   this.isLoading = false;
-    //   // For demo purposes, accept any valid email/password
-    //   if (this.email.includes('@') && this.password.length >= 6) {
-    //     this.router.navigate(['/home']);
-    //   } else {
-    //     alert('Invalid credentials. Please try again.');
-    //   }
-    // }, 1500);
+      // Simulate API call
+      // setTimeout(() => {
+      //   this.isLoading = false;
+      //   // For demo purposes, accept any valid email/password
+      //   if (this.email.includes('@') && this.password.length >= 6) {
+      //     this.router.navigate(['/home']);
+      //   } else {
+      //     alert('Invalid credentials. Please try again.');
+      //   }
+      // }, 1500);
+    }
   }
-}
 }

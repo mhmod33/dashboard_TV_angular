@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
@@ -29,11 +29,11 @@ interface Subadmin {
 export class AuthServiceService {
   private base = 'http://127.0.0.1:8000';
   private authStatusSubject = new BehaviorSubject<boolean>(this.hasToken());
-  private authStatus$ = this.authStatusSubject.asObservable();
+  authStatus$ = this.authStatusSubject.asObservable();
   constructor(private http: HttpClient, private router: Router) { }
 
-  login(email: string, password: string): Observable<LoginResponse> {
-    return this.http.post<any>(`${this.base}/api/login`, { email, password }).pipe(
+  login(name: string, password: string): Observable<LoginResponse> {
+    return this.http.post<any>(`${this.base}/api/login`, { name, password }).pipe(
       tap((res) => {
         this.setSession(
           res.token,
@@ -54,13 +54,25 @@ export class AuthServiceService {
     localStorage.setItem('name', name)
   }
 
+  logout(): Observable<any> {
+    const token = this.getToken();
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+    return this.http.post<any>(`${this.base}/api/logout`, {}, { headers }).pipe(
+      tap(() => {
+        this.clearSession();
+        this.authStatusSubject.next(false);
+        this.router.navigate(['/login'])
+      })
+    )
+
+  }
   private clearSession() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('role');
-    localStorage.removeItem('name');
+    localStorage.clear();
   }
 
-  isAuthenticated():boolean{
+  isAuthenticated(): boolean {
     return this.hasToken();
   }
   getToken(): string | null {
@@ -75,10 +87,10 @@ export class AuthServiceService {
 
 
   getCurrentUser(): Subadmin | null {
-    if(!this.isAuthenticated){
-      return  null ;
+    if (!this.isAuthenticated) {
+      return null;
     }
-    
+
     return {
       id: 0,
       name: this.getUserName() || '',
@@ -91,6 +103,6 @@ export class AuthServiceService {
       deleted_at: null,
       parent_admin_id: null
     };
-    
+
   }
 }

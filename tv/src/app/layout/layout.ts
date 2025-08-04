@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterOutlet } from '@angular/router';
+import { AuthServiceService } from '../services/auth-service/auth-service.service';
 
 @Component({
     selector: 'app-layout',
@@ -18,7 +19,7 @@ export class LayoutComponent {
         balance: 2500
     };
 
-    constructor(public router: Router) { }
+    constructor(public router: Router, private authService: AuthServiceService) { }
 
     toggleSidebar() {
         this.isSidebarOpen = !this.isSidebarOpen;
@@ -32,7 +33,7 @@ export class LayoutComponent {
     confirmLogout() {
         console.log('Logging out...');
         this.showLogoutAlert = false;
-        this.router.navigate(['/login']);
+        this.authService.logout().subscribe();
     }
 
     cancelLogout() {
