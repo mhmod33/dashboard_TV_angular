@@ -354,6 +354,25 @@
     margin-bottom: 0;
 }
 
+.payment-options {
+    max-width: 300px;
+}
+
+#cars {
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 15px;
+    border: 1px solid #ced4da;
+    transition: border-color 0.3s ease;
+}
+
+#cars:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 4px rgba(0, 123, 255, 0.4);
+}
+
+
 /* Responsive Design */
 @media (max-width: 1024px) {
     .form-container {

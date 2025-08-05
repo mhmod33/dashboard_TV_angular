@@ -13,4 +13,7 @@ export interface Customer {
     payment_status: string
     status: string
     created_at: string
+    customer_name:string
+    plan_id:number
+    admin_id:number
 }
