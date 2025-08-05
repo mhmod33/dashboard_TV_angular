@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SystemService } from '../services/system/system.service';
+import { AuthServiceService } from '../services/auth-service/auth-service.service';
 
 @Component({
     selector: 'app-add-customer',
@@ -14,6 +15,8 @@ import { SystemService } from '../services/system/system.service';
 export class AddCustomerComponent {
     customerForm!: FormGroup;
     admins: any;
+    role: any;
+    isSubmitting = false;
 
     // Plan options
     planOptions = [
@@ -35,18 +38,26 @@ export class AddCustomerComponent {
     constructor(
         private router: Router,
         private fb: FormBuilder,
-        private systemService: SystemService
+        private systemService: SystemService,
+        private authService: AuthServiceService,
     ) {
-        this.customerForm = this.fb.group({
-
-        })
+        this.role = this.authService.getRole();
+        this.initForm();
     }
 
     ngOnInit() {
-        this.initForm();
-        this.systemService.getAllAdmins().subscribe((res) => {
-            this.admins = res.admins;
-        });
+        // Only load admins if not subadmin
+        if (this.role !== 'subadmin') {
+            this.systemService.getAllAdmins().subscribe({
+                next: (res) => {
+                    this.admins = res.admins;
+                },
+                error: (error) => {
+                    console.error('Error loading admins:', error);
+                }
+            });
+        }
+        console.log('Current role:', this.role);
     }
 
     initForm() {
@@ -57,8 +68,34 @@ export class AddCustomerComponent {
             phone: [''],
             plan_id: ['1', Validators.required],
             payment_status: ['paid', Validators.required],
-            admin_id: ['', Validators.required]
+            admin_id: ['']
         });
+
+        // Add admin validation based on role
+        if (this.role !== 'subadmin') {
+            this.customerForm.get('admin_id')?.setValidators([Validators.required]);
+        }
+    }
+
+    // SN validation method
+    validateSerialNumber(): void {
+        const serialNumber = this.customerForm.get('serial_number')?.value;
+        if (serialNumber && serialNumber.length === 12) {
+            // For now, we'll validate on form submission
+            // When you have the API, uncomment this:
+            /*
+            this.systemService.checkSerialNumber(serialNumber).subscribe({
+                next: (response: { exists: boolean }) => {
+                    if (response.exists) {
+                        this.customerForm.get('serial_number')?.setErrors({ 'snExists': true });
+                    }
+                },
+                error: (error: any) => {
+                    console.error('Error checking serial number:', error);
+                }
+            });
+            */
+        }
     }
 
     // Validation helper methods
@@ -82,42 +119,67 @@ export class AddCustomerComponent {
             const requiredLength = field.errors?.['maxlength']?.requiredLength;
             return `${this.getFieldLabel(fieldName)} must be exactly ${requiredLength} characters`;
         }
+        if (field.hasError('snExists')) {
+            return 'This Serial Number is already in use';
+        }
         return '';
     }
 
     getFieldLabel(fieldName: string): string {
         const labels: { [key: string]: string } = {
-            serialNumber: 'Serial Number',
-            customerName: 'Customer Name',
+            serial_number: 'Serial Number',
+            customer_name: 'Customer Name',
             address: 'Address',
             phone: 'Phone',
-            planDuration: 'Plan Duration',
-            paymentStatus: 'Payment Status',
-            adminId: 'Admin'
+            plan_id: 'Plan Duration',
+            payment_status: 'Payment Status',
+            admin_id: 'Admin'
         };
         return labels[fieldName] || fieldName;
     }
 
     // Plan selection
     selectPlan(planId: string): void {
-        this.customerForm.patchValue({ planDuration: planId });
+        this.customerForm.patchValue({ plan_id: planId });
     }
 
     // Payment status selection
     selectPaymentStatus(status: string): void {
-        this.customerForm.patchValue({ paymentStatus: status });
+        this.customerForm.patchValue({ payment_status: status });
     }
 
     // Form submission
     onSubmit(): void {
-        if (this.customerForm.valid) {
+        if (this.customerForm.valid && !this.isSubmitting) {
+            this.isSubmitting = true;
             const data = this.customerForm.value;
-            console.log('Saving customer:', this.customerForm.value);
-            // Here you would typically make an API call to save the customer
-            this.systemService.addCustomer(data).subscribe((res) => {
-                alert('Customer saved successfully!');
-                this.router.navigate(['/customers']);
-            });
+            console.log('Saving customer:', data);
+
+            if (this.role === 'subadmin') {
+                this.systemService.addMyCustomer(data).subscribe({
+                    next: (res) => {
+                        alert('Customer saved successfully!');
+                        this.router.navigate(['/customers']);
+                    },
+                    error: (error) => {
+                        console.error('Error saving customer:', error);
+                        alert('Error saving customer. Please try again.');
+                        this.isSubmitting = false;
+                    }
+                });
+            } else {
+                this.systemService.addCustomer(data).subscribe({
+                    next: (res) => {
+                        alert('Customer saved successfully!');
+                        this.router.navigate(['/customers']);
+                    },
+                    error: (error) => {
+                        console.error('Error saving customer:', error);
+                        alert('Error saving customer. Please try again.');
+                        this.isSubmitting = false;
+                    }
+                });
+            }
         } else {
             this.markFormGroupTouched();
         }
@@ -138,23 +200,23 @@ export class AddCustomerComponent {
 
     // Check if plan is selected
     isPlanSelected(planId: string): boolean {
-        return this.customerForm.get('planDuration')?.value === planId;
+        return this.customerForm.get('plan_id')?.value === planId;
     }
 
     // Check if payment status is selected
     isPaymentSelected(status: string): boolean {
-        return this.customerForm.get('paymentStatus')?.value === status;
+        return this.customerForm.get('payment_status')?.value === status;
     }
 
     // Get selected plan details
     getSelectedPlan() {
-        const planId = this.customerForm.get('planDuration')?.value;
+        const planId = this.customerForm.get('plan_id')?.value;
         return this.planOptions.find(plan => plan.id === planId);
     }
 
     // Get selected payment status details
     getSelectedPaymentStatus() {
-        const statusId = this.customerForm.get('paymentStatus')?.value;
+        const statusId = this.customerForm.get('payment_status')?.value;
         return this.paymentOptions.find(payment => payment.id === statusId);
     }
-} 
+}

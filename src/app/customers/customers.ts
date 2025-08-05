@@ -138,22 +138,62 @@ export class CustomersComponent {
         // Apply the selected bulk action
         switch (this.bulkAction) {
             case 'enable':
-                console.log('Enable selected customers:', this.selectedCustomers);
+                this.systemService.bulkUpdateStatus(this.selectedCustomers, 'active').subscribe({
+                    next: (res) => {
+                        console.log('Customers enabled successfully');
+                        // this.loadCustomers(); // Reload customers
+                        this.selectedCustomers = [];
+                        this.selectAll = false;
+                    },
+                    error: (error) => {
+                        console.error('Error enabling customers:', error);
+                        alert('Error enabling customers. Please try again.');
+                    }
+                });
                 break;
             case 'disable':
-                console.log('Disable selected customers:', this.selectedCustomers);
+                this.systemService.bulkUpdateStatus(this.selectedCustomers, 'inactive').subscribe({
+                    next: (res) => {
+                        console.log('Customers disabled successfully');
+                        // this.loadCustomers(); // Reload customers
+                        this.selectedCustomers = [];
+                        this.selectAll = false;
+                    },
+                    error: (error) => {
+                        console.error('Error disabling customers:', error);
+                        alert('Error disabling customers. Please try again.');
+                    }
+                });
                 break;
             case 'mark-paid':
-                console.log('Mark selected customers as paid:', this.selectedCustomers);
+                this.systemService.bulkUpdatePaymentStatus(this.selectedCustomers, 'paid').subscribe({
+                    next: (res) => {
+                        console.log('Customers marked as paid successfully');
+                        // this.loadCustomers(); // Reload customers
+                        this.selectedCustomers = [];
+                        this.selectAll = false;
+                    },
+                    error: (error) => {
+                        console.error('Error marking customers as paid:', error);
+                        alert('Error marking customers as paid. Please try again.');
+                    }
+                });
                 break;
             case 'mark-unpaid':
-                console.log('Mark selected customers as unpaid:', this.selectedCustomers);
+                this.systemService.bulkUpdatePaymentStatus(this.selectedCustomers, 'unpaid').subscribe({
+                    next: (res) => {
+                        console.log('Customers marked as unpaid successfully');
+                        // this.loadCustomers(); // Reload customers
+                        this.selectedCustomers = [];
+                        this.selectAll = false;
+                    },
+                    error: (error) => {
+                        console.error('Error marking customers as unpaid:', error);
+                        alert('Error marking customers as unpaid. Please try again.');
+                    }
+                });
                 break;
         }
-
-        // Reset selection
-        this.selectedCustomers = [];
-        this.selectAll = false;
     }
 
     // Export functionality

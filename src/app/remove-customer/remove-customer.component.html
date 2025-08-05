@@ -16,33 +16,75 @@
 
     <!-- Search Form -->
     <div class="search-form">
-      <div class="form-field">
-        <label for="deviceSN" class="form-label">
-          Device SN:
-        </label>
-        <input 
-          type="text" 
-          id="deviceSN"
-          formControlName="deviceSN"
-          class="form-input"
-          placeholder="Enter SN (partial or full)"
-        >
-        <div class="error-message" *ngIf="getErrorMessage()">
-          {{ getErrorMessage() }}
-        </div>
-      </div>
+      <form [formGroup]="removeForm" (ngSubmit)="searchCustomer()" class="edit-form">
 
-      <!-- Search Button -->
-      <div class="form-actions">
-        <button 
-          type="button" 
-          class="btn btn-primary"
-          (click)="searchCustomer()"
-          [disabled]="!removeForm.valid"
-        >
-          Search
-        </button>
-      </div>
+        <div class="form-field">
+          <label for="serial_number" class="form-label">
+            Customer SN:
+          </label>
+          <input type="text" id="serial_number" formControlName="serial_number" class="form-input"
+            placeholder="Enter SN (partial or full)">
+          <div class="error-message" *ngIf="getErrorMessage()">
+            {{ getErrorMessage() }}
+          </div>
+        </div>
+
+        <!-- Search Button -->
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" [disabled]="!removeForm.valid">
+            Search
+          </button>
+        </div>
+      </form>
+    </div>
+
+
+    <!-- Customers Table -->
+    <div class="table-container mt-5" *ngIf="customer">
+      <table class="customers-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Device SN</th>
+            <th>Owner</th>
+            <th>Dates</th>
+            <th>Registered</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="customer-row">
+
+            <td class="customer-name">{{ customer.name }}</td>
+            <td class="device-sn">{{ customer.serial_number }}</td>
+            <td>{{ customer.owner }}</td>
+            <td class="date">
+              <div class="date-range">
+                <span class="start-date">{{ customer.created_at |date:'medium'}}</span>
+                <!-- <span class="date-separator">-</span>
+                            <span class="end-date">{{ customer.endDate }}</span> -->
+              </div>
+            </td>
+            <td class="remaining">
+              <span class="remaining-text" [class.expired]="customer.status === 'expired'">
+                {{ customer.created_at |date:'medium'}}
+              </span>
+            </td>
+            <td class="actions">
+
+              <button class="action-btn delete" (click)="deleteCustomer(customer.id)" title="Delete">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <polyline points="3,6 5,6 21,6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                  <path d="M19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </button>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
     </div>
   </div>
 </div>

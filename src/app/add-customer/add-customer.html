@@ -31,11 +31,11 @@
                     </label>
                     <input type="text" id="serialNumber" formControlName="serial_number"
                         placeholder="Enter 12 character SN" class="form-input"
-                        [class.error]="isFieldInvalid('serialNumber')" maxlength="12">
-                    @if (isFieldInvalid('serialNumber')) {
+                        [class.error]="isFieldInvalid('serial_number')" maxlength="12" (blur)="validateSerialNumber()">
+                    @if (isFieldInvalid('serial_number')) {
                     <div class="error-message">
-                        <i class="fa fa-circle-check"></i>
-                        {{ getErrorMessage('serialNumber') }}
+                        <i class="fa fa-times-circle"></i>
+                        {{ getErrorMessage('serial_number') }}
                     </div>
                     }
                     <div class="hint-message">
@@ -51,11 +51,11 @@
                     </label>
                     <input type="text" id="customerName" formControlName="customer_name"
                         placeholder="Enter customer name" class="form-input"
-                        [class.error]="isFieldInvalid('customerName')">
-                    @if (isFieldInvalid('customerName')) {
+                        [class.error]="isFieldInvalid('customer_name')">
+                    @if (isFieldInvalid('customer_name')) {
                     <div class="error-message">
                         <i class="fa fa-times-circle"></i>
-                        {{ getErrorMessage('customerName') }}
+                        {{ getErrorMessage('customer_name') }}
                     </div>
                     }
                 </div>
@@ -110,7 +110,7 @@
                         <div *ngFor="let payment of paymentOptions" class="payment-option"
                             [class.selected]="isPaymentSelected(payment.id)" (click)="selectPaymentStatus(payment.id)">
                             <span class="payment-name">{{ payment.name }}</span>
-                            <i *ngIf="isPaymentSelected(payment.id)" class=" fa-check check-icon"></i>
+                            <i *ngIf="isPaymentSelected(payment.id)" class="fa fa-check check-icon"></i>
                         </div>
                     </div>
                     @if (isFieldInvalid('payment_status')) {
@@ -125,7 +125,7 @@
                     </div>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" *ngIf="role!=='subadmin'">
                     <label class="form-label">Admin</label>
                     <div class="payment-options position-relative">
                         <select formControlName="admin_id" class="form-select pe-5">

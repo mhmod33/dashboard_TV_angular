@@ -14,13 +14,18 @@ export class SystemService {
   private payments = `${this.base}/api/payments`;
   private allCustomers = `${this.base}/api/customers`;
   // private activeCustomers = `${this.base}/api/customers`;
-  // private expiredCustomers = `${this.base}/api/expiredCustomers`;
+  // private expiredCustomers = `${this.base}/api/customers`;
   // private paidCustomers = `${this.base}/api/customers`;
 
   private allAdmins = `${this.base}/api/superadmin/admins`;
   private allSubadmins = `${this.base}/api/subadmins`;
 
-  private AddCustomer =`${this.base}/api/customers`
+  private AddCustomer = `${this.base}/api/customers`
+  private AddmyCustomer = `${this.base}/api/myCustomers`
+  private deletecustomer = `${this.base}/api/customers`
+  // private checkSN = `${this.base}/api/check-serial-number` // Uncomment when API is ready
+  private getCustomerBySn = `${this.base}/api/getcustomerbysn`
+
   constructor(private http: HttpClient) { }
 
 
@@ -42,7 +47,41 @@ export class SystemService {
     return this.http.get<SubadminRoot>(this.allSubadmins)
   }
 
-  addCustomer(data:CustomerRoot):Observable<any>{
-    return this.http.post<any>(this.AddCustomer,data);
+  addCustomer(data: CustomerRoot): Observable<any> {
+    return this.http.post<any>(this.AddCustomer, data);
   }
+
+  addMyCustomer(data: CustomerRoot): Observable<any> {
+    return this.http.post<any>(this.AddmyCustomer, data);
+  }
+
+  deleteCustomer(id:number):Observable<any>{
+    return this.http.delete(`${this.deletecustomer}/${id}`);
+  }
+
+  // Bulk action methods
+  bulkUpdateStatus(customerIds: string[], status: string): Observable<any> {
+    return this.http.put<any>(`${this.allCustomers}/bulk/status`, {
+      customer_ids: customerIds,
+      status: status
+    });
+  }
+
+  bulkUpdatePaymentStatus(customerIds: string[], paymentStatus: string): Observable<any> {
+    return this.http.put<any>(`${this.allCustomers}/bulk/payment-status`, {
+      customer_ids: customerIds,
+      payment_status: paymentStatus
+    });
+  }
+
+  getCustomerBysn(data: any): Observable<any> {
+    return this.http.post<any>(this.getCustomerBySn, data)
+  }
+  // Uncomment when API is ready
+  /*
+  checkSerialNumber(serialNumber: string): Observable<{ exists: boolean }> {
+    return this.http.get<{ exists: boolean }>(`${this.checkSN}/${serialNumber}`);
+  }
+  */
+
 }

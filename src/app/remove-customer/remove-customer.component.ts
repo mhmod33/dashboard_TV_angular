@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { SystemService } from '../services/system/system.service';
 
 @Component({
   selector: 'app-remove-customer',
@@ -10,18 +11,34 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } 
 })
 export class RemoveCustomerComponent {
   removeForm: FormGroup;
-  
-  constructor(private fb: FormBuilder) {
+  sn: any;
+  customer: any
+  constructor(
+    private fb: FormBuilder,
+    private systemService: SystemService
+  ) {
     this.removeForm = this.fb.group({
-      deviceSN: ['', [Validators.required, Validators.minLength(3)]]
+      serial_number: ['', [Validators.required, Validators.minLength(12)]]
     });
   }
-
+  deleteCustomer(id: number) {
+    return this.systemService.deleteCustomer(id).subscribe(() => {
+      alert('deleted successfully!');
+    })
+  }
   searchCustomer() {
+
     if (this.removeForm.valid) {
-      console.log('Searching for customer with SN:', this.removeForm.value.deviceSN);
-      // Here you would typically make an API call to search for the customer
-      alert('Searching for customer...');
+      const data = this.removeForm.value
+      this.systemService.getCustomerBysn(data).subscribe({
+        next: (res) => {
+          this.customer = res.customer
+        },
+        error: () => {
+          alert('There is no customer with this sn 🚨🚫')
+        }
+      }
+      )
     } else {
       alert('Please enter a valid device serial number.');
     }
@@ -34,7 +51,7 @@ export class RemoveCustomerComponent {
         return 'Device SN is required';
       }
       if (control.errors['minlength']) {
-        return 'Device SN must be at least 3 characters';
+        return 'Device SN must be at least 12 characters';
       }
     }
     return '';
