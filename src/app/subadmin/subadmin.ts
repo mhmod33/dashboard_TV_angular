@@ -14,7 +14,7 @@ import { AuthServiceService } from '../services/auth-service/auth-service.servic
     styleUrl: './subadmin.css'
 })
 export class SubAdminComponent {
-    getRole:string;
+    getRole: string;
     // Summary stats
     summaryStats = {
         totalSubAdmins: 1,
@@ -34,7 +34,7 @@ export class SubAdminComponent {
     //     }
     // ];
 
-    subadmins:any;
+    subadmins: any;
     // Recent transactions
     recentTransactions = [
         {
@@ -50,17 +50,17 @@ export class SubAdminComponent {
 
     constructor(
         private router: Router,
-        private systemService:SystemService,
+        private systemService: SystemService,
         private authService: AuthServiceService
-    ) { 
-        this.getRole =  this.authService.getRole() ?? ''
-        
+    ) {
+        this.getRole = this.authService.getRole() ?? ''
+
     }
 
 
-    ngOnInit(){
-        this.systemService.getAllSubadmins().subscribe((res)=>{
-            this.subadmins=res.subadmins
+    ngOnInit() {
+        this.systemService.getAllSubadmins().subscribe((res) => {
+            this.subadmins = res.subadmins
         })
     }
     // Navigation methods
@@ -75,14 +75,17 @@ export class SubAdminComponent {
     // Action methods for sub-admin performance
     addBalance(username: string) {
         console.log('Add balance for:', username);
+        this.router.navigate(['/add-subadmin-balance', username]);
     }
 
     setPrices(username: string) {
         console.log('Set prices for:', username);
+        this.router.navigate(['/set-prices', username]);
     }
 
     viewCustomers(username: string) {
         console.log('View customers for:', username);
+        this.router.navigate(['/subadmin-customers', username]);
     }
 
     viewStats(username: string) {

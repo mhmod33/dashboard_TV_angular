@@ -81,12 +81,10 @@ export class AddCustomerComponent {
     validateSerialNumber(): void {
         const serialNumber = this.customerForm.get('serial_number')?.value;
         if (serialNumber && serialNumber.length === 12) {
-            // For now, we'll validate on form submission
-            // When you have the API, uncomment this:
-            /*
-            this.systemService.checkSerialNumber(serialNumber).subscribe({
-                next: (response: { exists: boolean }) => {
-                    if (response.exists) {
+            // Call API to check if SN exists
+            this.systemService.getCustomerBysn({ serial_number: serialNumber }).subscribe({
+                next: (response: any) => {
+                    if (response.customer) {
                         this.customerForm.get('serial_number')?.setErrors({ 'snExists': true });
                     }
                 },
@@ -94,7 +92,6 @@ export class AddCustomerComponent {
                     console.error('Error checking serial number:', error);
                 }
             });
-            */
         }
     }
 

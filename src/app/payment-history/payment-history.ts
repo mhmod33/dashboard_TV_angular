@@ -1,57 +1,22 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router, RouterLink } from '@angular/router';
 import { SystemService } from '../services/system/system.service';
 import { Payemnt, PaymentRoot } from '../interfaces/payment';
 
 @Component({
     selector: 'app-payment-history',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule,RouterLink],
     templateUrl: './payment-history.html',
     styleUrl: './payment-history.css'
 })
 export class PaymentHistoryComponent {
-    // payments = [
-    //     {
-    //         id: 'PAY001',
-    //         date: '2024-01-15',
-    //         type: 'Credit Card',
-    //         code: 'CC001234',
-    //         customerName: 'Ahmed Mohamed',
-    //         owner: 'Admin',
-    //         duration: '30 days',
-    //         expBefore: '2024-01-15',
-    //         expAfter: '2024-02-15',
-    //         cost: '$25.00'
-    //     },
-    //     {
-    //         id: 'PAY002',
-    //         date: '2024-01-14',
-    //         type: 'PayPal',
-    //         code: 'PP567890',
-    //         customerName: 'Sarah Ali',
-    //         owner: 'Admin',
-    //         duration: '90 days',
-    //         expBefore: '2024-01-14',
-    //         expAfter: '2024-04-14',
-    //         cost: '$60.00'
-    //     },
-    //     {
-    //         id: 'PAY003',
-    //         date: '2024-01-13',
-    //         type: 'Bank Transfer',
-    //         code: 'BT123456',
-    //         customerName: 'Mohamed Hassan',
-    //         owner: 'Admin',
-    //         duration: '180 days',
-    //         expBefore: '2024-01-13',
-    //         expAfter: '2024-07-13',
-    //         cost: '$100.00'
-    //     }
-    // ];
+    constructor(
+        private systemService: SystemService,
+        private router: Router
+    ) { }
 
-
-    constructor(private systemService: SystemService) { }
     payments: Payemnt[] = [];
 
     ngOnInit(): void {
@@ -62,4 +27,32 @@ export class PaymentHistoryComponent {
         })
     }
 
+    // Navigate to add payment page
+    addPayment(): void {
+        this.router.navigate(['/add-payment']);
+    }
+
+    // Delete payment
+    deletePayment(paymentId: number): void {
+        if (confirm('Are you sure you want to delete this payment?')) {
+            this.systemService.deletePayment(paymentId).subscribe({
+                next: (res) => {
+                    console.log('Payment deleted successfully');
+                    // Reload payments
+                    this.loadPayments();
+                },
+                error: (error) => {
+                    console.error('Error deleting payment:', error);
+                    alert('Error deleting payment. Please try again.');
+                }
+            });
+        }
+    }
+
+    // Reload payments
+    loadPayments(): void {
+        this.systemService.allPayments().subscribe((res: any) => {
+            this.payments = res.payemnts;
+        });
+    }
 } 

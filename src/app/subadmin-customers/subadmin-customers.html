@@ -1,0 +1,101 @@
+<div class="subadmin-customers-container">
+    <!-- Header Section -->
+    <div class="page-header">
+        <div class="header-left">
+            <h1>SubAdmin Customers</h1>
+            <p class="subtitle">Customers for: {{ subadminUsername }}</p>
+        </div>
+        <div class="header-right">
+            <div class="breadcrumb">
+                <i class="fa fa-home"></i>
+                <span>Home > SubAdmin > Customers</span>
+            </div>
+            <button class="back-btn" (click)="goBack()">
+                <i class="fa fa-arrow-left"></i>
+                Back
+            </button>
+        </div>
+    </div>
+
+    <!-- Search and Filter Section -->
+    <div class="search-filter-section">
+        <div class="search-box">
+            <input type="text" placeholder="Search customers..." [(ngModel)]="searchTerm" class="search-input">
+            <button class="search-btn" (click)="performSearch()">
+                <i class="fa fa-search"></i>
+            </button>
+        </div>
+        <div class="filter-buttons">
+            <button class="filter-btn" [class.active]="currentView === 'all'" (click)="setView('all')">
+                All Customers
+            </button>
+            <button class="filter-btn" [class.active]="currentView === 'active'" (click)="setView('active')">
+                Active
+            </button>
+            <button class="filter-btn" [class.active]="currentView === 'expired'" (click)="setView('expired')">
+                Expired
+            </button>
+            <button class="filter-btn" [class.active]="currentView === 'paid'" (click)="setView('paid')">
+                Paid
+            </button>
+        </div>
+        <div class="export-section">
+            <button class="export-btn" (click)="exportToExcel()">
+                <i class="fa fa-download"></i>
+                Export to Excel
+            </button>
+        </div>
+    </div>
+
+    <!-- Customers Table -->
+    <div class="table-container">
+        <table class="customers-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Device SN</th>
+                    <th>Status</th>
+                    <th>Payment Status</th>
+                    <th>Created Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let customer of filteredCustomers; let i = index" class="customer-row">
+                    <td>{{ i + 1 }}</td>
+                    <td class="customer-name">{{ customer.name }}</td>
+                    <td class="device-sn">{{ customer.serial_number }}</td>
+                    <td class="status">
+                        <span class="status-badge" [ngClass]="customer.status">
+                            {{ customer.status }}
+                        </span>
+                    </td>
+                    <td class="payment-status">
+                        <span class="payment-badge" [ngClass]="customer.payment_status">
+                            {{ customer.payment_status }}
+                        </span>
+                    </td>
+                    <td class="created-date">{{ customer.created_at | date:'medium' }}</td>
+                    <td class="actions">
+                        <button class="action-btn edit" (click)="editCustomer(customer.id)" title="Edit">
+                            <i class="fa fa-edit"></i>
+                        </button>
+                        <button class="action-btn delete" (click)="deleteCustomer(customer.id)" title="Delete">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+                <tr *ngIf="filteredCustomers.length === 0" class="empty-row">
+                    <td colspan="7">
+                        <div class="empty-content">
+                            <i class="fa fa-users"></i>
+                            <h3>No customers found</h3>
+                            <p>No customers match your current filters.</p>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

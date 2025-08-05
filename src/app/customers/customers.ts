@@ -199,6 +199,36 @@ export class CustomersComponent {
     // Export functionality
     exportToExcel() {
         console.log('Exporting customers to Excel...');
+
+        // Prepare data for export
+        const exportData = this.filteredCustomers.map(customer => ({
+            'Customer Name': customer.name,
+            'Serial Number': customer.serial_number,
+            'Owner': customer.owner,
+            'Status': customer.status,
+            'Payment Status': customer.payment_status,
+            'Created Date': customer.created_at,
+            'Address': customer.address || '',
+            'Phone': customer.phone || ''
+        }));
+
+        // Create CSV content
+        const headers = Object.keys(exportData[0] || {}) as string[];
+        const csvContent = [
+            headers.join(','),
+            ...exportData.map(row => headers.map(header => `"${(row as any)[header] || ''}"`).join(','))
+        ].join('\n');
+
+        // Create and download file
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `customers_${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 
     // Add customer functionality

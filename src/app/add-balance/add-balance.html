@@ -1,0 +1,106 @@
+<div class="add-balance-container">
+    <!-- Header Section -->
+    <div class="page-header">
+        <div class="header-left">
+            <h1>Add Balance</h1>
+        </div>
+        <div class="header-right">
+            <div class="breadcrumb">
+                <i class="fa fa-home"></i>
+                <span>Home > Admin Users > Add Balance</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-container">
+        <!-- Main Form -->
+        <div class="main-form">
+            <form [formGroup]="balanceForm" (ngSubmit)="onSubmit()" class="edit-form">
+                <!-- Admin Info -->
+                <div class="admin-info" *ngIf="admin">
+                    <h3>Admin Information</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>Name:</label>
+                            <span>{{ admin.name }}</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Current Balance:</label>
+                            <span>${{ admin.balance }}</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Role:</label>
+                            <span>{{ admin.role }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Amount Field -->
+                <div class="form-group">
+                    <label for="amount" class="form-label">
+                        Amount to Add *
+                    </label>
+                    <input type="number" id="amount" formControlName="amount" placeholder="Enter amount"
+                        class="form-input" [class.error]="isFieldInvalid('amount')" min="1" step="0.01">
+                    @if (isFieldInvalid('amount')) {
+                    <div class="error-message">
+                        <i class="fa fa-times-circle"></i>
+                        {{ getErrorMessage('amount') }}
+                    </div>
+                    }
+                </div>
+
+                <!-- Reason Field -->
+                <div class="form-group">
+                    <label for="reason" class="form-label">
+                        Reason for Adding Balance *
+                    </label>
+                    <textarea id="reason" formControlName="reason" placeholder="Enter reason for adding balance"
+                        class="form-input" [class.error]="isFieldInvalid('reason')" rows="3"></textarea>
+                    @if (isFieldInvalid('reason')) {
+                    <div class="error-message">
+                        <i class="fa fa-times-circle"></i>
+                        {{ getErrorMessage('reason') }}
+                    </div>
+                    }
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="form-actions">
+                    <button type="submit" class="save-btn" [disabled]="isSubmitting">
+                        <i class="fa fa-save"></i>
+                        {{ isSubmitting ? 'Adding...' : 'Add Balance' }}
+                    </button>
+                    <button type="button" class="cancel-btn" (click)="cancelForm()">
+                        <i class="fa fa-times"></i>
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Information Sidebar -->
+        <div class="info-sidebar">
+            <div class="info-header">
+                <i class="fa fa-info-circle"></i>
+                <span>Information</span>
+            </div>
+
+            <div class="info-content">
+                <p>Add balance to the selected admin account.</p>
+                <p>Required fields are marked with *</p>
+            </div>
+
+            <div class="info-box">
+                <div class="info-box-header">
+                    <i class="fa fa-info-circle"></i>
+                    <span>Balance Addition</span>
+                </div>
+                <div class="info-box-content">
+                    <p>Enter the amount you want to add to the admin's balance.</p>
+                    <p>Provide a clear reason for the balance addition.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -104,16 +104,54 @@ export class AdminUsersComponent {
     // Action methods for individual admin users
     editAdmin(adminId: number) {
         console.log('Edit admin:', adminId);
+        this.router.navigate(['/edit-admin', adminId]);
     }
 
     deleteAdmin(adminId: number) {
-        console.log('Delete admin:', adminId);
+        if (confirm('Are you sure you want to delete this admin?')) {
+            this.systemService.deleteAdmin(adminId).subscribe({
+                next: (res) => {
+                    console.log('Admin deleted successfully');
+                    this.loadAdmins();
+                },
+                error: (error) => {
+                    console.error('Error deleting admin:', error);
+                    alert('Error deleting admin. Please try again.');
+                }
+            });
+        }
+    }
+
+    addBalance(adminId: number) {
+        console.log('Add balance for admin:', adminId);
+        this.router.navigate(['/add-balance', adminId]);
+    }
+
+    banAdmin(adminId: number) {
+        if (confirm('Are you sure you want to ban this admin?')) {
+            this.systemService.banAdmin(adminId).subscribe({
+                next: (res) => {
+                    console.log('Admin banned successfully');
+                    this.loadAdmins();
+                },
+                error: (error) => {
+                    console.error('Error banning admin:', error);
+                    alert('Error banning admin. Please try again.');
+                }
+            });
+        }
     }
 
     viewAdminDetails(adminId: number) {
         console.log('View admin details:', adminId);
-        // Here you would typically navigate to a details page or open a modal
-        alert(`Viewing details for admin ID: ${adminId}`);
+        this.router.navigate(['/admin-details', adminId]);
+    }
+
+    // Load admins
+    loadAdmins() {
+        this.systemService.getAllAdmins().subscribe((res) => {
+            this.adminUsers = res.admins;
+        });
     }
 
     // Get status display info

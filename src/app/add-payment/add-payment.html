@@ -1,0 +1,177 @@
+<div class="add-payment-container">
+    <!-- Header Section -->
+    <div class="page-header">
+        <div class="header-left">
+            <h1>Add Payment</h1>
+        </div>
+        <div class="header-right">
+            <div class="breadcrumb">
+                <i class="fa fa-home"></i>
+                <span>Home > Add Payment</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-container">
+        <!-- Main Form -->
+        <div class="main-form">
+            <form [formGroup]="paymentForm" (ngSubmit)="onSubmit()" class="edit-form">
+                <!-- Customer Selection -->
+                <div class="form-group">
+                    <label for="customer" class="form-label">
+                        Select Customer *
+                    </label>
+                    <select id="customer" class="form-select" (change)="onCustomerSelect($event)">
+                        <option value="">Select a customer</option>
+                        <option [value]="customer.id" *ngFor="let customer of customers">
+                            {{ customer.name }} - {{ customer.serial_number }}
+                        </option>
+                    </select>
+                </div>
+
+                <!-- Serial Number Field -->
+                <div class="form-group">
+                    <label for="serialNumber" class="form-label">
+                        Serial Number *
+                    </label>
+                    <input type="text" id="serialNumber" formControlName="serial_number"
+                        placeholder="Enter serial number" class="form-input"
+                        [class.error]="isFieldInvalid('serial_number')">
+                    @if (isFieldInvalid('serial_number')) {
+                    <div class="error-message">
+                        <i class="fa fa-times-circle"></i>
+                        {{ getErrorMessage('serial_number') }}
+                    </div>
+                    }
+                </div>
+
+                <!-- Customer Name Field -->
+                <div class="form-group">
+                    <label for="customerName" class="form-label">
+                        Customer Name *
+                    </label>
+                    <input type="text" id="customerName" formControlName="customer_name"
+                        placeholder="Enter customer name" class="form-input"
+                        [class.error]="isFieldInvalid('customer_name')">
+                    @if (isFieldInvalid('customer_name')) {
+                    <div class="error-message">
+                        <i class="fa fa-times-circle"></i>
+                        {{ getErrorMessage('customer_name') }}
+                    </div>
+                    }
+                </div>
+
+                <!-- Owner Field -->
+                <div class="form-group">
+                    <label for="owner" class="form-label">
+                        Owner *
+                    </label>
+                    <input type="text" id="owner" formControlName="owner" placeholder="Enter owner name"
+                        class="form-input" [class.error]="isFieldInvalid('owner')">
+                    @if (isFieldInvalid('owner')) {
+                    <div class="error-message">
+                        <i class="fa fa-times-circle"></i>
+                        {{ getErrorMessage('owner') }}
+                    </div>
+                    }
+                </div>
+
+                <!-- Date Field -->
+                <div class="form-group">
+                    <label for="date" class="form-label">
+                        Payment Date *
+                    </label>
+                    <input type="date" id="date" formControlName="date" class="form-input"
+                        [class.error]="isFieldInvalid('date')">
+                    @if (isFieldInvalid('date')) {
+                    <div class="error-message">
+                        <i class="fa fa-times-circle"></i>
+                        {{ getErrorMessage('date') }}
+                    </div>
+                    }
+                </div>
+
+                <!-- Expiration Before Field -->
+                <div class="form-group">
+                    <label for="expBefore" class="form-label">
+                        Expiration Before *
+                    </label>
+                    <input type="date" id="expBefore" formControlName="exp_before" class="form-input"
+                        [class.error]="isFieldInvalid('exp_before')">
+                    @if (isFieldInvalid('exp_before')) {
+                    <div class="error-message">
+                        <i class="fa fa-times-circle"></i>
+                        {{ getErrorMessage('exp_before') }}
+                    </div>
+                    }
+                </div>
+
+                <!-- Expiration After Field -->
+                <div class="form-group">
+                    <label for="expAfter" class="form-label">
+                        Expiration After *
+                    </label>
+                    <input type="date" id="expAfter" formControlName="exp_after" class="form-input"
+                        [class.error]="isFieldInvalid('exp_after')">
+                    @if (isFieldInvalid('exp_after')) {
+                    <div class="error-message">
+                        <i class="fa fa-times-circle"></i>
+                        {{ getErrorMessage('exp_after') }}
+                    </div>
+                    }
+                </div>
+
+                <!-- Cost Field -->
+                <div class="form-group">
+                    <label for="cost" class="form-label">
+                        Cost *
+                    </label>
+                    <input type="number" id="cost" formControlName="cost" placeholder="Enter cost amount"
+                        class="form-input" [class.error]="isFieldInvalid('cost')" min="0" step="0.01">
+                    @if (isFieldInvalid('cost')) {
+                    <div class="error-message">
+                        <i class="fa fa-times-circle"></i>
+                        {{ getErrorMessage('cost') }}
+                    </div>
+                    }
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="form-actions">
+                    <button type="submit" class="save-btn" [disabled]="isSubmitting">
+                        <i class="fa fa-save"></i>
+                        {{ isSubmitting ? 'Saving...' : 'Save Payment' }}
+                    </button>
+                    <button type="button" class="cancel-btn" (click)="cancelForm()">
+                        <i class="fa fa-times"></i>
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Information Sidebar -->
+        <div class="info-sidebar">
+            <div class="info-header">
+                <i class="fa fa-info-circle"></i>
+                <span>Information</span>
+            </div>
+
+            <div class="info-content">
+                <p>Please fill out the form to add a new payment record.</p>
+                <p>Required fields are marked with *</p>
+            </div>
+
+            <div class="info-box">
+                <div class="info-box-header">
+                    <i class="fa fa-info-circle"></i>
+                    <span>Payment Details</span>
+                </div>
+                <div class="info-box-content">
+                    <p>Select a customer to auto-fill their details.</p>
+                    <p>Make sure to enter the correct expiration dates.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

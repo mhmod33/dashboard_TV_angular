@@ -55,8 +55,32 @@ export class SystemService {
     return this.http.post<any>(this.AddmyCustomer, data);
   }
 
-  deleteCustomer(id:number):Observable<any>{
+  addPayment(data: any): Observable<any> {
+    return this.http.post<any>(this.payments, data);
+  }
+
+  deleteCustomer(id: number): Observable<any> {
     return this.http.delete(`${this.deletecustomer}/${id}`);
+  }
+
+  deletePayment(id: number): Observable<any> {
+    return this.http.delete(`${this.payments}/${id}`);
+  }
+
+  deleteAdmin(id: number): Observable<any> {
+    return this.http.delete(`${this.allAdmins}/${id}`);
+  }
+
+  banAdmin(id: number): Observable<any> {
+    return this.http.put(`${this.allAdmins}/${id}/ban`, {});
+  }
+
+  getAdminById(id: number): Observable<any> {
+    return this.http.get(`${this.allAdmins}/${id}`);
+  }
+
+  addBalance(data: any): Observable<any> {
+    return this.http.post(`${this.allAdmins}/balance`, data);
   }
 
   // Bulk action methods
@@ -76,6 +100,10 @@ export class SystemService {
 
   getCustomerBysn(data: any): Observable<any> {
     return this.http.post<any>(this.getCustomerBySn, data)
+  }
+
+  getMyCustomers(): Observable<any> {
+    return this.http.get<any>(this.AddmyCustomer);
   }
   // Uncomment when API is ready
   /*

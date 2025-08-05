@@ -13,6 +13,9 @@ import { DefaultPricesComponent } from './default-prices/default-prices.componen
 import { TimePeriodsComponent } from './time-periods/time-periods.component';
 import { RemoveCustomerComponent } from './remove-customer/remove-customer.component';
 import { DeleteAllCustomersComponent } from './delete-all-customers/delete-all-customers.component';
+import { AddPaymentComponent } from './add-payment/add-payment';
+import { AddBalanceComponent } from './add-balance/add-balance';
+import { SubadminCustomersComponent } from './subadmin-customers/subadmin-customers';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -99,6 +102,27 @@ export const routes: Routes = [
     component: LayoutComponent,
     children: [
       { path: '', component: DeleteAllCustomersComponent }
+    ]
+  },
+  {
+    path: 'add-payment',
+    component: LayoutComponent,
+    children: [
+      { path: '', component: AddPaymentComponent }
+    ]
+  },
+  {
+    path: 'add-balance/:adminId',
+    component: LayoutComponent,
+    children: [
+      { path: '', component: AddBalanceComponent }
+    ]
+  },
+  {
+    path: 'subadmin-customers/:username',
+    component: LayoutComponent,
+    children: [
+      { path: '', component: SubadminCustomersComponent }
     ]
   }
 ];
