@@ -2,6 +2,9 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { SystemService } from '../services/system/system.service';
+import { SubadminRoot } from '../interfaces/subadmin';
+import { AuthServiceService } from '../services/auth-service/auth-service.service';
 
 @Component({
     selector: 'app-subadmin',
@@ -11,6 +14,7 @@ import { Router } from '@angular/router';
     styleUrl: './subadmin.css'
 })
 export class SubAdminComponent {
+    getRole:string;
     // Summary stats
     summaryStats = {
         totalSubAdmins: 1,
@@ -21,15 +25,16 @@ export class SubAdminComponent {
     };
 
     // Sub-admin performance data
-    subAdminPerformance = [
-        {
-            username: 'mhmod33',
-            balance: 0,
-            acasCustomers: 0,
-            created: '2025-08-01'
-        }
-    ];
+    // subadmins = [
+    //     {
+    //         username: 'mhmod33',
+    //         balance: 0,
+    //         acasCustomers: 0,
+    //         created: '2025-08-01'
+    //     }
+    // ];
 
+    subadmins:any;
     // Recent transactions
     recentTransactions = [
         {
@@ -43,8 +48,21 @@ export class SubAdminComponent {
     // Recent customers
     recentCustomers: any[] = [];
 
-    constructor(private router: Router) { }
+    constructor(
+        private router: Router,
+        private systemService:SystemService,
+        private authService: AuthServiceService
+    ) { 
+        this.getRole =  this.authService.getRole() ?? ''
+        
+    }
 
+
+    ngOnInit(){
+        this.systemService.getAllSubadmins().subscribe((res)=>{
+            this.subadmins=res.subadmins
+        })
+    }
     // Navigation methods
     addNewSubAdmin() {
         this.router.navigate(['/add-subadmin']);

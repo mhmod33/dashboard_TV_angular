@@ -77,7 +77,7 @@
                     <td class="admin-id">{{ admin.id }}</td>
                     <td class="admin-username">
                         <div class="username-info">
-                            <span class="username">{{ admin.username }}</span>
+                            <span class="username">{{ admin.name }}</span>
                             <span class="status-badge" [ngClass]="getStatusClass(admin.status)">
                                 {{ getStatusInfo(admin.status).label }}
                             </span>
@@ -89,7 +89,11 @@
                             {{ getStatusInfo(admin.status).label }}
                         </span>
                     </td>
-                    <td class="admin-customers">{{ admin.customers }}</td>
+                    @if(admin.role=='superadmin'){
+                    <td class="admin-customers">0 - {{admin.customers }}</td>
+                    }@else {
+                    <td class="admin-customers">{{ admin.customers.length }} </td>
+                    }
                     <td class="admin-actions">
                         <button class="action-btn details" (click)="viewAdminDetails(admin.id)" title="View Details">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"

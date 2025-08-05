@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { PaymentRoot } from '../../interfaces/payment';
 import { CustomerRoot } from '../../interfaces/customer';
+import { SubadminRoot } from '../../interfaces/subadmin';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,8 @@ export class SystemService {
 
   private payments = `${this.base}/api/payments`;
   private allCustomers = `${this.base}/api/customers`;
-
+  private allAdmins = `${this.base}/api/superadmin/admins`;
+  private allSubadmins = `${this.base}/api/subadmins`;
   constructor(private http: HttpClient) { }
 
 
@@ -24,4 +26,11 @@ export class SystemService {
     return this.http.get<CustomerRoot>(this.allCustomers);
   }
 
+  getAllAdmins(): Observable<AdminRoot> {
+    return this.http.get<AdminRoot>(this.allAdmins)
+  }
+  
+  getAllSubadmins(): Observable<SubadminRoot> {
+    return this.http.get<SubadminRoot>(this.allSubadmins)
+  }
 }
