@@ -152,7 +152,7 @@ export class CustomersComponent {
                 });
                 break;
             case 'disable':
-                this.systemService.bulkUpdateStatus(this.selectedCustomers, 'inactive').subscribe({
+                this.systemService.bulkUpdateStatus(this.selectedCustomers, 'expired').subscribe({
                     next: (res) => {
                         console.log('Customers disabled successfully');
                         // this.loadCustomers(); // Reload customers

@@ -41,9 +41,16 @@
                     <td>{{ payment.exp_after }}</td>
                     <td class="cost">{{ payment.cost }}</td>
                     <td class="actions">
-                        <button class="action-btn delete" (click)="deletePayment(payment.id)" title="Delete Payment">
+                        <button class="action-btn delete" (click)="confirmDelete(payment)" title="Delete Payment"
+                            tabindex="0">
                             <i class="fa fa-trash"></i>
                         </button>
+                        <!-- Confirmation Dialog -->
+                        <div *ngIf="confirmingPaymentId === payment.id" class="confirm-dialog">
+                            <span>Are you sure you want to delete this payment?</span>
+                            <button class="confirm-btn" (click)="deletePayment(payment.id)">Yes</button>
+                            <button class="cancel-btn" (click)="cancelDelete()">No</button>
+                        </div>
                     </td>
                 </tr>
             </tbody>
