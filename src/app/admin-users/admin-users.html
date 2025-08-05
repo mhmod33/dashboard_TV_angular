@@ -68,6 +68,7 @@
                     <th>USERNAME</th>
                     <th>BALANCE</th>
                     <th>STATUS</th>
+                    <th>ROLE</th>
                     <th>CUSTOMERS</th>
                     <th>ACTIONS</th>
                 </tr>
@@ -89,6 +90,7 @@
                             {{ getStatusInfo(admin.status).label }}
                         </span>
                     </td>
+                    <td class="admin-id">{{ admin.role }}</td>
                     @if(admin.role=='superadmin'){
                     <td class="admin-customers">0 - {{admin.customers }}</td>
                     }@else {

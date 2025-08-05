@@ -20,7 +20,7 @@ export class CustomersComponent {
     rowsPerPage = 25;
 
     // View filter
-    currentView = 'all'; // 'all', 'active', 'expired', 'unpaid'
+    currentView = 'all'; // 'all', 'active', 'expired', 'paid'
 
     // Bulk actions
     bulkAction = '';
@@ -63,16 +63,16 @@ export class CustomersComponent {
     //         paid: false
     //     }
     // ];
-customers: Customer[] = [];
+    customers: Customer[] = [];
     constructor(
         private router: Router,
-        private systemService:SystemService
+        private systemService: SystemService
     ) { }
 
-    ngOnInit(){
-        this.systemService.allSuperCustomers().subscribe((res)=>{
-            console.log('res',res)
-            this.customers=res.customers
+    ngOnInit() {
+        this.systemService.allSuperCustomers().subscribe((res) => {
+            console.log('res', res)
+            this.customers = res.customers
         })
     }
     // Filtered customers based on current view
@@ -95,8 +95,8 @@ customers: Customer[] = [];
             case 'expired':
                 filtered = filtered.filter(customer => customer.status === 'expired');
                 break;
-            case 'unpaid':
-                filtered = filtered.filter(customer => !customer.status);
+            case 'paid':
+                filtered = filtered.filter(customer => customer.payment_status === 'paid');
                 break;
         }
 

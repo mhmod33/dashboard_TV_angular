@@ -13,8 +13,13 @@ export class SystemService {
 
   private payments = `${this.base}/api/payments`;
   private allCustomers = `${this.base}/api/customers`;
+  private activeCustomers = `${this.base}/api/customers`;
+  private expiredCustomers = `${this.base}/api/expiredCustomers`;
+  private paidCustomers = `${this.base}/api/customers`;
+
   private allAdmins = `${this.base}/api/superadmin/admins`;
   private allSubadmins = `${this.base}/api/subadmins`;
+
   constructor(private http: HttpClient) { }
 
 
@@ -25,12 +30,16 @@ export class SystemService {
   allSuperCustomers(): Observable<CustomerRoot> {
     return this.http.get<CustomerRoot>(this.allCustomers);
   }
-
+  getActiveCustomers(): Observable<CustomerRoot> {
+    return this.http.get<CustomerRoot>(this.activeCustomers);
+  }
   getAllAdmins(): Observable<AdminRoot> {
     return this.http.get<AdminRoot>(this.allAdmins)
   }
-  
+
   getAllSubadmins(): Observable<SubadminRoot> {
     return this.http.get<SubadminRoot>(this.allSubadmins)
   }
+
+
 }
