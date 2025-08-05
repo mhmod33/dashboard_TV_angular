@@ -23,7 +23,8 @@ export class SystemService {
   private AddCustomer = `${this.base}/api/customers`
   private AddmyCustomer = `${this.base}/api/myCustomers`
   private deletecustomer = `${this.base}/api/customers`
-  // private checkSN = `${this.base}/api/check-serial-number` // Uncomment when API is ready
+  private updatebalance = `${this.base}/api/superadmin/update-balance`
+  
   private getCustomerBySn = `${this.base}/api/getcustomerbysn`
 
   constructor(private http: HttpClient) { }
@@ -59,7 +60,7 @@ export class SystemService {
     return this.http.post<any>(this.payments, data);
   }
 
-  deleteCustomer(id: number): Observable<any> {
+  deleteCustomer(id: string): Observable<any> {
     return this.http.delete(`${this.deletecustomer}/${id}`);
   }
 
@@ -75,7 +76,7 @@ export class SystemService {
     return this.http.put(`${this.allAdmins}/${id}/ban`, {});
   }
 
-  getAdminById(id: number): Observable<any> {
+  getAdminById(id: string): Observable<any> {
     return this.http.get(`${this.allAdmins}/${id}`);
   }
 
@@ -83,6 +84,11 @@ export class SystemService {
     return this.http.post(`${this.allAdmins}/balance`, data);
   }
 
+  updateBalance(adminId: string, balance: number): Observable<any> {
+  return this.http.patch(`${this.updatebalance}/${adminId}`,{
+    balance: balance
+  });
+  }
   // Bulk action methods
   bulkUpdateStatus(customerIds: string[], status: string): Observable<any> {
     return this.http.put<any>(`${this.allCustomers}/bulk/status`, {

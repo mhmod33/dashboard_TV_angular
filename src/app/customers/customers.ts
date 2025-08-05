@@ -13,6 +13,11 @@ import { Customer } from '../interfaces/customer';
     styleUrl: './customers.css'
 })
 export class CustomersComponent {
+    showModal = false;
+    modalTitle = '';
+    modalMessage = '';
+    modalType: 'confirm' | 'info' = 'info';
+    modalAction: (() => void) | null = null;
     // Search and filter properties
     searchTerm = '';
     nameFilter = '';
@@ -74,6 +79,7 @@ export class CustomersComponent {
             console.log('res', res)
             this.customers = res.customers
         })
+
     }
     // Filtered customers based on current view
     get filteredCustomers() {
@@ -134,66 +140,62 @@ export class CustomersComponent {
 
     applyBulkAction() {
         if (!this.bulkAction || this.selectedCustomers.length === 0) return;
-
-        // Apply the selected bulk action
-        switch (this.bulkAction) {
-            case 'enable':
-                this.systemService.bulkUpdateStatus(this.selectedCustomers, 'active').subscribe({
-                    next: (res) => {
-                        console.log('Customers enabled successfully');
-                        // this.loadCustomers(); // Reload customers
-                        this.selectedCustomers = [];
-                        this.selectAll = false;
-                    },
-                    error: (error) => {
-                        console.error('Error enabling customers:', error);
-                        alert('Error enabling customers. Please try again.');
-                    }
-                });
-                break;
-            case 'disable':
-                this.systemService.bulkUpdateStatus(this.selectedCustomers, 'expired').subscribe({
-                    next: (res) => {
-                        console.log('Customers disabled successfully');
-                        // this.loadCustomers(); // Reload customers
-                        this.selectedCustomers = [];
-                        this.selectAll = false;
-                    },
-                    error: (error) => {
-                        console.error('Error disabling customers:', error);
-                        alert('Error disabling customers. Please try again.');
-                    }
-                });
-                break;
-            case 'mark-paid':
-                this.systemService.bulkUpdatePaymentStatus(this.selectedCustomers, 'paid').subscribe({
-                    next: (res) => {
-                        console.log('Customers marked as paid successfully');
-                        // this.loadCustomers(); // Reload customers
-                        this.selectedCustomers = [];
-                        this.selectAll = false;
-                    },
-                    error: (error) => {
-                        console.error('Error marking customers as paid:', error);
-                        alert('Error marking customers as paid. Please try again.');
-                    }
-                });
-                break;
-            case 'mark-unpaid':
-                this.systemService.bulkUpdatePaymentStatus(this.selectedCustomers, 'unpaid').subscribe({
-                    next: (res) => {
-                        console.log('Customers marked as unpaid successfully');
-                        // this.loadCustomers(); // Reload customers
-                        this.selectedCustomers = [];
-                        this.selectAll = false;
-                    },
-                    error: (error) => {
-                        console.error('Error marking customers as unpaid:', error);
-                        alert('Error marking customers as unpaid. Please try again.');
-                    }
-                });
-                break;
-        }
+        this.showModal = true;
+        this.modalType = 'confirm';
+        this.modalTitle = 'Confirm Bulk Action';
+        this.modalMessage = `Are you sure you want to apply '${this.bulkAction}' to selected customers?`;
+        this.modalAction = () => {
+            switch (this.bulkAction) {
+                case 'enable':
+                    this.systemService.bulkUpdateStatus(this.selectedCustomers, 'active').subscribe({
+                        next: (res) => {
+                            this.showInfoModal('Customers enabled successfully');
+                            this.selectedCustomers = [];
+                            this.selectAll = false;
+                        },
+                        error: (error) => {
+                            this.showInfoModal('Error enabling customers. Please try again.');
+                        }
+                    });
+                    break;
+                case 'disable':
+                    this.systemService.bulkUpdateStatus(this.selectedCustomers, 'expired').subscribe({
+                        next: (res) => {
+                            this.showInfoModal('Customers disabled successfully');
+                            this.selectedCustomers = [];
+                            this.selectAll = false;
+                        },
+                        error: (error) => {
+                            this.showInfoModal('Error disabling customers. Please try again.');
+                        }
+                    });
+                    break;
+                case 'mark-paid':
+                    this.systemService.bulkUpdatePaymentStatus(this.selectedCustomers, 'paid').subscribe({
+                        next: (res) => {
+                            this.showInfoModal('Customers marked as paid successfully');
+                            this.selectedCustomers = [];
+                            this.selectAll = false;
+                        },
+                        error: (error) => {
+                            this.showInfoModal('Error marking customers as paid. Please try again.');
+                        }
+                    });
+                    break;
+                case 'mark-unpaid':
+                    this.systemService.bulkUpdatePaymentStatus(this.selectedCustomers, 'unpaid').subscribe({
+                        next: (res) => {
+                            this.showInfoModal('Customers marked as unpaid successfully');
+                            this.selectedCustomers = [];
+                            this.selectAll = false;
+                        },
+                        error: (error) => {
+                            this.showInfoModal('Error marking customers as unpaid. Please try again.');
+                        }
+                    });
+                    break;
+            }
+        };
     }
 
     // Export functionality
@@ -247,7 +249,40 @@ export class CustomersComponent {
     }
 
     deleteCustomer(customerId: string) {
-        console.log('Delete customer:', customerId);
+        this.showModal = true;
+        this.modalType = 'confirm';
+        this.modalTitle = 'Delete Customer';
+        this.modalMessage = 'Are you sure you want to delete this customer?';
+        this.modalAction = () => {
+            this.systemService.deleteCustomer(customerId).subscribe({
+                next: () => {
+                    this.showInfoModal('Customer deleted successfully!');
+                },
+                error: () => {
+                    this.showInfoModal('Error deleting customer. Please try again.');
+                }
+            });
+        };
+    }
+    showInfoModal(message: string) {
+        this.showModal = true;
+        this.modalType = 'info';
+        this.modalTitle = 'Notification';
+        this.modalMessage = message;
+        this.modalAction = null;
+    }
+
+    closeModal() {
+        this.showModal = false;
+        this.modalAction = null;
+    }
+
+    confirmModal() {
+        if (this.modalAction) {
+            this.showModal = false;
+            this.modalAction();
+            this.modalAction = null;
+        }
     }
 
     isCustomerSelected(customerId: string): boolean {

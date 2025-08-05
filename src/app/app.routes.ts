@@ -112,7 +112,7 @@ export const routes: Routes = [
     ]
   },
   {
-    path: 'add-balance/:adminId',
+    path: 'add-balance/:id',
     component: LayoutComponent,
     children: [
       { path: '', component: AddBalanceComponent }

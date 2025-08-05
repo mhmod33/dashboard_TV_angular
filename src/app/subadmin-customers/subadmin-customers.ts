@@ -119,7 +119,7 @@ export class SubadminCustomersComponent implements OnInit {
 
     deleteCustomer(customerId: string) {
         if (confirm('Are you sure you want to delete this customer?')) {
-            this.systemService.deleteCustomer(Number(customerId)).subscribe({
+            this.systemService.deleteCustomer(String(customerId)).subscribe({
                 next: (res) => {
                     console.log('Customer deleted successfully');
                     this.loadCustomers();

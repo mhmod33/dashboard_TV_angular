@@ -17,37 +17,8 @@ export class AdminUsersComponent {
     sortOrder = 'descending';
     searchTerm = '';
 
-    // Sample admin users data
-    // adminUsers = [
-    //     {
-    //         id: 161,
-    //         username: 'moksha',
-    //         balance: 480,
-    //         status: 'admin',
-    //         customers: 25
-    //     },
-    //     {
-    //         id: 162,
-    //         username: 'ahmedmedhat',
-    //         balance: 1250,
-    //         status: 'superadmin',
-    //         customers: 150
-    //     },
-    //     {
-    //         id: 163,
-    //         username: 'sarah_admin',
-    //         balance: 320,
-    //         status: 'subadmin',
-    //         customers: 12
-    //     },
-    //     {
-    //         id: 164,
-    //         username: 'mohamed_tech',
-    //         balance: 890,
-    //         status: 'admin',
-    //         customers: 67
-    //     }
-    // ];
+   
+    
     adminUsers: Admin[] = [];
     constructor(
         private router: Router,

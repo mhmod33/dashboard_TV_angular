@@ -10,6 +10,11 @@ import { SystemService } from '../services/system/system.service';
   styleUrl: './remove-customer.component.css'
 })
 export class RemoveCustomerComponent {
+  showModal = false;
+  modalTitle = '';
+  modalMessage = '';
+  modalType: 'confirm' | 'info' = 'info';
+  modalAction: (() => void) | null = null;
   removeForm: FormGroup;
   sn: any;
   customer: any
@@ -21,26 +26,56 @@ export class RemoveCustomerComponent {
       serial_number: ['', [Validators.required, Validators.minLength(12)]]
     });
   }
-  deleteCustomer(id: number) {
-    return this.systemService.deleteCustomer(id).subscribe(() => {
-      alert('deleted successfully!');
-    })
-  }
-  searchCustomer() {
-
-    if (this.removeForm.valid) {
-      const data = this.removeForm.value
-      this.systemService.getCustomerBysn(data).subscribe({
-        next: (res) => {
-          this.customer = res.customer
+  deleteCustomer(id: string) {
+    this.showModal = true;
+    this.modalType = 'confirm';
+    this.modalTitle = 'Delete Customer';
+    this.modalMessage = 'Are you sure you want to delete this customer?';
+    this.modalAction = () => {
+      this.systemService.deleteCustomer(id).subscribe({
+        next: () => {
+          this.showInfoModal('Customer deleted successfully!');
+          this.customer = null;
         },
         error: () => {
-          alert('There is no customer with this sn 🚨🚫')
+          this.showInfoModal('Error deleting customer. Please try again.');
         }
-      }
-      )
+      });
+    };
+  }
+  searchCustomer() {
+    if (this.removeForm.valid) {
+      const data = this.removeForm.value;
+      this.systemService.getCustomerBysn(data).subscribe({
+        next: (res) => {
+          this.customer = res.customer;
+        },
+        error: () => {
+          this.showInfoModal('There is no customer with this SN');
+        }
+      });
     } else {
-      alert('Please enter a valid device serial number.');
+      this.showInfoModal('Please enter a valid device serial number.');
+    }
+  }
+  showInfoModal(message: string) {
+    this.showModal = true;
+    this.modalType = 'info';
+    this.modalTitle = 'Notification';
+    this.modalMessage = message;
+    this.modalAction = null;
+  }
+
+  closeModal() {
+    this.showModal = false;
+    this.modalAction = null;
+  }
+
+  confirmModal() {
+    if (this.modalAction) {
+      this.showModal = false;
+      this.modalAction();
+      this.modalAction = null;
     }
   }
 

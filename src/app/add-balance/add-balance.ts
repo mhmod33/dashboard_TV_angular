@@ -13,7 +13,7 @@ import { SystemService } from '../services/system/system.service';
 })
 export class AddBalanceComponent implements OnInit {
     balanceForm!: FormGroup;
-    adminId: number = 0;
+    adminId: string = '';
     admin: any = null;
     isSubmitting = false;
 
@@ -27,14 +27,14 @@ export class AddBalanceComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.adminId = Number(this.route.snapshot.paramMap.get('id'));
+        this.adminId = String(this.route.snapshot.paramMap.get('id'));
+        console.log(this.adminId)
         this.loadAdminDetails();
     }
 
     initForm() {
         this.balanceForm = this.fb.group({
-            amount: ['', [Validators.required, Validators.min(1)]],
-            reason: ['', [Validators.required, Validators.minLength(5)]]
+            balance: ['', [Validators.required, Validators.min(1)]],
         });
     }
 
@@ -75,8 +75,7 @@ export class AddBalanceComponent implements OnInit {
 
     getFieldLabel(fieldName: string): string {
         const labels: { [key: string]: string } = {
-            amount: 'Amount',
-            reason: 'Reason'
+            balance: 'balance'
         };
         return labels[fieldName] || fieldName;
     }
@@ -87,15 +86,15 @@ export class AddBalanceComponent implements OnInit {
             this.isSubmitting = true;
             const data = {
                 admin_id: this.adminId,
-                amount: this.balanceForm.value.amount,
-                reason: this.balanceForm.value.reason
+                balance: this.balanceForm.value.balance,
             };
             console.log('Adding balance:', data);
 
-            this.systemService.addBalance(data).subscribe({
+            this.systemService.updateBalance(data.admin_id,this.balanceForm.value.balance).subscribe({
                 next: (res) => {
                     alert('Balance added successfully!');
-                    this.router.navigate(['/admin-users']);
+                    console.log(this.balanceForm.value.balance)
+                    // this.router.navigate(['/admin-users']);
                 },
                 error: (error) => {
                     console.error('Error adding balance:', error);
