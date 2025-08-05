@@ -9,6 +9,10 @@ import { AddAdminComponent } from './add-admin/add-admin';
 import { SubAdminComponent } from './subadmin/subadmin';
 import { AddSubAdminComponent } from './add-subadmin/add-subadmin';
 import { LayoutComponent } from './layout/layout';
+import { DefaultPricesComponent } from './default-prices/default-prices.component';
+import { TimePeriodsComponent } from './time-periods/time-periods.component';
+import { RemoveCustomerComponent } from './remove-customer/remove-customer.component';
+import { DeleteAllCustomersComponent } from './delete-all-customers/delete-all-customers.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -67,6 +71,34 @@ export const routes: Routes = [
     component: LayoutComponent,
     children: [
       { path: '', component: AddSubAdminComponent }
+    ]
+  },
+  {
+    path: 'default-prices',
+    component: LayoutComponent,
+    children: [
+      { path: '', component: DefaultPricesComponent }
+    ]
+  },
+  {
+    path: 'time-periods',
+    component: LayoutComponent,
+    children: [
+      { path: '', component: TimePeriodsComponent }
+    ]
+  },
+  {
+    path: 'remove-customer',
+    component: LayoutComponent,
+    children: [
+      { path: '', component: RemoveCustomerComponent }
+    ]
+  },
+  {
+    path: 'delete-all-customers',
+    component: LayoutComponent,
+    children: [
+      { path: '', component: DeleteAllCustomersComponent }
     ]
   }
 ];

@@ -1,0 +1,262 @@
+.time-periods-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Page Header */
+.page-header {
+  margin-bottom: 30px;
+}
+
+.page-header h1 {
+  color: #2d3748;
+  font-size: 32px;
+  font-weight: 600;
+  margin: 0;
+  text-align: center;
+}
+
+/* Form Section */
+.form-section {
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.section-header {
+  background: #f8fafc;
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.section-header h2 {
+  color: #4a5568;
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* Form Styles */
+.time-period-form {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-label {
+  color: #2d3748;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.required {
+  color: #e53e3e;
+  font-weight: 700;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #2d3748;
+  background: white;
+  transition: all 0.3s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-input.ng-invalid.ng-touched {
+  border-color: #e53e3e;
+}
+
+.form-input.ng-valid.ng-touched {
+  border-color: #38a169;
+}
+
+.helper-text {
+  font-size: 12px;
+  color: #718096;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.error-message {
+  font-size: 12px;
+  color: #e53e3e;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+/* Checkbox Field */
+.checkbox-field {
+  margin-top: 10px;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.form-checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: #667eea;
+  cursor: pointer;
+}
+
+.checkbox-label {
+  color: #2d3748;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Form Actions */
+.form-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.btn {
+  padding: 12px 32px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 140px;
+}
+
+.btn-primary {
+  background: #667eea;
+  color: white;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #5a67d8;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-primary:disabled {
+  background: #cbd5e0;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .time-periods-container {
+    padding: 15px;
+  }
+  
+  .page-header h1 {
+    font-size: 28px;
+  }
+  
+  .form-section {
+    padding: 20px;
+  }
+  
+  .section-header {
+    padding: 12px 16px;
+  }
+  
+  .section-header h2 {
+    font-size: 16px;
+  }
+  
+  .time-period-form {
+    gap: 20px;
+  }
+  
+  .form-input {
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+  
+  .btn {
+    width: 100%;
+    padding: 14px 24px;
+  }
+}
+
+/* Loading States */
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Success/Error Messages */
+.message {
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.message.success {
+  background: #c6f6d5;
+  color: #22543d;
+  border: 1px solid #9ae6b4;
+}
+
+.message.error {
+  background: #fed7d7;
+  color: #742a2a;
+  border: 1px solid #feb2b2;
+}
+
+/* Input Placeholder Styles */
+.form-input::placeholder {
+  color: #a0aec0;
+  font-weight: 400;
+}
+
+/* Focus States */
+.form-input:focus::placeholder {
+  color: #718096;
+}
+
+/* Checkbox Custom Styling */
+.form-checkbox:checked {
+  background-color: #667eea;
+  border-color: #667eea;
+}
+
+.form-checkbox:focus {
+  outline: 2px solid rgba(102, 126, 234, 0.3);
+  outline-offset: 2px;
+}
