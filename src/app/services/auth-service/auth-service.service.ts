@@ -7,6 +7,7 @@ interface LoginResponse {
   message: string;
   name: string;
   role: string;
+  balance: any;
   token: string;
   id: any;
 }
@@ -71,7 +72,7 @@ export class AuthServiceService {
       .post<any>(`${this.base}/api/login`, { name, password })
       .pipe(
         tap((res) => {
-          this.setSession(res.token, res.role, res.name, res.id);
+          this.setSession(res.token, res.role, res.name, res.id, res.balance);
           this.authStatusSubject.next(true);
         })
       );
@@ -87,8 +88,9 @@ export class AuthServiceService {
     return !!localStorage.getItem('token');
   }
 
-  private setSession(token: string, role: string, name: string, id: any) {
+  private setSession(token: string, role: string, name: string, id: any, balance: any) {
     localStorage.setItem('token', token);
+    localStorage.setItem('balance', balance);
     localStorage.setItem('role', role);
     localStorage.setItem('name', name);
     localStorage.setItem('id', id);
@@ -123,7 +125,9 @@ export class AuthServiceService {
   getRole(): string | null {
     return localStorage.getItem('role');
   }
-
+  getBalance():any{
+    return localStorage.getItem('balance');
+  }
   getCurrentUser(): Subadmin | null {
     if (!this.isAuthenticated) {
       return null;
@@ -135,7 +139,7 @@ export class AuthServiceService {
       password: '',
       status: '',
       role: this.getRole() || '',
-      balance: '',
+      balance: this.getBalance(),
       created_at: '',
       updated_at: '',
       deleted_at: null,

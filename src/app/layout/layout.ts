@@ -19,7 +19,7 @@ export class LayoutComponent {
     constructor(public router: Router, private authService: AuthServiceService) {
         this.currentUser = {
             name: this.authService.getUserName() ?? '',
-            balance: 2500,
+            balance: this.authService.getBalance(),
             avatar:
                 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
             role: this.authService.getRole() ?? '',
