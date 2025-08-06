@@ -61,6 +61,7 @@ export class SubAdminComponent {
     ngOnInit() {
         this.systemService.getAllSubadmins().subscribe((res) => {
             this.subadmins = res.subadmins
+            console.log(res)
         })
     }
     // Navigation methods
