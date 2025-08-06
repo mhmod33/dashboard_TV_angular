@@ -24,7 +24,7 @@ export class SystemService {
   private AddmyCustomer = `${this.base}/api/myCustomers`
   private deletecustomer = `${this.base}/api/customers`
   private updatebalance = `${this.base}/api/superadmin/update-balance`
-  
+  private decreasebalance = `${this.base}/api/superadmin/decrease-balance`
   private getCustomerBySn = `${this.base}/api/getcustomerbysn`
 
   constructor(private http: HttpClient) { }
@@ -73,7 +73,7 @@ export class SystemService {
   }
 
   banAdmin(id: number): Observable<any> {
-    return this.http.put(`${this.allAdmins}/${id}/ban`, {});
+    return this.http.put(`${this.allAdmins}/ban/${id}`, {});
   }
 
   getAdminById(id: string): Observable<any> {
@@ -84,11 +84,25 @@ export class SystemService {
     return this.http.post(`${this.allAdmins}/balance`, data);
   }
 
-  updateBalance(adminId: string, balance: number): Observable<any> {
-  return this.http.patch(`${this.updatebalance}/${adminId}`,{
-    balance: balance
-  });
+  addAdmin(data:any):Observable<any>{
+    return this.http.post(this.allAdmins,data);
   }
+  updateBalance(adminId: string, balance: number): Observable<any> {
+    return this.http.patch(`${this.updatebalance}/${adminId}`, {
+      balance: balance
+    });
+  }
+  decreaseBalance(adminId: string, balance: number): Observable<any> {
+    return this.http.patch(`${this.decreasebalance}/${adminId}`, {
+      balance: balance
+    });
+  }
+
+  updateAdmin(adminId: string, data: any): Observable<any> {
+    return this.http.patch(`${this.allAdmins}/${adminId}`, data);
+  }
+
+
   // Bulk action methods
   bulkUpdateStatus(customerIds: string[], status: string): Observable<any> {
     return this.http.put<any>(`${this.allCustomers}/bulk/status`, {
@@ -111,6 +125,10 @@ export class SystemService {
   getMyCustomers(): Observable<any> {
     return this.http.get<any>(this.AddmyCustomer);
   }
+
+
+
+
   // Uncomment when API is ready
   /*
   checkSerialNumber(serialNumber: string): Observable<{ exists: boolean }> {

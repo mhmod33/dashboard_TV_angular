@@ -16,6 +16,7 @@ export class AddBalanceComponent implements OnInit {
     adminId: string = '';
     admin: any = null;
     isSubmitting = false;
+    balanceAction: 'increase' | 'decrease' = 'increase'; // NEW: track action
 
     constructor(
         private router: Router,
@@ -35,6 +36,7 @@ export class AddBalanceComponent implements OnInit {
     initForm() {
         this.balanceForm = this.fb.group({
             balance: ['', [Validators.required, Validators.min(1)]],
+            action: ['increase', Validators.required] // NEW: add action to form
         });
     }
 
@@ -88,20 +90,32 @@ export class AddBalanceComponent implements OnInit {
                 admin_id: this.adminId,
                 balance: this.balanceForm.value.balance,
             };
-            console.log('Adding balance:', data);
-
-            this.systemService.updateBalance(data.admin_id,this.balanceForm.value.balance).subscribe({
-                next: (res) => {
-                    alert('Balance added successfully!');
-                    console.log(this.balanceForm.value.balance)
-                    // this.router.navigate(['/admin-users']);
-                },
-                error: (error) => {
-                    console.error('Error adding balance:', error);
-                    alert('Error adding balance. Please try again.');
-                    this.isSubmitting = false;
-                }
-            });
+            const action = this.balanceForm.value.action;
+            if (action === 'increase') {
+                this.systemService.updateBalance(data.admin_id, this.balanceForm.value.balance).subscribe({
+                    next: (res) => {
+                        alert('Balance added successfully!');
+                        this.isSubmitting = false;
+                    },
+                    error: (error) => {
+                        console.error('Error adding balance:', error);
+                        alert('Error adding balance. Please try again.');
+                        this.isSubmitting = false;
+                    }
+                });
+            } else if (action === 'decrease') {
+                this.systemService.decreaseBalance(data.admin_id, this.balanceForm.value.balance).subscribe({
+                    next: (res) => {
+                        alert('Balance decreased successfully!');
+                        this.isSubmitting = false;
+                    },
+                    error: (error) => {
+                        console.error('Error decreasing balance:', error);
+                        alert('Error decreasing balance. Please try again.');
+                        this.isSubmitting = false;
+                    }
+                });
+            }
         } else {
             this.markFormGroupTouched();
         }

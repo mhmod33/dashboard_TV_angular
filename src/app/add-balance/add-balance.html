@@ -35,6 +35,19 @@
                     </div>
                 </div>
 
+                <!-- Action Selection -->
+                <div class="form-group">
+                    <label class="form-label">Action *</label>
+                    <div style="display: flex; gap: 20px; align-items: center;">
+                        <label style="display: flex; align-items: center; gap: 5px;">
+                            <input type="radio" formControlName="action" value="increase"> Increase
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 5px;">
+                            <input type="radio" formControlName="action" value="decrease"> Decrease
+                        </label>
+                    </div>
+                </div>
+
                 <!-- Amount Field -->
                 <div class="form-group">
                     <label for="balance" class="form-label">
@@ -50,7 +63,7 @@
                     }
                 </div>
 
-              
+
                 <!-- Action Buttons -->
                 <div class="form-actions">
                     <button type="submit" class="save-btn" [disabled]="isSubmitting">

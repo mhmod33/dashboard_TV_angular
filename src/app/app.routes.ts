@@ -124,5 +124,13 @@ export const routes: Routes = [
     children: [
       { path: '', component: SubadminCustomersComponent }
     ]
+  },
+  {
+    path: 'admin-details/:id',
+    loadComponent: () => import('./admin-details/admin-details').then(m => m.AdminDetailsComponent)
+  },
+  {
+    path: 'edit-admin/:id',
+    loadComponent: () => import('./edit-admin/edit-admin').then(m => m.EditAdminComponent)
   }
 ];

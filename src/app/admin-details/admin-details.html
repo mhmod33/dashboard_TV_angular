@@ -1,0 +1,40 @@
+<app-layout>
+    <div class="admin-details-container">
+        <div class="admin-info-card" *ngIf="admin">
+            <h2>Admin Details</h2>
+            <div class="info-grid">
+                <div><strong>Name:</strong> {{ admin.name }}</div>
+                <div><strong>Role:</strong> {{ admin.role }}</div>
+                <div><strong>Status:</strong> {{ admin.status }}</div>
+                <div><strong>Balance:</strong> ${{ admin.balance }}</div>
+                <div><strong>ID:</strong> {{ admin.id }}</div>
+            </div>
+        </div>
+        <div class="customers-card">
+            <h3>Customers</h3>
+            <div *ngIf="customers.length > 0; else noCustomers">
+                <table class="customers-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Device SN</th>
+                            <th>Registered</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let customer of customers; let i = index">
+                            <td>{{ i + 1 }}</td>
+                            <td>{{ customer.name }}</td>
+                            <td>{{ customer.serial_number }}</td>
+                            <td>{{ customer.created_at | date:'medium' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <ng-template #noCustomers>
+                <div class="empty-message">No customers found for this admin.</div>
+            </ng-template>
+        </div>
+    </div>
+</app-layout>

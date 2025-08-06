@@ -15,10 +15,10 @@ export class AdminUsersComponent {
     // Filter properties
     idFilter = '';
     sortOrder = 'descending';
-    searchTerm = '';
+    searchTerm: string = '';
 
-   
-    
+
+
     adminUsers: Admin[] = [];
     constructor(
         private router: Router,
@@ -60,11 +60,8 @@ export class AdminUsersComponent {
 
     // Filter methods
     applyFilter() {
-        console.log('Applying filter:', {
-            searchTerm: this.searchTerm,
-            idFilter: this.idFilter,
-            sortOrder: this.sortOrder
-        });
+        // This method is now only needed to trigger Angular change detection if used with (ngModelChange)
+        // Filtering is handled by the filteredAdminUsers getter
     }
 
     // Add admin functionality

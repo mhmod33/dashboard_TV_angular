@@ -25,16 +25,7 @@
                     <input type="text" class="search-input" placeholder="Search by username or ID"
                         [(ngModel)]="searchTerm">
                 </div>
-                <div class="search-group">
-                    <label class="filter-label">ID</label>
-                    <select class="filter-select" [(ngModel)]="idFilter">
-                        <option value="">All IDs</option>
-                        <option value="161">161</option>
-                        <option value="162">162</option>
-                        <option value="163">163</option>
-                        <option value="164">164</option>
-                    </select>
-                </div>
+
                 <div class="search-group">
                     <label class="filter-label">SORT</label>
                     <select class="filter-select" [(ngModel)]="sortOrder">
@@ -43,10 +34,10 @@
                     </select>
                 </div>
             </div>
-            <button class="filter-btn" (click)="applyFilter()">
+            <!-- <button class="filter-btn" (click)="applyFilter()">
                 <i class="fa fa-filter"></i>
                 Go
-            </button>
+            </button> -->
         </div>
     </div>
 
@@ -89,7 +80,7 @@
                     }
                     <td class="admin-actions">
                         <button class="action-btn add-balance" (click)="addBalance(admin.id)" title="Add Balance">
-                            <i class="fa fa-plus"></i>
+                            <i class="fa-solid fa-money-bill-1-wave"></i>
                         </button>
                         <button class="action-btn view" (click)="viewAdminDetails(admin.id)" title="View Details">
                             <i class="fa fa-eye"></i>
@@ -100,9 +91,16 @@
                         <button class="action-btn delete" (click)="deleteAdmin(admin.id)" title="Delete">
                             <i class="fa fa-trash"></i>
                         </button>
+                        @if(admin.status=='active'){
                         <button class="action-btn ban" (click)="banAdmin(admin.id)" title="Ban Admin">
                             <i class="fa fa-ban"></i>
                         </button>
+                        }@else {
+                        <button class="action-btn ban" style="color: rgba(151, 151, 151, 0.575); cursor:not-allowed;"
+                            disabled (click)="banAdmin(admin.id)" title="Ban Admin">
+                            <i class="fa fa-ban"></i>
+                        </button>
+                        }
                     </td>
                 </tr>
                 <tr *ngIf="filteredAdminUsers.length === 0" class="empty-row">

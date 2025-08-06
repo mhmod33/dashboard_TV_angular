@@ -12,19 +12,18 @@
                     <polyline points="9,22 9,12 15,12 15,22" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
-                <span>Home > ACAS</span>
+                <span>Home > add admin</span>
             </div>
         </div>
     </div>
-
     <div class="form-container">
         <!-- Main Form -->
         <div class="main-form">
             <form (ngSubmit)="saveAdmin()" #adminForm="ngForm">
-                <!-- Username Field -->
+                <!-- name Field -->
                 <div class="form-group">
-                    <label for="username" class="form-label">
-                        Username
+                    <label for="name" class="form-label">
+                        name
                     </label>
                     <div class="input-with-icon">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
@@ -34,11 +33,11 @@
                             <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                 stroke-linejoin="round" />
                         </svg>
-                        <input type="text" id="username" name="username" [(ngModel)]="adminData.username"
-                            placeholder="Enter username" class="form-input" [class.error]="errors.username"
+                        <input type="text" id="name" name="name" [(ngModel)]="adminData.name"
+                            placeholder="Enter name" class="form-input" [class.error]="errors.name"
                             (blur)="validateUsername()">
                     </div>
-                    <div class="error-message" *ngIf="errors.username">
+                    <div class="error-message" *ngIf="errors.name">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                 stroke-linejoin="round" />
@@ -47,10 +46,9 @@
                             <line x1="9" y1="9" x2="15" y2="15" stroke="currentColor" stroke-width="2"
                                 stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
-                        {{ errors.username }}
+                        {{ errors.name }}
                     </div>
                 </div>
-
                 <!-- Password Field -->
                 <div class="form-group">
                     <label for="password" class="form-label">
@@ -82,7 +80,6 @@
                         {{ errors.password }}
                     </div>
                 </div>
-
                 <!-- Balance Field -->
                 <div class="form-group">
                     <label for="balance" class="form-label">
@@ -112,25 +109,23 @@
                         {{ errors.balance }}
                     </div>
                 </div>
-
                 <!-- User Type Selection -->
                 <div class="form-group">
                     <label class="form-label">
                         User Type
                     </label>
                     <div class="user-type-options">
-                        <div *ngFor="let userType of userTypes" class="user-type-option"
-                            [class.selected]="isUserTypeSelected(userType.id)" (click)="selectUserType(userType.id)">
+                        <div *ngFor="let role of userTypes" class="user-type-option"
+                            [class.selected]="isUserTypeSelected(role.id)" (click)="selectUserType(role.id)">
                             <div class="radio-button">
-                                <div class="radio-circle" [class.selected]="isUserTypeSelected(userType.id)">
-                                    <div class="radio-dot" *ngIf="isUserTypeSelected(userType.id)"></div>
+                                <div class="radio-circle" [class.selected]="isUserTypeSelected(role.id)">
+                                    <div class="radio-dot" *ngIf="isUserTypeSelected(role.id)"></div>
                                 </div>
                             </div>
-                            <span class="user-type-name">{{ userType.name }}</span>
+                            <span class="user-type-name">{{ role.name }}</span>
                         </div>
                     </div>
                 </div>
-
                 <!-- Action Buttons -->
                 <div class="form-actions">
                     <button type="submit" class="save-btn">
