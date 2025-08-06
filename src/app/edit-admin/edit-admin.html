@@ -1,0 +1,59 @@
+<app-layout>
+    <div class="edit-admin-container">
+        <h2>Edit Admin</h2>
+        <form [formGroup]="adminForm" (ngSubmit)="onSubmit()" class="edit-form">
+            <div class="form-group">
+                <label>Name *</label>
+                <input type="text" formControlName="name" class="form-input"
+                    [class.error]="adminForm.get('name')?.invalid && adminForm.get('name')?.touched">
+                <div *ngIf="adminForm.get('name')?.invalid && adminForm.get('name')?.touched" class="error-message">Name
+                    is required.</div>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" formControlName="password" class="form-input"
+                    [class.error]="adminForm.get('password')?.invalid && adminForm.get('password')?.touched">
+                <div *ngIf="adminForm.get('password')?.invalid && adminForm.get('password')?.touched"
+                    class="error-message">Password must be at least 3 characters.</div>
+            </div>
+            <div class="form-group">
+                <label>Status *</label>
+                <!-- <input type="text" formControlName="status" class="form-input"
+                    [class.error]="adminForm.get('status')?.invalid && adminForm.get('status')?.touched"> -->
+                    <select name="" id="" type="text" formControlName="status" class="form-input"
+                    [class.error]="adminForm.get('status')?.invalid && adminForm.get('status')?.touched">
+                    <option value="active">active</option>
+                    <option value="inactive">inactive</option>
+                </select>
+                <div *ngIf="adminForm.get('status')?.invalid && adminForm.get('status')?.touched" class="error-message">
+                    Status is required.</div>
+            </div>
+            <div class="form-group">
+                <label>Balance *</label>
+                <input type="number" formControlName="balance" class="form-input"
+                    [class.error]="adminForm.get('balance')?.invalid && adminForm.get('balance')?.touched">
+                <div *ngIf="adminForm.get('balance')?.invalid && adminForm.get('balance')?.touched"
+                    class="error-message">Balance is required and must be an integer.</div>
+            </div>
+            <div class="form-group">
+                <label>Role *</label>
+                <select name="" id="" type="text" formControlName="role" class="form-input"
+                    [class.error]="adminForm.get('role')?.invalid && adminForm.get('role')?.touched">
+                    <option value="" disabled>select role</option>
+                    <option value="superadmin">superadmin</option>
+                    <option value="admin">admin</option>
+                    <option value="subadmin">subadmin</option>
+                </select>
+                <!-- <input type="text" formControlName="role" class="form-input"
+                    [class.error]="adminForm.get('role')?.invalid && adminForm.get('role')?.touched"> -->
+                <div *ngIf="adminForm.get('role')?.invalid && adminForm.get('role')?.touched" class="error-message">Role
+                    is required.</div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="save-btn" [disabled]="isSubmitting">Save</button>
+                <button type="button" class="cancel-btn"
+                    (click)="router.navigate(['/admin-users'])">Cancel</button>
+            </div>
+        </form>
+    </div>
+</app-layout>

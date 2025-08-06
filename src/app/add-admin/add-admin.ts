@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { LayoutComponent } from '../layout/layout';
+import { SystemService } from '../services/system/system.service';
 
 @Component({
     selector: 'app-add-admin',
@@ -13,15 +15,15 @@ import { Router } from '@angular/router';
 export class AddAdminComponent {
     // Form data
     adminData = {
-        username: '',
+        name: '',
         password: '',
         balance: '',
-        userType: 'superadmin'
+        role: 'superadmin'
     };
 
     // Validation states
     errors = {
-        username: '',
+        name: '',
         password: '',
         balance: ''
     };
@@ -33,19 +35,22 @@ export class AddAdminComponent {
         { id: 'subadmin', name: 'Sub Admin' }
     ];
 
-    constructor(private router: Router) { }
+    constructor(
+        private router: Router,
+        private systemService: SystemService
+    ) { }
 
     // Validation methods
     validateUsername(): boolean {
-        if (!this.adminData.username.trim()) {
-            this.errors.username = 'Username is required';
+        if (!this.adminData.name.trim()) {
+            this.errors.name = 'name is required';
             return false;
         }
-        if (this.adminData.username.length < 3) {
-            this.errors.username = 'Username must be at least 3 characters';
+        if (this.adminData.name.length < 3) {
+            this.errors.name = 'name must be at least 3 characters';
             return false;
         }
-        this.errors.username = '';
+        this.errors.name = '';
         return true;
     }
 
@@ -54,8 +59,8 @@ export class AddAdminComponent {
             this.errors.password = 'Password is required';
             return false;
         }
-        if (this.adminData.password.length < 6) {
-            this.errors.password = 'Password must be at least 6 characters';
+        if (this.adminData.password.length < 3) {
+            this.errors.password = 'Password must be at least 3 characters';
             return false;
         }
         this.errors.password = '';
@@ -84,16 +89,17 @@ export class AddAdminComponent {
     }
 
     // User type selection
-    selectUserType(userType: string): void {
-        this.adminData.userType = userType;
+    selectUserType(role: string): void {
+        this.adminData.role = role;
     }
 
     // Form submission
     saveAdmin(): void {
         if (this.validateForm()) {
             console.log('Saving admin:', this.adminData);
-            // Here you would typically make an API call to save the admin
-            alert('Admin user saved successfully!');
+            this.systemService.addAdmin(this.adminData).subscribe((res) => {
+                alert('Admin user saved successfully!');
+            })
             this.router.navigate(['/admin-users']);
         }
     }
@@ -104,12 +110,12 @@ export class AddAdminComponent {
     }
 
     // Check if user type is selected
-    isUserTypeSelected(userType: string): boolean {
-        return this.adminData.userType === userType;
+    isUserTypeSelected(role: string): boolean {
+        return this.adminData.role === role;
     }
 
     // Get selected user type details
     getSelectedUserType() {
-        return this.userTypes.find(type => type.id === this.adminData.userType);
+        return this.userTypes.find(type => type.id === this.adminData.role);
     }
 } 
