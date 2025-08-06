@@ -39,7 +39,7 @@
                     <select id="customer" class="form-select" (change)="onCustomerSelect($event)">
                         <option value="">Select a customer</option>
                         <option [value]="customer.id" *ngFor="let customer of customers">
-                            {{ customer.name }} - {{ customer.serial_number }}
+                            {{ customer.name }}
                         </option>
                     </select>
                 </div>

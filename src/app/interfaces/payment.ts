@@ -1,6 +1,6 @@
 export interface PaymentRoot {
   message: string
-  payemnts: Payemnt[]
+  payments: Payemnt[]
 }
 
 export interface Payemnt {
