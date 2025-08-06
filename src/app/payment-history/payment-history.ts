@@ -23,7 +23,7 @@ export class PaymentHistoryComponent {
     ngOnInit(): void {
         console.log('new')
         this.systemService.allPayments().subscribe((res: any) => {
-            console.log('res', res);
+            console.log('res', res.payments.length);
             this.payments = res.payemnts;
         })
     }
