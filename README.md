@@ -66,7 +66,7 @@ tv/src/app/
 ### AddAdminComponent (add-admin/)
 - Form to create new admin users
 - Includes validation for username, password, and balance
-- Has user type selection (Super Admin, Admin, Sub Admin)
+- Has user type selection (superadmin, Admin, Sub Admin)
 
 ## Routing
 

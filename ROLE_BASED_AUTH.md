@@ -6,13 +6,13 @@ This document explains how the role-based authorization system works in the TV D
 
 The application implements a hierarchical role-based access control (RBAC) system with three user roles:
 
-1. **Super Admin** - Full access to all features including admin user management
+1. **superadmin** - Full access to all features including admin user management
 2. **Admin** - Access to most features but cannot manage admin users or delete all customers
 3. **Sub Admin** - Access to basic features but cannot manage users or delete all customers
 
 ## Access Matrix
 
-| Page | Super Admin | Admin | Sub Admin |
+| Page | superadmin | Admin | Sub Admin |
 |------|-------------|-------|----------|
 | Dashboard | ✅ | ✅ | ✅ |
 | Payment History | ✅ | ✅ | ✅ |
@@ -27,7 +27,7 @@ The application implements a hierarchical role-based access control (RBAC) syste
 ## Role Hierarchy
 
 ```
-Super Admin (Level 3) > Admin (Level 2) > Sub Admin (Level 1)
+superadmin (Level 3) > Admin (Level 2) > Sub Admin (Level 1)
 ```
 
 ## Access Control Implementation
@@ -49,16 +49,16 @@ Super Admin (Level 3) > Admin (Level 2) > Sub Admin (Level 1)
 
 Each route is protected with:
 - `canActivate: [AuthGuard]` - Ensures user is authenticated
-- `data: { role: 'super admin' }` - Specifies required role
+- `data: { role: 'superadmin' }` - Specifies required role
 
 ## Protected Routes
 
-### Super Admin Only
+### superadmin Only
 - `/admin-users` - Manage admin users
 - `/add-admin` - Add new admins
 - `/delete-all-customers` - Delete all customers
 
-### Admin & Super Admin
+### Admin & superadmin
 - `/subadmin` - Manage subadmins
 - `/add-subadmin` - Add new subadmins
 
@@ -128,9 +128,9 @@ private function hasRequiredRole($userRole, $requiredRole)
         return in_array($userRole, $requiredRole);
     }
 
-    // Role hierarchy: super admin > admin > sub admin
+    // Role hierarchy: superadmin > admin > sub admin
     $roleHierarchy = [
-        'super admin' => 3,
+        'superadmin' => 3,
         'admin' => 2,
         'sub admin' => 1
     ];

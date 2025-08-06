@@ -30,7 +30,7 @@ export class AddAdminComponent {
 
     // User type options
     userTypes = [
-        { id: 'superadmin', name: 'Super Admin' },
+        { id: 'superadmin', name: 'superadmin' },
         { id: 'admin', name: 'Admin' },
         { id: 'subadmin', name: 'Sub Admin' }
     ];

@@ -14,11 +14,7 @@ export class SystemService {
 
   private payments = `${this.base}/api/payments`;
   private allCustomers = `${this.base}/api/customers`;
-  // private activeCustomers = `${this.base}/api/customers`;
-  // private expiredCustomers = `${this.base}/api/customers`;
-  // private paidCustomers = `${this.base}/api/customers`;
-
-  private allAdmins = `${this.base}/api/superadmin/admins`;
+  private allAdmins = `${this.base}/api/admins`;
   private allSubadmins = `${this.base}/api/subadmins`;
   private superadmin = `${this.base}/api/superadmin/superadminProfile`;
   private admin = `${this.base}/api/subadminProfile`;
@@ -29,6 +25,9 @@ export class SystemService {
   private decreasebalance = `${this.base}/api/superadmin/decrease-balance`;
   private getCustomerBySn = `${this.base}/api/getcustomerbysn`;
   private periods = `${this.base}/api/periods`;
+  private getCustomersByAdminId = `${this.base}/api/customers/by-admin`;
+  private subadminEndpoint = `${this.base}/api/add-subadmin`;
+  private getMySubadmins = `${this.base}/api/getMySubadmins`;
 
   constructor(
     private http: HttpClient,
@@ -42,9 +41,7 @@ export class SystemService {
   allSuperCustomers(): Observable<CustomerRoot> {
     return this.http.get<CustomerRoot>(this.allCustomers);
   }
-  // getActiveCustomers(): Observable<CustomerRoot> {
-  //   return this.http.get<CustomerRoot>(this.activeCustomers);
-  // }
+
   getAllAdmins(): Observable<any> {
     return this.http.get<any>(this.allAdmins);
   }
@@ -89,14 +86,53 @@ export class SystemService {
     return this.http.post(`${this.allAdmins}/balance`, data);
   }
 
+  // Add this method to support the subadmin-specific endpoint
+  addSubAdmin(data: any): Observable<any> {
+    return this.http.post<any>(this.subadminEndpoint, data);
+  }
+
+  // Period methods
+  getAllPeriods(): Observable<any> {
+    return this.http.get<any>(this.periods);
+  }
+  getMysubadmins():Observable<SubadminRoot>{
+    return this.http.get<SubadminRoot>(this.getMySubadmins)
+  }
+  addPeriod(data: any): Observable<any> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${this.authService.getToken()}`,
+    });
+    return this.http.post<any>(this.periods, data, { headers });
+  }
+
+  updatePeriod(id: string, data: any): Observable<any> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${this.authService.getToken()}`,
+    });
+    return this.http.put<any>(`${this.periods}/${id}`, data, { headers });
+  }
+
+  deletePeriod(id: string): Observable<any> {
+    return this.http.delete<any>(`${this.periods}/${id}`);
+  }
+
+  // Admin balance method
+  getAdminBalance(): Observable<any> {
+    return this.http.get<any>(`${this.base}/api/admin/balance`);
+  }
+
   addAdmin(data: any): Observable<any> {
     return this.http.post(this.allAdmins, data);
   }
+
   updateBalance(adminId: string, balance: number): Observable<any> {
     return this.http.patch(`${this.updatebalance}/${adminId}`, {
       balance: balance,
     });
   }
+
   decreaseBalance(adminId: string, balance: number): Observable<any> {
     return this.http.patch(`${this.decreasebalance}/${adminId}`, {
       balance: balance,
@@ -110,9 +146,15 @@ export class SystemService {
   getSuperadminProfile(id: string): Observable<any> {
     return this.http.get<any>(this.superadmin);
   }
+
   getAdminProfile(id: string): Observable<any> {
     return this.http.get<any>(this.admin);
   }
+
+  getCustomersbyAdminId(id: string): Observable<CustomerRoot> {
+    return this.http.get<CustomerRoot>(`${this.getCustomersByAdminId}/${id}`);
+  }
+
   // Bulk action methods
   bulkUpdateStatus(customerIds: string[], status: string): Observable<any> {
     return this.http.put<any>(`${this.allCustomers}/bulk/status`, {
@@ -137,37 +179,5 @@ export class SystemService {
 
   getMyCustomers(): Observable<any> {
     return this.http.get<any>(this.AddmyCustomer);
-  }
-
-  // Uncomment when API is ready
-  /*
-  checkSerialNumber(serialNumber: string): Observable<{ exists: boolean }> {
-    return this.http.get<{ exists: boolean }>(`${this.checkSN}/${serialNumber}`);
-  }
-  */
-
-  getAllPeriods(): Observable<any> {
-    return this.http.get<any>(this.periods);
-  }
-
-  // Update addPeriod method
-  addPeriod(data: any): Observable<any> {
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${this.authService.getToken()}`,
-    });
-    return this.http.post<any>(this.periods, data, { headers });
-  }
-
-  updatePeriod(id: string, data: any): Observable<any> {
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${this.authService.getToken()}`,
-    });
-    return this.http.put<any>(`${this.periods}/${id}`, data, { headers });
-  }
-
-  deletePeriod(id: string): Observable<any> {
-    return this.http.delete<any>(`${this.periods}/${id}`);
   }
 }

@@ -24,7 +24,7 @@ export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'unauthorized', component: UnauthorizedComponent },
-  
+
   // Dashboard
   {
     path: 'home',
@@ -34,7 +34,7 @@ export const routes: Routes = [
       { path: '', component: HomeComponent }
     ]
   },
-  
+
   // Payment History
   {
     path: 'payment-history',
@@ -44,7 +44,7 @@ export const routes: Routes = [
       { path: '', component: PaymentHistoryComponent }
     ]
   },
-  
+
   // Customers
   {
     path: 'customers',
@@ -62,13 +62,13 @@ export const routes: Routes = [
       { path: '', component: AddCustomerComponent }
     ]
   },
-  
-  // Admin Users - Super Admin only
+
+  // Admin Users - superadmin only
   {
     path: 'admin-users',
     component: LayoutComponent,
     canActivate: [AuthGuard],
-    data: { role: 'super admin' },
+    data: { role: 'superadmin' },
     children: [
       { path: '', component: AdminUsersComponent }
     ]
@@ -77,18 +77,18 @@ export const routes: Routes = [
     path: 'add-admin',
     component: LayoutComponent,
     canActivate: [AuthGuard],
-    data: { role: 'super admin' },
+    data: { role: 'superadmin' },
     children: [
       { path: '', component: AddAdminComponent }
     ]
   },
-  
-  // SubAdmin - Super Admin and Admin only
+
+  // SubAdmin - superadmin and Admin only
   {
     path: 'subadmin',
     component: LayoutComponent,
     canActivate: [AuthGuard],
-    data: { role: ['super admin', 'admin'] },
+    data: { role: ['superadmin', 'admin'] },
     children: [
       { path: '', component: SubAdminComponent }
     ]
@@ -97,56 +97,56 @@ export const routes: Routes = [
     path: 'add-subadmin',
     component: LayoutComponent,
     canActivate: [AuthGuard],
-    data: { role: ['super admin', 'admin'] },
+    data: { role: ['superadmin', 'admin'] },
     children: [
       { path: '', component: AddSubAdminComponent }
     ]
   },
-  
+
   // Default Prices
   {
     path: 'default-prices',
     component: LayoutComponent,
     canActivate: [AuthGuard],
-    data: { role: ['super admin', 'admin', 'subadmin'] },
+    data: { role: ['superadmin', 'admin', 'subadmin'] },
     children: [
       { path: '', component: DefaultPricesComponent }
     ]
   },
-  
+
   // Time Periods
   {
     path: 'time-periods',
     component: LayoutComponent,
     canActivate: [AuthGuard],
-    data: { role: ['super admin', 'admin', 'subadmin'] },
+    data: { role: ['superadmin', 'admin', 'subadmin'] },
     children: [
       { path: '', component: TimePeriodsComponent }
     ]
   },
-  
+
   // Remove Customer
   {
     path: 'remove-customer',
     component: LayoutComponent,
     canActivate: [AuthGuard],
-    data: { role: ['super admin', 'admin', 'subadmin'] },
+    data: { role: ['superadmin', 'admin', 'subadmin'] },
     children: [
       { path: '', component: RemoveCustomerComponent }
     ]
   },
-  
-  // Delete All Customers - Super Admin only
+
+  // Delete All Customers - superadmin only
   {
     path: 'delete-all-customers',
     component: LayoutComponent,
     canActivate: [AuthGuard],
-    data: { role: 'super admin' },
+    data: { role: 'superadmin' },
     children: [
       { path: '', component: DeleteAllCustomersComponent }
     ]
   },
-  
+
   // Other routes
   {
     path: 'add-payment',
@@ -165,7 +165,7 @@ export const routes: Routes = [
     ]
   },
   {
-    path: 'subadmin-customers/:username',
+    path: 'subadmin-customers/:id',
     component: LayoutComponent,
     canActivate: [AuthGuard],
     children: [
