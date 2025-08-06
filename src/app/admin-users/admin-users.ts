@@ -125,7 +125,7 @@ export class AdminUsersComponent {
     // Get status display info
     getStatusInfo(status: string) {
         const statusMap: { [key: string]: { label: string, color: string } } = {
-            'superadmin': { label: 'Super Admin', color: '#dc2626' },
+            'superadmin': { label: 'superadmin', color: '#dc2626' },
             'admin': { label: 'Admin', color: '#059669' },
             'subadmin': { label: 'Sub Admin', color: '#7c3aed' }
         };

@@ -34,7 +34,7 @@ export class AuthServiceService {
 
   // Role permissions mapping based on the access matrix
   private rolePermissions: { [key: string]: string[] } = {
-    'super admin': [
+    'superadmin': [
       'dashboard',
       'payment-history',
       'customers',
@@ -64,7 +64,7 @@ export class AuthServiceService {
     ],
   };
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router) { }
 
   login(name: string, password: string): Observable<LoginResponse> {
     return this.http

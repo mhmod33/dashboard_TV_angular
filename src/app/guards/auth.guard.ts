@@ -9,7 +9,7 @@ export class AuthGuard implements CanActivate {
   constructor(
     private authService: AuthServiceService,
     private router: Router
-  ) {}
+  ) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
     // Check if user is authenticated
@@ -38,22 +38,22 @@ export class AuthGuard implements CanActivate {
     // Normalize role names
     userRole = userRole.toLowerCase();
     if (Array.isArray(requiredRole)) {
-        requiredRole = requiredRole.map(r => r.toLowerCase());
-        return requiredRole.includes(userRole);
+      requiredRole = requiredRole.map(r => r.toLowerCase());
+      return requiredRole.includes(userRole);
     }
 
     requiredRole = requiredRole.toLowerCase();
 
-    // Role hierarchy: super admin > admin > sub admin
+    // Role hierarchy: superadmin > admin > sub admin
     const roleHierarchy = {
-        'super admin': 3,
-        'admin': 2,
-        'sub admin': 1
+      'superadmin': 3,
+      'admin': 2,
+      'sub admin': 1
     };
 
     const userRoleLevel = roleHierarchy[userRole as keyof typeof roleHierarchy] || 0;
     const requiredRoleLevel = roleHierarchy[requiredRole as keyof typeof roleHierarchy] || 0;
 
     return userRoleLevel >= requiredRoleLevel;
-}
+  }
 } 
