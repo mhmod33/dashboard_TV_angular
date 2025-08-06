@@ -21,15 +21,20 @@
         <!-- Main Form -->
         <div class="main-form">
             <form (ngSubmit)="addSubAdmin()" #subAdminForm="ngForm">
-                <!-- Username Field -->
-                <div class="form-group">
-                    <label for="username" class="form-label">
-                        Username *
+                <!-- Admin Selection Field - Only visible for superadmin -->
+                <div class="form-group" *ngIf="!isAdmin">
+                    <label for="parentAdmin" class="form-label">
+                        Select Admin *
                     </label>
-                    <input type="text" id="username" name="username" [(ngModel)]="subAdminData.username"
-                        placeholder="Username" class="form-input" [class.error]="errors.username"
-                        (blur)="validateUsername()">
-                    <div class="error-message" *ngIf="errors.username">
+                    <select id="parentAdmin" name="parent_admin_id" [(ngModel)]="subAdminData.parent_admin_id"
+                        class="form-select" [class.error]="errors.parent_admin_id" (blur)="validateParentAdmin()"
+                        (change)="onAdminSelect($event)">
+                        <option value="">Select an admin</option>
+                        <option *ngFor="let admin of adminList" [value]="admin.id">
+                            {{ admin.name }} (Balance: {{ admin.balance }})
+                        </option>
+                    </select>
+                    <div class="error-message" *ngIf="errors.parent_admin_id">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                 stroke-linejoin="round" />
@@ -38,7 +43,30 @@
                             <line x1="9" y1="9" x2="15" y2="15" stroke="currentColor" stroke-width="2"
                                 stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
-                        {{ errors.username }}
+                        {{ errors.parent_admin_id }}
+                    </div>
+                </div>
+
+                <!-- Hidden parent_admin_id field for admin users -->
+                <input type="hidden" name="parent_admin_id" [(ngModel)]="subAdminData.parent_admin_id" *ngIf="isAdmin">
+
+                <!-- Name Field -->
+                <div class="form-group">
+                    <label for="name" class="form-label">
+                        Name *
+                    </label>
+                    <input type="text" id="name" name="name" [(ngModel)]="subAdminData.name" placeholder="Enter name"
+                        class="form-input" [class.error]="errors.name" (blur)="validateName()">
+                    <div class="error-message" *ngIf="errors.name">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                            <line x1="15" y1="9" x2="9" y2="15" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                            <line x1="9" y1="9" x2="15" y2="15" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        {{ errors.name }}
                     </div>
                 </div>
 
@@ -63,15 +91,21 @@
                     </div>
                 </div>
 
-                <!-- Full Name Field -->
+                <!-- Role Field - Hidden since it's fixed as 'subadmin' -->
+                <input type="hidden" name="role" [(ngModel)]="subAdminData.role" value="subadmin">
+
+                <!-- Balance Field -->
                 <div class="form-group">
-                    <label for="fullName" class="form-label">
-                        Full Name *
+                    <label for="balance" class="form-label">
+                        Balance * <span class="balance-info" [class.no-balance]="!selectedAdminBalance">
+                            ({{ isAdmin ? 'Your' : 'Selected admin\'s' }} balance: {{ selectedAdminBalance |
+                            number:'1.0-0' }})
+                        </span>
                     </label>
-                    <input type="text" id="fullName" name="fullName" [(ngModel)]="subAdminData.fullName"
-                        placeholder="Name" class="form-input" [class.error]="errors.fullName"
-                        (blur)="validateFullName()">
-                    <div class="error-message" *ngIf="errors.fullName">
+                    <input type="number" id="balance" name="balance" [(ngModel)]="subAdminData.balance" placeholder="0"
+                        class="form-input" [class.error]="errors.balance" (blur)="validateBalance()"
+                        [attr.max]="selectedAdminBalance" min="0" step="1" [disabled]="!selectedAdminBalance">
+                    <div class="error-message" *ngIf="errors.balance">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                 stroke-linejoin="round" />
@@ -80,19 +114,21 @@
                             <line x1="9" y1="9" x2="15" y2="15" stroke="currentColor" stroke-width="2"
                                 stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
-                        {{ errors.fullName }}
+                        {{ errors.balance }}
                     </div>
                 </div>
 
-                <!-- Initial Balance Field -->
+                <!-- Status Field -->
                 <div class="form-group">
-                    <label for="initialBalance" class="form-label">
-                        Initial Balance * (Your available balance: {{ availableBalance }})
+                    <label for="status" class="form-label">
+                        Status *
                     </label>
-                    <input type="number" id="initialBalance" name="initialBalance"
-                        [(ngModel)]="subAdminData.initialBalance" placeholder="0" class="form-input"
-                        [class.error]="errors.initialBalance" (blur)="validateInitialBalance()" min="0" step="0.01">
-                    <div class="error-message" *ngIf="errors.initialBalance">
+                    <select id="status" name="status" [(ngModel)]="subAdminData.status" class="form-select"
+                        [class.error]="errors.status" (blur)="validateStatus()">
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                    <div class="error-message" *ngIf="errors.status">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                 stroke-linejoin="round" />
@@ -101,7 +137,7 @@
                             <line x1="9" y1="9" x2="15" y2="15" stroke="currentColor" stroke-width="2"
                                 stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
-                        {{ errors.initialBalance }}
+                        {{ errors.status }}
                     </div>
                 </div>
 

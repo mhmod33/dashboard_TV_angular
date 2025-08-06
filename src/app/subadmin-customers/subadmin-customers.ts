@@ -16,7 +16,7 @@ export class SubadminCustomersComponent implements OnInit {
     subadminUsername: string = '';
     searchTerm = '';
     currentView = 'all';
-
+    adminId: any
     constructor(
         private router: Router,
         private route: ActivatedRoute,
@@ -25,12 +25,15 @@ export class SubadminCustomersComponent implements OnInit {
 
     ngOnInit() {
         this.subadminUsername = this.route.snapshot.paramMap.get('username') || '';
+        this.adminId = this.route.snapshot.paramMap.get('id') || '';
         this.loadCustomers();
     }
 
     loadCustomers() {
-        this.systemService.getMyCustomers().subscribe({
+        this.systemService.getCustomersbyAdminId(this.adminId).subscribe({
+
             next: (res: any) => {
+                console.log('reponse', res)
                 this.customers = res.customers || [];
             },
             error: (error: any) => {

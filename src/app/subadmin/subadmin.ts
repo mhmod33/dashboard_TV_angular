@@ -88,9 +88,9 @@ export class SubAdminComponent {
         this.router.navigate(['/set-prices', username]);
     }
 
-    viewCustomers(username: string) {
-        console.log('View customers for:', username);
-        this.router.navigate(['/subadmin-customers', username]);
+    viewCustomers(id: string) {
+        console.log('View customers for:', id);
+        this.router.navigate(['/subadmin-customers', id]);
     }
 
     viewStats(username: string) {

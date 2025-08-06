@@ -120,7 +120,7 @@ export const routes: Routes = [
     ]
   },
   {
-    path: 'subadmin-customers/:username',
+    path: 'subadmin-customers/:id',
     component: LayoutComponent,
     children: [
       { path: '', component: SubadminCustomersComponent }

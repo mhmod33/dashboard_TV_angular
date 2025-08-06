@@ -17,7 +17,7 @@ export class SystemService {
   // private expiredCustomers = `${this.base}/api/customers`;
   // private paidCustomers = `${this.base}/api/customers`;
 
-  private allAdmins = `${this.base}/api/superadmin/admins`;
+  private allAdmins = `${this.base}/api/admins`;
   private allSubadmins = `${this.base}/api/subadmins`;
   private superadmin = `${this.base}/api/superadmin/superadminProfile`;
   private admin = `${this.base}/api/subadminProfile`;
@@ -27,7 +27,10 @@ export class SystemService {
   private updatebalance = `${this.base}/api/superadmin/update-balance`
   private decreasebalance = `${this.base}/api/superadmin/decrease-balance`
   private getCustomerBySn = `${this.base}/api/getcustomerbysn`
-  
+  private getCustomersByAdminId = `${this.base}/api/getcustomersbyadminId`;
+  private subadminEndpoint = `${this.base}/api/add-subadmin`;
+  private getSingleadmin = `${this.base}/api/superadmin/admins/2`;
+
   constructor(private http: HttpClient) { }
 
 
@@ -81,6 +84,9 @@ export class SystemService {
     return this.http.get(`${this.allAdmins}/${id}`);
   }
 
+  // getSingleAdmin():Observable<any>{
+  //   return this.http.get<any>(this)
+  // }
   addBalance(data: any): Observable<any> {
     return this.http.post(`${this.allAdmins}/balance`, data);
   }
@@ -103,11 +109,15 @@ export class SystemService {
     return this.http.patch(`${this.allAdmins}/${adminId}`, data);
   }
 
-  getSuperadminProfile(id:string):Observable<any>{
+  getSuperadminProfile(id: string): Observable<any> {
     return this.http.get<any>(this.superadmin)
   }
-  getAdminProfile(id:string):Observable<any>{
+  getAdminProfile(id: string): Observable<any> {
     return this.http.get<any>(this.admin)
+  }
+
+  getCustomersbyAdminId(id: string): Observable<CustomerRoot> {
+    return this.http.get<CustomerRoot>(`${this.getCustomersByAdminId}/${id}`);
   }
   // Bulk action methods
   bulkUpdateStatus(customerIds: string[], status: string): Observable<any> {
@@ -132,8 +142,14 @@ export class SystemService {
     return this.http.get<any>(this.AddmyCustomer);
   }
 
+  addSubAdmin(data: any): Observable<any> {
+    return this.http.post<any>(this.subadminEndpoint, data);
+  }
 
-
+  // Get admin's balance
+  getAdminBalance(): Observable<any> {
+    return this.http.get<any>(`${this.base}/api/admin/balance`);
+  }
 
   // Uncomment when API is ready
   /*
