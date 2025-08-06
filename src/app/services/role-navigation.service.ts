@@ -14,20 +14,22 @@ export interface NavigationItem {
 })
 export class RoleNavigationService {
   private navigationItems: NavigationItem[] = [
-    // Dashboard - accessible to all authenticated users
+    // Dashboard - accessible to all authenticated users (Super Admin, Admin, Sub Admin)
     { path: '/home', label: 'Dashboard', icon: 'dashboard', requiredRole: ['superadmin', 'admin', 'subadmin'] },
     
-    // Payment History - accessible to all authenticated users
+    // Payment History - accessible to all authenticated users (Super Admin, Admin, Sub Admin)
     { path: '/payment-history', label: 'Payment History', icon: 'payment', requiredRole: ['superadmin', 'admin', 'subadmin'] },
     
-    // Customers - accessible to all authenticated users
+    // Customers - accessible to all authenticated users (Super Admin, Admin, Sub Admin)
     { path: '/customers', label: 'EgyBest Customers', icon: 'customers', requiredRole: ['superadmin', 'admin', 'subadmin'] },
     
     // Admin Controller Section
+    // Admin Users - only accessible to Super Admin
     { path: '/admin-users', label: 'Admin Users', icon: 'admin', requiredRole: 'superadmin', section: 'Admin Controller' },
+    // SubAdmin - accessible to Super Admin and Admin only
     { path: '/subadmin', label: 'SubAdmin', icon: 'subadmin', requiredRole: ['superadmin', 'admin'], section: 'Admin Controller' },
     
-    // System Management Section - accessible to all authenticated users
+    // System Management Section - accessible to all authenticated users (Super Admin, Admin, Sub Admin)
     { path: '/default-prices', label: 'Default Prices', icon: 'prices', requiredRole: ['superadmin', 'admin', 'subadmin'], section: 'System Management' },
     { path: '/time-periods', label: 'Time Periods', icon: 'time', requiredRole: ['superadmin', 'admin', 'subadmin'], section: 'System Management' },
     { path: '/remove-customer', label: 'Remove Customer by SN', icon: 'remove', requiredRole: ['superadmin', 'admin', 'subadmin'], section: 'System Management' },
@@ -104,4 +106,4 @@ export class RoleNavigationService {
   isSubAdmin(): boolean {
     return this.authService.getRole() === 'subadmin';
   }
-} 
+}

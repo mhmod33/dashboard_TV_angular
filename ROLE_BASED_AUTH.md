@@ -7,8 +7,22 @@ This document explains how the role-based authorization system works in the TV D
 The application implements a hierarchical role-based access control (RBAC) system with three user roles:
 
 1. **Super Admin** - Full access to all features including admin user management
-2. **Admin** - Access to most features but cannot manage admin users
-3. **Sub Admin** - Access to basic features and system management, but cannot manage users
+2. **Admin** - Access to most features but cannot manage admin users or delete all customers
+3. **Sub Admin** - Access to basic features but cannot manage users or delete all customers
+
+## Access Matrix
+
+| Page | Super Admin | Admin | Sub Admin |
+|------|-------------|-------|----------|
+| Dashboard | ✅ | ✅ | ✅ |
+| Payment History | ✅ | ✅ | ✅ |
+| Customers | ✅ | ✅ | ✅ |
+| Admin Users | ✅ | ❌ | ❌ |
+| SubAdmin | ✅ | ✅ | ❌ |
+| Default Prices | ✅ | ✅ | ✅ |
+| Time Periods | ✅ | ✅ | ✅ |
+| Remove Customer | ✅ | ✅ | ✅ |
+| Delete All Customers | ✅ | ❌ | ❌ |
 
 ## Role Hierarchy
 
@@ -35,17 +49,17 @@ Super Admin (Level 3) > Admin (Level 2) > Sub Admin (Level 1)
 
 Each route is protected with:
 - `canActivate: [AuthGuard]` - Ensures user is authenticated
-- `data: { role: 'superadmin' }` - Specifies required role
+- `data: { role: 'super admin' }` - Specifies required role
 
 ## Protected Routes
 
 ### Super Admin Only
 - `/admin-users` - Manage admin users
+- `/add-admin` - Add new admins
 - `/delete-all-customers` - Delete all customers
 
 ### Admin & Super Admin
 - `/subadmin` - Manage subadmins
-- `/add-admin` - Add new admins
 - `/add-subadmin` - Add new subadmins
 
 ### All Authenticated Users
@@ -71,32 +85,60 @@ Each route is protected with:
 - Redirects unauthorized access attempts to error page
 - Provides clear feedback about access restrictions
 
-## Backend Requirements
+## Backend Implementation
 
-The backend should implement:
+The backend implements:
 
-1. **JWT Authentication** with role information in token
+1. **Token-based Authentication** with role information in token
 2. **Role-based middleware** for API endpoints
 3. **Consistent role hierarchy** matching frontend
 4. **Proper error responses** for unauthorized access
 
-### Example Backend Middleware
+### Backend Middleware
 
 ```php
-// Laravel/PHP example
-public function checkRole($requiredRole) {
-    $userRole = auth()->user()->role;
+// app/Http/Middleware/RoleMiddleware.php
+public function handle(Request $request, Closure $next, $requiredRole)
+{
+    // Check if user is authenticated
+    if (!Auth::check()) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Unauthorized access',
+        ], 401);
+    }
+
+    $user = Auth::user();
     
+    // Check if user has the required role
+    if (!$this->hasRequiredRole($user->role, $requiredRole)) {
+        return response()->json([
+            'success' => false,
+            'message' => 'You do not have permission to access this resource',
+        ], 403);
+    }
+
+    return $next($request);
+}
+
+private function hasRequiredRole($userRole, $requiredRole)
+{
+    // If required role is an array, check if user role is in the array
+    if (is_array($requiredRole)) {
+        return in_array($userRole, $requiredRole);
+    }
+
+    // Role hierarchy: super admin > admin > sub admin
     $roleHierarchy = [
-        'superadmin' => 3,
+        'super admin' => 3,
         'admin' => 2,
-        'subadmin' => 1
+        'sub admin' => 1
     ];
-    
-    $userLevel = $roleHierarchy[$userRole] ?? 0;
-    $requiredLevel = $roleHierarchy[$requiredRole] ?? 0;
-    
-    return $userLevel >= $requiredLevel;
+
+    $userRoleLevel = $roleHierarchy[$userRole] ?? 0;
+    $requiredRoleLevel = $roleHierarchy[$requiredRole] ?? 0;
+
+    return $userRoleLevel >= $requiredRoleLevel;
 }
 ```
 
@@ -120,4 +162,4 @@ public function checkRole($requiredRole) {
 - Add role-based permissions for specific actions
 - Implement dynamic permission management
 - Add audit logging for role changes
-- Create role-based dashboard widgets 
+- Create role-based dashboard widgets

@@ -35,20 +35,25 @@ export class AuthGuard implements CanActivate {
   private hasRequiredRole(userRole: string | null, requiredRole: string | string[]): boolean {
     if (!userRole) return false;
 
+    // Normalize role names
+    userRole = userRole.toLowerCase();
     if (Array.isArray(requiredRole)) {
-      return requiredRole.includes(userRole);
+        requiredRole = requiredRole.map(r => r.toLowerCase());
+        return requiredRole.includes(userRole);
     }
 
-    // Role hierarchy: superadmin > admin > subadmin
+    requiredRole = requiredRole.toLowerCase();
+
+    // Role hierarchy: super admin > admin > sub admin
     const roleHierarchy = {
-      'superadmin': 3,
-      'admin': 2,
-      'subadmin': 1
+        'super admin': 3,
+        'admin': 2,
+        'sub admin': 1
     };
 
     const userRoleLevel = roleHierarchy[userRole as keyof typeof roleHierarchy] || 0;
     const requiredRoleLevel = roleHierarchy[requiredRole as keyof typeof roleHierarchy] || 0;
 
     return userRoleLevel >= requiredRoleLevel;
-  }
+}
 } 
