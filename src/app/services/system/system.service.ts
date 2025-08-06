@@ -24,12 +24,14 @@ export class SystemService {
   private updatebalance = `${this.base}/api/superadmin/update-balance`;
   private decreasebalance = `${this.base}/api/superadmin/decrease-balance`;
   private getCustomerBySn = `${this.base}/api/getcustomerbysn`;
-  private periods = `${this.base}/api/periods`; // Added missing property
-  private getCustomersByAdminId = `${this.base}/api/customers/by-admin`; // Added missing property
+  private periods = `${this.base}/api/periods`;
+  private getCustomersByAdminId = `${this.base}/api/customers/by-admin`;
+  private subadminEndpoint = `${this.base}/api/add-subadmin`;
+  private getSingleadmin = `${this.base}/api/superadmin/admins/2`;
 
   constructor(
     private http: HttpClient,
-    private authService: AuthServiceService // Added missing injection
+    private authService: AuthServiceService
   ) {}
 
   allPayments(): Observable<PaymentRoot[]> {
@@ -82,6 +84,41 @@ export class SystemService {
 
   addBalance(data: any): Observable<any> {
     return this.http.post(`${this.allAdmins}/balance`, data);
+  }
+
+  // Add this method to support the subadmin-specific endpoint
+  addSubAdmin(data: any): Observable<any> {
+    return this.http.post<any>(this.subadminEndpoint, data);
+  }
+
+  // Period methods
+  getAllPeriods(): Observable<any> {
+    return this.http.get<any>(this.periods);
+  }
+
+  addPeriod(data: any): Observable<any> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${this.authService.getToken()}`,
+    });
+    return this.http.post<any>(this.periods, data, { headers });
+  }
+
+  updatePeriod(id: string, data: any): Observable<any> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${this.authService.getToken()}`,
+    });
+    return this.http.put<any>(`${this.periods}/${id}`, data, { headers });
+  }
+
+  deletePeriod(id: string): Observable<any> {
+    return this.http.delete<any>(`${this.periods}/${id}`);
+  }
+
+  // Admin balance method
+  getAdminBalance(): Observable<any> {
+    return this.http.get<any>(`${this.base}/api/admin/balance`);
   }
 
   addAdmin(data: any): Observable<any> {
@@ -140,29 +177,5 @@ export class SystemService {
 
   getMyCustomers(): Observable<any> {
     return this.http.get<any>(this.AddmyCustomer);
-  }
-
-  getAllPeriods(): Observable<any> {
-    return this.http.get<any>(this.periods);
-  }
-
-  addPeriod(data: any): Observable<any> {
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${this.authService.getToken()}`,
-    });
-    return this.http.post<any>(this.periods, data, { headers });
-  }
-
-  updatePeriod(id: string, data: any): Observable<any> {
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${this.authService.getToken()}`,
-    });
-    return this.http.put<any>(`${this.periods}/${id}`, data, { headers });
-  }
-
-  deletePeriod(id: string): Observable<any> {
-    return this.http.delete<any>(`${this.periods}/${id}`);
   }
 }
