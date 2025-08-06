@@ -19,14 +19,15 @@ export class SystemService {
 
   private allAdmins = `${this.base}/api/superadmin/admins`;
   private allSubadmins = `${this.base}/api/subadmins`;
-
+  private superadmin = `${this.base}/api/superadmin/superadminProfile`;
+  private admin = `${this.base}/api/subadminProfile`;
   private AddCustomer = `${this.base}/api/customers`
   private AddmyCustomer = `${this.base}/api/myCustomers`
   private deletecustomer = `${this.base}/api/customers`
   private updatebalance = `${this.base}/api/superadmin/update-balance`
   private decreasebalance = `${this.base}/api/superadmin/decrease-balance`
   private getCustomerBySn = `${this.base}/api/getcustomerbysn`
-
+  
   constructor(private http: HttpClient) { }
 
 
@@ -84,8 +85,8 @@ export class SystemService {
     return this.http.post(`${this.allAdmins}/balance`, data);
   }
 
-  addAdmin(data:any):Observable<any>{
-    return this.http.post(this.allAdmins,data);
+  addAdmin(data: any): Observable<any> {
+    return this.http.post(this.allAdmins, data);
   }
   updateBalance(adminId: string, balance: number): Observable<any> {
     return this.http.patch(`${this.updatebalance}/${adminId}`, {
@@ -102,7 +103,12 @@ export class SystemService {
     return this.http.patch(`${this.allAdmins}/${adminId}`, data);
   }
 
-
+  getSuperadminProfile(id:string):Observable<any>{
+    return this.http.get<any>(this.superadmin)
+  }
+  getAdminProfile(id:string):Observable<any>{
+    return this.http.get<any>(this.admin)
+  }
   // Bulk action methods
   bulkUpdateStatus(customerIds: string[], status: string): Observable<any> {
     return this.http.put<any>(`${this.allCustomers}/bulk/status`, {

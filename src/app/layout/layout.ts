@@ -6,20 +6,20 @@ import { AuthServiceService } from '../services/auth-service/auth-service.servic
 @Component({
     selector: 'app-layout',
     standalone: true,
-    imports: [CommonModule, RouterOutlet,RouterLink],
+    imports: [CommonModule, RouterOutlet, RouterLink],
     templateUrl: './layout.html',
     styleUrl: './layout.css'
 })
 export class LayoutComponent {
     isSidebarOpen = true;
     showLogoutAlert = false;
-  
-    currentUser: { name: string;avatar: string ,balance:number};
-    
-    constructor(public router: Router, private authService: AuthServiceService) { 
+
+    currentUser: { name: string; avatar: string, balance: number };
+
+    constructor(public router: Router, private authService: AuthServiceService) {
         this.currentUser = {
             name: this.authService.getUserName() ?? '',
-            balance:2500,
+            balance: 2500,
             avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'
         };
     }
@@ -61,6 +61,10 @@ export class LayoutComponent {
 
     navigateToSubAdmin() {
         this.router.navigate(['/subadmin']);
+    }
+
+    navigateToProfile() {
+        this.router.navigate(['/profile']);
     }
 
     getIconPath(route: string): string {

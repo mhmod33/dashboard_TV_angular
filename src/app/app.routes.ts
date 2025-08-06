@@ -16,6 +16,7 @@ import { DeleteAllCustomersComponent } from './delete-all-customers/delete-all-c
 import { AddPaymentComponent } from './add-payment/add-payment';
 import { AddBalanceComponent } from './add-balance/add-balance';
 import { SubadminCustomersComponent } from './subadmin-customers/subadmin-customers';
+import { ProfileComponent } from './profile/profile';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -132,5 +133,12 @@ export const routes: Routes = [
   {
     path: 'edit-admin/:id',
     loadComponent: () => import('./edit-admin/edit-admin').then(m => m.EditAdminComponent)
+  },
+  {
+    path: 'profile',
+    component: LayoutComponent,
+    children: [
+      { path: '', component: ProfileComponent }
+    ]
   }
 ];

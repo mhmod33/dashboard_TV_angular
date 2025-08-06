@@ -8,6 +8,7 @@ interface LoginResponse {
   name: string;
   role: string;
   token: string;
+  id: any;
 }
 interface Subadmin {
   id: number
@@ -39,6 +40,7 @@ export class AuthServiceService {
           res.token,
           res.role,
           res.name,
+          res.id,
         )
         this.authStatusSubject.next(true);
       })
@@ -48,10 +50,11 @@ export class AuthServiceService {
     return !!localStorage.getItem('token')
   }
 
-  private setSession(token: string, role: string, name: string) {
+  private setSession(token: string, role: string, name: string,id:any) {
     localStorage.setItem('token', token)
     localStorage.setItem('role', role)
     localStorage.setItem('name', name)
+    localStorage.setItem('id', id)
   }
 
   logout(): Observable<any> {
