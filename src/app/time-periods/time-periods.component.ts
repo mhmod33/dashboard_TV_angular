@@ -33,6 +33,8 @@ export class TimePeriodsComponent {
       days: ['', [Validators.required, Validators.min(1)]],
       display_order: [5, [Validators.required, Validators.min(1)]],
       active: [true],
+      price: [0, [Validators.required, Validators.min(0)]], // Add this line
+      plan: [0, [Validators.required, Validators.min(0)]], // Add this line
     });
   }
 
@@ -84,9 +86,12 @@ export class TimePeriodsComponent {
       days: '',
       display_order: 5,
       active: true,
+      price: 0, // Add this
+      plan: 0, // Add this
     });
   }
 
+  // Update getErrorMessage()
   getErrorMessage(controlName: string): string {
     const control = this.timePeriodForm.get(controlName);
     if (control?.errors && control.touched) {
@@ -97,6 +102,9 @@ export class TimePeriodsComponent {
         return 'Invalid format';
       }
       if (control.errors['min']) {
+        if (controlName === 'price' || controlName === 'plan') {
+          return 'Value must be 0 or more';
+        }
         return 'Value must be greater than 0';
       }
     }

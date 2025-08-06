@@ -5,8 +5,12 @@
   </div>
 
   <!-- Success/Error Message -->
-  <div *ngIf="success" class="message success">{{ success }}</div>
-  <div *ngIf="error" class="message error">{{ error }}</div>
+  <div *ngIf="success" class="message success">
+    {{ success }}
+  </div>
+  <div *ngIf="error" class="message error">
+    {{ error }}
+  </div>
   <div *ngIf="loading" class="message">Saving...</div>
 
   <!-- Add New Period Section -->
@@ -20,13 +24,7 @@
         <label for="period_code" class="form-label">
           Period Code <span class="required">*</span>
         </label>
-        <input 
-          type="text" 
-          id="period_code"
-          formControlName="period_code"
-          class="form-input"
-          placeholder="Enter period code"
-        >
+        <input type="text" id="period_code" formControlName="period_code" class="form-input" placeholder="Enter period code">
         <div class="helper-text">
           Short code like mon1, mon3, etc. Cannot be changed after creation.
         </div>
@@ -40,13 +38,7 @@
         <label for="display_name" class="form-label">
           Display Name <span class="required">*</span>
         </label>
-        <input 
-          type="text" 
-          id="display_name"
-          formControlName="display_name"
-          class="form-input"
-          placeholder="Enter display name"
-        >
+        <input type="text" id="display_name" formControlName="display_name" class="form-input" placeholder="Enter display name">
         <div class="helper-text">
           User-friendly name like "1 Month", "3 Months", etc.
         </div>
@@ -60,13 +52,7 @@
         <label for="months" class="form-label">
           Months <span class="required">*</span>
         </label>
-        <input 
-          type="number" 
-          id="months"
-          formControlName="months"
-          class="form-input"
-          placeholder="Enter number of months"
-        >
+        <input type="number" id="months" formControlName="months" class="form-input" placeholder="Enter number of months">
         <div class="helper-text">
           Number of months for this period.
         </div>
@@ -80,13 +66,7 @@
         <label for="days" class="form-label">
           Days <span class="required">*</span>
         </label>
-        <input 
-          type="number" 
-          id="days"
-          formControlName="days"
-          class="form-input"
-          placeholder="Enter number of days"
-        >
+        <input type="number" id="days" formControlName="days" class="form-input" placeholder="Enter number of days">
         <div class="helper-text">
           Exact number of days for this period.
         </div>
@@ -100,13 +80,7 @@
         <label for="display_order" class="form-label">
           Display Order <span class="required">*</span>
         </label>
-        <input 
-          type="number" 
-          id="display_order"
-          formControlName="display_order"
-          class="form-input"
-          placeholder="Enter display order"
-        >
+        <input type="number" id="display_order" formControlName="display_order" class="form-input" placeholder="Enter display order">
         <div class="helper-text">
           Order in which periods are displayed.
         </div>
@@ -115,15 +89,38 @@
         </div>
       </div>
 
+      <!-- Price Field -->
+      <div class="form-field">
+        <label for="price" class="form-label">
+          Price <span class="required">*</span>
+        </label>
+        <input type="number" id="price" formControlName="price" class="form-input" placeholder="Enter price" step="0.01" min="0">
+        <div class="helper-text">
+          Price for this time period.
+        </div>
+        <div class="error-message" *ngIf="getErrorMessage('price')">
+          {{ getErrorMessage('price') }}
+        </div>
+      </div>
+
+      <!-- Plan Field -->
+      <div class="form-field">
+        <label for="plan" class="form-label">
+          Plan Price <span class="required">*</span>
+        </label>
+        <input type="number" id="plan" formControlName="plan" class="form-input" placeholder="Enter plan price" step="0.01" min="0">
+        <div class="helper-text">
+          Plan price for this time period.
+        </div>
+        <div class="error-message" *ngIf="getErrorMessage('plan')">
+          {{ getErrorMessage('plan') }}
+        </div>
+      </div>
+
       <!-- Active Checkbox -->
       <div class="form-field checkbox-field">
         <div class="checkbox-container">
-          <input 
-            type="checkbox" 
-            id="active"
-            formControlName="active"
-            class="form-checkbox"
-          >
+          <input type="checkbox" id="active" formControlName="active" class="form-checkbox">
           <label for="active" class="checkbox-label">
             Active
           </label>
@@ -135,12 +132,7 @@
 
       <!-- Action Button -->
       <div class="form-actions">
-        <button 
-          type="button" 
-          class="btn btn-primary"
-          (click)="addPeriod()"
-          [disabled]="!timePeriodForm.valid || loading"
-        >
+        <button type="button" class="btn btn-primary" (click)="addPeriod()" [disabled]="!timePeriodForm.valid || loading">
           Add Period
         </button>
       </div>
