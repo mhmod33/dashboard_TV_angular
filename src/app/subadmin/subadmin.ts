@@ -15,6 +15,11 @@ import { AuthServiceService } from '../services/auth-service/auth-service.servic
 })
 export class SubAdminComponent {
     getRole: string;
+    mySubadminslength: any
+    subadmins: any;
+    allMySubadmins: any
+
+
     // Summary stats
     summaryStats = {
         totalSubAdmins: 1,
@@ -24,17 +29,6 @@ export class SubAdminComponent {
         totalCreditTransfers: 0
     };
 
-    // Sub-admin performance data
-    // subadmins = [
-    //     {
-    //         username: 'mhmod33',
-    //         balance: 0,
-    //         acasCustomers: 0,
-    //         created: '2025-08-01'
-    //     }
-    // ];
-
-    subadmins: any;
     // Recent transactions
     recentTransactions = [
         {
@@ -54,14 +48,21 @@ export class SubAdminComponent {
         private authService: AuthServiceService
     ) {
         this.getRole = this.authService.getRole() ?? ''
-
     }
 
 
     ngOnInit() {
         this.systemService.getAllSubadmins().subscribe((res) => {
             this.subadmins = res.subadmins
-            console.log(res)
+            // console.log(res)
+        })
+        this.systemService.getMysubadmins().subscribe((res) => {
+            console.log(res.subadmins)
+            this.mySubadminslength = res.subadmins.length
+        })
+        this.systemService.getMysubadmins().subscribe((res) => {
+            console.log(res.subadmins)
+            this.allMySubadmins = res.subadmins
         })
     }
     // Navigation methods

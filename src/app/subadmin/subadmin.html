@@ -58,19 +58,17 @@
                         stroke-linejoin="round" />
                 </svg>
             </div>
+            @if(getRole !=='superadmin'){
             <div class="card-content">
-                <div class="card-value">{{ summaryStats.totalSubAdmins }}</div>
-                <div class="card-label">Total SubAdmins</div>
-                <!-- <button class="view-details-btn" (click)="viewSubAdminDetails('all')">
-                    <span>View Details</span>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round" />
-                        <polyline points="12,5 19,12 12,19" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round" />
-                    </svg>
-                </button> -->
+                <div class="card-value">{{ mySubadminslength || 0}}</div>
+                <div class="card-label">My SubAdmins</div>
             </div>
+            }@else {
+            <div class="card-content">
+                <div class="card-value">{{ subadmins.length }}</div>
+                <div class="card-label">Total SubAdmins</div>
+            </div>
+            }
         </div>
 
 
@@ -169,7 +167,7 @@
                                 </svg>
                                 Manage Balance
                             </button>
-                            
+
                             <button class="action-btn customers" (click)="viewCustomers(subadmin.id)">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
@@ -180,7 +178,7 @@
                                 </svg>
                                 Customers
                             </button>
-                            
+
                         </td>
                     </tr>
                 </tbody>
@@ -216,7 +214,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let subadmin of subadmins" class="performance-row">
+                    <tr *ngFor="let subadmin of allMySubadmins" class="performance-row">
                         <td class="username">{{ subadmin.name }}</td>
                         <td class="balance">{{ subadmin.balance }}</td>
                         <td class="admin">{{ subadmin.admin.name }}</td>

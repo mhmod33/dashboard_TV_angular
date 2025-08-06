@@ -27,7 +27,7 @@ export class SystemService {
   private periods = `${this.base}/api/periods`;
   private getCustomersByAdminId = `${this.base}/api/customers/by-admin`;
   private subadminEndpoint = `${this.base}/api/add-subadmin`;
-  private getSingleadmin = `${this.base}/api/superadmin/admins/2`;
+  private getMySubadmins = `${this.base}/api/getMySubadmins`;
 
   constructor(
     private http: HttpClient,
@@ -95,7 +95,9 @@ export class SystemService {
   getAllPeriods(): Observable<any> {
     return this.http.get<any>(this.periods);
   }
-
+  getMysubadmins():Observable<SubadminRoot>{
+    return this.http.get<SubadminRoot>(this.getMySubadmins)
+  }
   addPeriod(data: any): Observable<any> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
