@@ -43,7 +43,7 @@ export class HomeComponent {
         });
 
         this.systemService.allPayments().subscribe((res: any) => {
-            const totalPayments = res.payemnts.reduce((sum: number, payment: any) => {
+            const totalPayments = res.payments.reduce((sum: number, payment: any) => {
                 return sum + (Number(payment.cost) || 0);
             }, 0);
             this.stats[2].value = totalPayments.toLocaleString();

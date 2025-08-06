@@ -1,8 +1,9 @@
+import { Payemnt } from './../interfaces/payment';
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { SystemService } from '../services/system/system.service';
-import { Payemnt, PaymentRoot } from '../interfaces/payment';
+import { PaymentRoot } from '../interfaces/payment';
 
 @Component({
     selector: 'app-payment-history',
@@ -23,8 +24,8 @@ export class PaymentHistoryComponent {
     ngOnInit(): void {
         console.log('new')
         this.systemService.allPayments().subscribe((res: any) => {
-            console.log('res', res.payments.length);
-            this.payments = res.payemnts;
+            console.log('res', res.payments);
+            this.payments = res.payments;
         })
     }
 
@@ -62,7 +63,7 @@ export class PaymentHistoryComponent {
     // Reload payments
     loadPayments(): void {
         this.systemService.allPayments().subscribe((res: any) => {
-            this.payments = res.payemnts;
+            this.payments = res.payments;
         });
     }
 } 
