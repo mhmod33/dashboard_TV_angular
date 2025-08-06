@@ -1,6 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { SystemService } from '../services/system/system.service';
 import { Period } from '../interfaces/period';
 
@@ -8,7 +14,7 @@ import { Period } from '../interfaces/period';
   selector: 'app-default-prices',
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './default-prices.component.html',
-  styleUrl: './default-prices.component.css'
+  styleUrl: './default-prices.component.css',
 })
 export class DefaultPricesComponent implements OnInit {
   periods: Period[] = [];
@@ -34,7 +40,7 @@ export class DefaultPricesComponent implements OnInit {
       error: () => {
         this.error = 'Failed to load periods.';
         this.loading = false;
-      }
+      },
     });
   }
 
@@ -50,20 +56,30 @@ export class DefaultPricesComponent implements OnInit {
       this.error = 'Please enter a valid price.';
       return;
     }
+
     this.loading = true;
-    this.systemService.updatePeriod(period.id.toString(), { ...period, price: this.editPrice }).subscribe({
-      next: () => {
-        this.success = 'Price updated successfully!';
-        this.editingId = null;
-        this.editPrice = null;
-        this.loadPeriods();
-        this.loading = false;
-      },
-      error: () => {
-        this.error = 'Failed to update price.';
-        this.loading = false;
-      }
-    });
+    const updateData = { price: this.editPrice }; // Only send the price field
+
+    this.systemService
+      .updatePeriod(period.id.toString(), updateData)
+      .subscribe({
+        next: () => {
+          this.success = 'Price updated successfully!';
+          this.editingId = null;
+          this.editPrice = null;
+          this.loadPeriods();
+          this.loading = false;
+        },
+        error: (err) => {
+          this.error =
+            err.error?.message || 'Failed to update price. Please try again.';
+          if (err.status === 401) {
+            this.error = 'Session expired. Please login again.';
+          }
+          this.loading = false;
+          console.error('Error details:', err);
+        },
+      });
   }
 
   cancelEdit() {

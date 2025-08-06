@@ -158,7 +158,7 @@
           </svg>
         </div>
         <div class="user-details">
-          <span class="user-name">
+          <span class="user-name" (click)="navigateToProfile()" style="cursor: pointer">
             {{ currentUser.name }}</span>
           <span class="user-role" *ngIf="isSidebarOpen">
             {{ currentUser.role }}</span>

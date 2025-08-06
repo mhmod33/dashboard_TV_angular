@@ -1,0 +1,51 @@
+<div class="profile-container">
+    <!-- Header Section -->
+    <div class="profile-header">
+        <div class="breadcrumb">
+            <i class="fas fa-home"></i>
+            <span>Home > Profile</span>
+        </div>
+        <h1>My Profile</h1>
+    </div>
+
+    <!-- Profile Card -->
+    <div class="profile-card">
+        <div class="profile-avatar">
+            <div class="avatar-circle">
+                <span class="initials">{{ admin?.name?.charAt(0) || 'A' }}</span>
+            </div>
+        </div>
+
+        <div class="profile-info">
+            <div class="info-row">
+                <div class="info-label">Name</div>
+                <div class="info-value">{{ admin?.name || 'Loading...' }}</div>
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">Status</div>
+                <div class="info-value">
+                    <span class="status-badge" [ngClass]="'status-' + admin?.status">
+                        {{ admin?.status || 'Loading...' }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">Role</div>
+                <div class="info-value">{{ admin?.role || 'Loading...' }}</div>
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">Balance</div>
+                <div class="info-value balance">{{ admin?.balance || '0' }}</div>
+            </div>
+        </div>
+
+        <div class="profile-actions">
+            <button class="edit-btn" (click)="editProfile()">
+                <i class="fas fa-edit"></i> Edit Profile
+            </button>
+        </div>
+    </div>
+</div>

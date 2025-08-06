@@ -1,0 +1,172 @@
+.profile-container {
+    padding: 32px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.profile-header {
+    margin-bottom: 32px;
+}
+
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #64748b;
+    margin-bottom: 16px;
+    font-size: 14px;
+}
+
+.breadcrumb i {
+    font-size: 16px;
+    color: #667eea;
+}
+
+.profile-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+}
+
+.profile-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+}
+
+.profile-avatar {
+    position: relative;
+}
+
+.avatar-circle {
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.initials {
+    font-size: 48px;
+    font-weight: 700;
+    color: white;
+    text-transform: uppercase;
+}
+
+.profile-info {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background: #f8fafc;
+    border-radius: 12px;
+}
+
+.info-label {
+    font-weight: 600;
+    color: #64748b;
+    font-size: 16px;
+}
+
+.info-value {
+    font-weight: 500;
+    color: #1e293b;
+    font-size: 16px;
+}
+
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.status-active {
+    background: #dcfce7;
+    color: #059669;
+}
+
+.status-admin {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+.status-superadmin {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.balance {
+    color: #059669;
+    font-weight: 700;
+}
+
+.profile-actions {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.edit-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.edit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
+}
+
+.edit-btn i {
+    font-size: 16px;
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+    .profile-container {
+        padding: 16px;
+    }
+
+    .profile-card {
+        padding: 24px;
+    }
+
+    .info-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .avatar-circle {
+        width: 96px;
+        height: 96px;
+    }
+
+    .initials {
+        font-size: 36px;
+    }
+}

@@ -16,6 +16,21 @@
         <!-- Main Form -->
         <div class="main-form">
             <form [formGroup]="paymentForm" (ngSubmit)="onSubmit()" class="edit-form">
+                <!-- Payment ID Field -->
+                <div class="form-group">
+                    <label for="paymentId" class="form-label">
+                        Payment ID *
+                    </label>
+                    <input type="text" id="paymentId" formControlName="payment_id" placeholder="Enter payment ID"
+                        class="form-input" [class.error]="isFieldInvalid('payment_id')">
+                    @if (isFieldInvalid('payment_id')) {
+                    <div class="error-message">
+                        <i class="fa fa-times-circle"></i>
+                        {{ getErrorMessage('payment_id') }}
+                    </div>
+                    }
+                </div>
+
                 <!-- Customer Selection -->
                 <div class="form-group">
                     <label for="customer" class="form-label">
@@ -35,7 +50,7 @@
                         Serial Number *
                     </label>
                     <input type="text" id="serialNumber" formControlName="serial_number"
-                        placeholder="Enter serial number" class="form-input"
+                        placeholder="Enter serial number (min 12 characters)" class="form-input"
                         [class.error]="isFieldInvalid('serial_number')">
                     @if (isFieldInvalid('serial_number')) {
                     <div class="error-message">
@@ -121,6 +136,27 @@
                     }
                 </div>
 
+                <!-- Duration Field -->
+                <div class="form-group">
+                    <label for="duration" class="form-label">
+                        Duration *
+                    </label>
+                    <select id="duration" formControlName="duration" class="form-input"
+                        [class.error]="isFieldInvalid('duration')">
+                        <option value="">Select duration</option>
+                        <option value="1">1 Month</option>
+                        <option value="3">3 Months</option>
+                        <option value="6">6 Months</option>
+                        <option value="12">12 Months</option>
+                    </select>
+                    @if (isFieldInvalid('duration')) {
+                    <div class="error-message">
+                        <i class="fa fa-times-circle"></i>
+                        {{ getErrorMessage('duration') }}
+                    </div>
+                    }
+                </div>
+
                 <!-- Cost Field -->
                 <div class="form-group">
                     <label for="cost" class="form-label">
@@ -170,6 +206,7 @@
                 <div class="info-box-content">
                     <p>Select a customer to auto-fill their details.</p>
                     <p>Make sure to enter the correct expiration dates.</p>
+                    <p>Duration will automatically calculate expiration dates.</p>
                 </div>
             </div>
         </div>

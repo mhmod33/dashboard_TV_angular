@@ -48,12 +48,10 @@ export class LayoutComponent {
         'dashboard',
         'payment-history',
         'customers',
-        // 'admin-users', // Admin cannot access admin users
         'subadmin',
         'default-prices',
         'time-periods',
         'remove-customer',
-        // 'delete-all-customers', // Admin cannot delete all customers
       ];
     } else if (role === 'sub admin') {
       // Sub Admin has limited access
@@ -61,12 +59,9 @@ export class LayoutComponent {
         'dashboard',
         'payment-history',
         'customers',
-        // 'admin-users', // Sub Admin cannot access admin users
-        // 'subadmin', // Sub Admin cannot access subadmin
         'default-prices',
         'time-periods',
         'remove-customer',
-        // 'delete-all-customers', // Sub Admin cannot delete all customers
       ];
     }
   }
@@ -112,6 +107,10 @@ export class LayoutComponent {
 
   navigateToSubAdmin() {
     this.router.navigate(['/subadmin']);
+  }
+  
+  navigateToProfile() {
+    this.router.navigate(['/profile']);
   }
 
   getIconPath(route: string): string {

@@ -30,13 +30,38 @@ export class AddPaymentComponent {
 
     initForm() {
         this.paymentForm = this.fb.group({
-            serial_number: ['', [Validators.required]],
+            payment_id: ['', [Validators.required]],
+            serial_number: ['', [Validators.required, Validators.minLength(12)]],
             customer_name: ['', [Validators.required]],
             owner: ['', [Validators.required]],
             exp_before: ['', [Validators.required]],
             exp_after: ['', [Validators.required]],
             cost: ['', [Validators.required, Validators.min(0)]],
-            date: [new Date().toISOString().split('T')[0], [Validators.required]]
+            duration: ['', [Validators.required, Validators.pattern(/^(1|3|6|12)$/)]]
+        });
+
+        // Subscribe to duration changes to auto-calculate expiration dates
+        this.paymentForm.get('duration')?.valueChanges.subscribe(duration => {
+            this.calculateExpirationDates(duration);
+        });
+    }
+
+    // Calculate expiration dates based on duration
+    calculateExpirationDates(duration: number) {
+        if (!duration) return;
+
+        const today = new Date();
+
+        // Set exp_before to today
+        const expBefore = today.toISOString().split('T')[0];
+
+        // Calculate exp_after by adding months
+        const expAfter = new Date(today);
+        expAfter.setMonth(expAfter.getMonth() + Number(duration));
+
+        this.paymentForm.patchValue({
+            exp_before: expBefore,
+            exp_after: expAfter.toISOString().split('T')[0]
         });
     }
 
@@ -67,18 +92,25 @@ export class AddPaymentComponent {
         if (field.hasError('min')) {
             return `${this.getFieldLabel(fieldName)} must be greater than 0`;
         }
+        if (field.hasError('minlength')) {
+            return `${this.getFieldLabel(fieldName)} must be at least 12 characters`;
+        }
+        if (field.hasError('pattern')) {
+            return `${this.getFieldLabel(fieldName)} must be 1, 3, 6, or 12 months`;
+        }
         return '';
     }
 
     getFieldLabel(fieldName: string): string {
         const labels: { [key: string]: string } = {
+            payment_id: 'Payment ID',
             serial_number: 'Serial Number',
             customer_name: 'Customer Name',
             owner: 'Owner',
             exp_before: 'Expiration Before',
             exp_after: 'Expiration After',
             cost: 'Cost',
-            date: 'Date'
+            duration: 'Duration'
         };
         return labels[fieldName] || fieldName;
     }

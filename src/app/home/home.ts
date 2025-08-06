@@ -28,20 +28,26 @@ export class HomeComponent {
     stats = [
         { title: 'Total Customers', value: 0, change: '+15%', icon: 'users', color: '#667eea' },
         { title: 'Total Admins', value: 0, change: '+2', icon: 'admin', color: '#10b981' },
-        { title: 'Total Payments', value: '1,234', change: '+8.2%', icon: 'payment', color: '#f59e0b' }
+        { title: 'Total Payments', value: '0', change: '', icon: 'payment', color: '#f59e0b' }
     ];
 
     ngOnInit() {
         this.systemService.allSuperCustomers().subscribe((res) => {
             this.allCustomers = res.customers.length;
             this.stats[0].value = this.allCustomers;
-        })
+        });
 
         this.systemService.getAllAdmins().subscribe((res) => {
             this.allAdmins = res.admins.length;
-            console.log(this.allAdmins)
             this.stats[1].value = this.allAdmins;
-        })
+        });
+
+        this.systemService.allPayments().subscribe((res: any) => {
+            const totalPayments = res.payemnts.reduce((sum: number, payment: any) => {
+                return sum + (Number(payment.cost) || 0);
+            }, 0);
+            this.stats[2].value = totalPayments.toLocaleString();
+        });
     }
     getIconPath(icon: string): string {
         const icons: { [key: string]: string } = {

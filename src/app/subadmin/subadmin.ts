@@ -61,6 +61,7 @@ export class SubAdminComponent {
     ngOnInit() {
         this.systemService.getAllSubadmins().subscribe((res) => {
             this.subadmins = res.subadmins
+            console.log(res)
         })
     }
     // Navigation methods
@@ -73,11 +74,15 @@ export class SubAdminComponent {
     }
 
     // Action methods for sub-admin performance
-    addBalance(username: string) {
-        console.log('Add balance for:', username);
-        this.router.navigate(['/add-subadmin-balance', username]);
-    }
+    // addBalance(username: string) {
+    //     console.log('Add balance for:', username);
+    //     this.router.navigate(['/add-subadmin-balance', username]);
+    // }
 
+    addBalance(adminId: number) {
+        console.log('Add balance for admin:', adminId);
+        this.router.navigate(['/add-balance', adminId]);
+    }
     setPrices(username: string) {
         console.log('Set prices for:', username);
         this.router.navigate(['/set-prices', username]);
