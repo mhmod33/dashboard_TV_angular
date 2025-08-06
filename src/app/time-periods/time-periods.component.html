@@ -4,50 +4,54 @@
     <h1>Manage Time Periods</h1>
   </div>
 
+  <!-- Success/Error Message -->
+  <div *ngIf="success" class="message success">{{ success }}</div>
+  <div *ngIf="error" class="message error">{{ error }}</div>
+  <div *ngIf="loading" class="message">Saving...</div>
+
   <!-- Add New Period Section -->
   <div class="form-section">
     <div class="section-header">
       <h2>Add New Period</h2>
     </div>
-    
     <form [formGroup]="timePeriodForm" class="time-period-form">
       <!-- Period Code Field -->
       <div class="form-field">
-        <label for="periodCode" class="form-label">
+        <label for="period_code" class="form-label">
           Period Code <span class="required">*</span>
         </label>
         <input 
           type="text" 
-          id="periodCode"
-          formControlName="periodCode"
+          id="period_code"
+          formControlName="period_code"
           class="form-input"
           placeholder="Enter period code"
         >
         <div class="helper-text">
           Short code like mon1, mon3, etc. Cannot be changed after creation.
         </div>
-        <div class="error-message" *ngIf="getErrorMessage('periodCode')">
-          {{ getErrorMessage('periodCode') }}
+        <div class="error-message" *ngIf="getErrorMessage('period_code')">
+          {{ getErrorMessage('period_code') }}
         </div>
       </div>
 
       <!-- Display Name Field -->
       <div class="form-field">
-        <label for="displayName" class="form-label">
+        <label for="display_name" class="form-label">
           Display Name <span class="required">*</span>
         </label>
         <input 
           type="text" 
-          id="displayName"
-          formControlName="displayName"
+          id="display_name"
+          formControlName="display_name"
           class="form-input"
           placeholder="Enter display name"
         >
         <div class="helper-text">
           User-friendly name like "1 Month", "3 Months", etc.
         </div>
-        <div class="error-message" *ngIf="getErrorMessage('displayName')">
-          {{ getErrorMessage('displayName') }}
+        <div class="error-message" *ngIf="getErrorMessage('display_name')">
+          {{ getErrorMessage('display_name') }}
         </div>
       </div>
 
@@ -93,21 +97,21 @@
 
       <!-- Display Order Field -->
       <div class="form-field">
-        <label for="displayOrder" class="form-label">
+        <label for="display_order" class="form-label">
           Display Order <span class="required">*</span>
         </label>
         <input 
           type="number" 
-          id="displayOrder"
-          formControlName="displayOrder"
+          id="display_order"
+          formControlName="display_order"
           class="form-input"
           placeholder="Enter display order"
         >
         <div class="helper-text">
           Order in which periods are displayed.
         </div>
-        <div class="error-message" *ngIf="getErrorMessage('displayOrder')">
-          {{ getErrorMessage('displayOrder') }}
+        <div class="error-message" *ngIf="getErrorMessage('display_order')">
+          {{ getErrorMessage('display_order') }}
         </div>
       </div>
 
@@ -135,7 +139,7 @@
           type="button" 
           class="btn btn-primary"
           (click)="addPeriod()"
-          [disabled]="!timePeriodForm.valid"
+          [disabled]="!timePeriodForm.valid || loading"
         >
           Add Period
         </button>

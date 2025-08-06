@@ -26,6 +26,7 @@ export class SystemService {
   private updatebalance = `${this.base}/api/superadmin/update-balance`
   
   private getCustomerBySn = `${this.base}/api/getcustomerbysn`
+  private periods = `${this.base}/api/periods`;
 
   constructor(private http: HttpClient) { }
 
@@ -40,8 +41,8 @@ export class SystemService {
   // getActiveCustomers(): Observable<CustomerRoot> {
   //   return this.http.get<CustomerRoot>(this.activeCustomers);
   // }
-  getAllAdmins(): Observable<AdminRoot> {
-    return this.http.get<AdminRoot>(this.allAdmins)
+  getAllAdmins(): Observable<any> {
+    return this.http.get<any>(this.allAdmins)
   }
 
   getAllSubadmins(): Observable<SubadminRoot> {
@@ -117,5 +118,21 @@ export class SystemService {
     return this.http.get<{ exists: boolean }>(`${this.checkSN}/${serialNumber}`);
   }
   */
+
+  getAllPeriods(): Observable<any> {
+    return this.http.get<any>(this.periods);
+  }
+
+  addPeriod(data: any): Observable<any> {
+    return this.http.post<any>(this.periods, data);
+  }
+
+  updatePeriod(id: string, data: any): Observable<any> {
+    return this.http.put<any>(`${this.periods}/${id}`, data);
+  }
+
+  deletePeriod(id: string): Observable<any> {
+    return this.http.delete<any>(`${this.periods}/${id}`);
+  }
 
 }

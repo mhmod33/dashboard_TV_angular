@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { SystemService } from '../services/system/system.service';
+import { Period } from '../interfaces/period';
 
 @Component({
   selector: 'app-time-periods',
@@ -10,36 +12,49 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } 
 })
 export class TimePeriodsComponent {
   timePeriodForm: FormGroup;
-  
-  constructor(private fb: FormBuilder) {
+  loading = false;
+  error: string = '';
+  success: string = '';
+
+  constructor(private fb: FormBuilder, private systemService: SystemService) {
     this.timePeriodForm = this.fb.group({
-      periodCode: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9]+$/)]],
-      displayName: ['', [Validators.required]],
+      period_code: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9]+$/)]],
+      display_name: ['', [Validators.required]],
       months: ['', [Validators.required, Validators.min(1)]],
       days: ['', [Validators.required, Validators.min(1)]],
-      displayOrder: [5, [Validators.required, Validators.min(1)]],
+      display_order: [5, [Validators.required, Validators.min(1)]],
       active: [true]
     });
   }
 
   addPeriod() {
+    this.error = '';
+    this.success = '';
     if (this.timePeriodForm.valid) {
-      console.log('Adding new time period:', this.timePeriodForm.value);
-      // Here you would typically make an API call to save the time period
-      alert('Time period added successfully!');
-      this.resetForm();
+      this.loading = true;
+      this.systemService.addPeriod(this.timePeriodForm.value).subscribe({
+        next: () => {
+          this.success = 'Time period added successfully!';
+          this.resetForm();
+          this.loading = false;
+        },
+        error: () => {
+          this.error = 'Failed to add period.';
+          this.loading = false;
+        }
+      });
     } else {
-      alert('Please check the form for errors.');
+      this.error = 'Please check the form for errors.';
     }
   }
 
   resetForm() {
-    this.timePeriodForm.patchValue({
-      periodCode: '',
-      displayName: '',
+    this.timePeriodForm.reset({
+      period_code: '',
+      display_name: '',
       months: '',
       days: '',
-      displayOrder: 5,
+      display_order: 5,
       active: true
     });
   }
