@@ -5,43 +5,49 @@
       <i class="fas fa-info-circle"></i>
       <span>You are editing prices for <strong>Default</strong> (applies to all users without specific prices)</span>
     </div>
-    <a href="#" class="manage-link">
+    <a href="/time-periods" class="manage-link">
       <i class="fas fa-clock"></i>
       Manage Time Periods
     </a>
   </div>
 
+  <!-- Success/Error Message -->
+  <div *ngIf="success" class="message success">{{ success }}</div>
+  <div *ngIf="error" class="message error">{{ error }}</div>
+  <div *ngIf="loading" class="message">Loading...</div>
+
   <!-- Price Configuration Section -->
-  <div class="price-config-section">
+  <div class="price-config-section" *ngIf="!loading && periods.length">
     <h2>Price Configuration</h2>
-    
-    <form [formGroup]="pricesForm" class="prices-form">
-      <div class="price-items">
-        <div class="price-item" *ngFor="let config of priceConfigurations; let i = index">
-          <div class="price-header">
-            <h3>{{ config.duration }}:</h3>
-          </div>
-          <div class="price-input-group">
+    <div class="price-items">
+      <div class="price-item" *ngFor="let period of periods">
+        <div class="price-header">
+          <h3>{{ period.display_name }} ({{ period.months }} month(s) / {{ period.days }} day(s))</h3>
+        </div>
+        <div class="price-input-group">
+          <ng-container *ngIf="editingId === period.id; else viewMode">
             <input 
               type="number" 
-              [formControlName]="'price' + config.id"
+              [(ngModel)]="editPrice"
               class="price-input"
               placeholder="Enter price"
+              [disabled]="loading"
+              name="editPrice{{period.id}}"
             >
-            <div class="price-description">{{ config.description }}</div>
+            <div class="action-buttons">
+              <button type="button" class="btn btn-primary" (click)="saveEdit(period)" [disabled]="loading">Save</button>
+              <button type="button" class="btn btn-secondary" (click)="cancelEdit()" [disabled]="loading">Cancel</button>
+            </div>
+          </ng-container>
+          <ng-template #viewMode>
+            <div class="price-value">{{ period.price || 0 }}</div>
+            <button type="button" class="btn btn-primary" (click)="startEdit(period)">Edit</button>
+          </ng-template>
+          <div class="price-description">
+            Period code: {{ period.period_code }} | Display order: {{ period.display_order }} | <span [ngClass]="{'active-status': period.active, 'inactive-status': !period.active}">{{ period.active ? 'Active' : 'Inactive' }}</span>
           </div>
         </div>
       </div>
-
-      <!-- Action Buttons -->
-      <div class="action-buttons">
-        <button type="button" class="btn btn-primary" (click)="saveChanges()">
-          Save Changes
-        </button>
-        <button type="button" class="btn btn-secondary" (click)="cancel()">
-          Cancel
-        </button>
-      </div>
-    </form>
+    </div>
   </div>
 </div>

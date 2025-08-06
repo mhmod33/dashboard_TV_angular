@@ -195,7 +195,7 @@ export class AddSubAdminComponent implements OnInit {
                 balance: parseInt(this.subAdminData.balance, 10)
             };
 
-            this.systemService.addSubAdmin(data).subscribe({
+            this.systemService.addAdmin(data).subscribe({
                 next: (response: any) => {
                     alert('Sub-admin added successfully!');
                     this.router.navigate(['/subadmin']);

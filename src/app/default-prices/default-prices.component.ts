@@ -1,78 +1,91 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
+import { SystemService } from '../services/system/system.service';
+import { Period } from '../interfaces/period';
 
 @Component({
   selector: 'app-default-prices',
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './default-prices.component.html',
-  styleUrl: './default-prices.component.css'
+  styleUrl: './default-prices.component.css',
 })
-export class DefaultPricesComponent {
-  pricesForm: FormGroup;
-  
-  priceConfigurations = [
-    {
-      id: 1,
-      duration: '1 Month',
-      months: 1,
-      days: 30,
-      price: 120000,
-      description: '1 month(s) / 30 day(s)'
-    },
-    {
-      id: 2,
-      duration: '3 Months',
-      months: 3,
-      days: 90,
-      price: 120,
-      description: '3 month(s) / 90 day(s)'
-    },
-    {
-      id: 3,
-      duration: '6 Months',
-      months: 6,
-      days: 180,
-      price: 1600000,
-      description: '6 month(s) / 180 day(s)'
-    },
-    {
-      id: 4,
-      duration: '12 Months',
-      months: 12,
-      days: 365,
-      price: 3200000,
-      description: '12 month(s) / 365 day(s)'
-    }
-  ];
+export class DefaultPricesComponent implements OnInit {
+  periods: Period[] = [];
+  loading = false;
+  error: string = '';
+  editingId: number | null = null;
+  editPrice: number | null = null;
+  success: string = '';
 
-  constructor(private fb: FormBuilder) {
-    this.pricesForm = this.fb.group({
-      price1: [120000, [Validators.required, Validators.min(0)]],
-      price2: [120, [Validators.required, Validators.min(0)]],
-      price3: [1600000, [Validators.required, Validators.min(0)]],
-      price4: [3200000, [Validators.required, Validators.min(0)]]
+  constructor(private systemService: SystemService) {}
+
+  ngOnInit(): void {
+    this.loadPeriods();
+  }
+
+  loadPeriods() {
+    this.loading = true;
+    this.systemService.getAllPeriods().subscribe({
+      next: (res) => {
+        this.periods = res.periods || [];
+        this.loading = false;
+      },
+      error: () => {
+        this.error = 'Failed to load periods.';
+        this.loading = false;
+      },
     });
   }
 
-  saveChanges() {
-    if (this.pricesForm.valid) {
-      console.log('Saving price changes:', this.pricesForm.value);
-      // Here you would typically make an API call to save the changes
-      alert('Price changes saved successfully!');
-    } else {
-      alert('Please check the form for errors.');
-    }
+  startEdit(period: Period) {
+    this.editingId = period.id;
+    this.editPrice = period.price || 0;
+    this.success = '';
+    this.error = '';
   }
 
-  cancel() {
-    // Reset form to original values
-    this.pricesForm.patchValue({
-      price1: 120000,
-      price2: 120,
-      price3: 1600000,
-      price4: 3200000
-    });
-    console.log('Changes cancelled');
+  saveEdit(period: Period) {
+    if (this.editPrice == null || isNaN(this.editPrice)) {
+      this.error = 'Please enter a valid price.';
+      return;
+    }
+
+    this.loading = true;
+    const updateData = { price: this.editPrice }; // Only send the price field
+
+    this.systemService
+      .updatePeriod(period.id.toString(), updateData)
+      .subscribe({
+        next: () => {
+          this.success = 'Price updated successfully!';
+          this.editingId = null;
+          this.editPrice = null;
+          this.loadPeriods();
+          this.loading = false;
+        },
+        error: (err) => {
+          this.error =
+            err.error?.message || 'Failed to update price. Please try again.';
+          if (err.status === 401) {
+            this.error = 'Session expired. Please login again.';
+          }
+          this.loading = false;
+          console.error('Error details:', err);
+        },
+      });
+  }
+
+  cancelEdit() {
+    this.editingId = null;
+    this.editPrice = null;
+    this.error = '';
+    this.success = '';
   }
 }

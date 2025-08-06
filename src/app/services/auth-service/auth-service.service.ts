@@ -10,51 +10,88 @@ interface LoginResponse {
   token: string;
   id: any;
 }
+
 interface Subadmin {
-  id: number
-  name: string
-  password: string
-  status: string
-  role: string
-  balance: string
-  created_at: string
-  updated_at: string
-  deleted_at: any
-  parent_admin_id: any
+  id: number;
+  name: string;
+  password: string;
+  status: string;
+  role: string;
+  balance: string;
+  created_at: string;
+  updated_at: string;
+  deleted_at: any;
+  parent_admin_id: any;
 }
 
-
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthServiceService {
   private base = 'http://127.0.0.1:8000';
   private authStatusSubject = new BehaviorSubject<boolean>(this.hasToken());
   authStatus$ = this.authStatusSubject.asObservable();
-  constructor(private http: HttpClient, private router: Router) { }
+
+  // Role permissions mapping based on the access matrix
+  private rolePermissions: { [key: string]: string[] } = {
+    'super admin': [
+      'dashboard',
+      'payment-history',
+      'customers',
+      'admin-users',
+      'subadmin',
+      'default-prices',
+      'time-periods',
+      'remove-customer',
+      'delete-all-customers',
+    ],
+    admin: [
+      'dashboard',
+      'payment-history',
+      'customers',
+      'subadmin',
+      'default-prices',
+      'time-periods',
+      'remove-customer',
+    ],
+    'subadmin': [
+      'dashboard',
+      'payment-history',
+      'customers',
+      'default-prices',
+      'time-periods',
+      'remove-customer',
+    ],
+  };
+
+  constructor(private http: HttpClient, private router: Router) {}
 
   login(name: string, password: string): Observable<LoginResponse> {
-    return this.http.post<any>(`${this.base}/api/login`, { name, password }).pipe(
-      tap((res) => {
-        this.setSession(
-          res.token,
-          res.role,
-          res.name,
-          res.id,
-        )
-        this.authStatusSubject.next(true);
-      })
-    )
-  }
-  private hasToken(): boolean {
-    return !!localStorage.getItem('token')
+    return this.http
+      .post<any>(`${this.base}/api/login`, { name, password })
+      .pipe(
+        tap((res) => {
+          this.setSession(res.token, res.role, res.name, res.id);
+          this.authStatusSubject.next(true);
+        })
+      );
   }
 
-  private setSession(token: string, role: string, name: string,id:any) {
-    localStorage.setItem('token', token)
-    localStorage.setItem('role', role)
-    localStorage.setItem('name', name)
-    localStorage.setItem('id', id)
+  // Add method to check page access
+  canAccess(page: string): boolean {
+    const role = this.getRole();
+    return role ? this.rolePermissions[role]?.includes(page) || false : false;
+  }
+
+  private hasToken(): boolean {
+    return !!localStorage.getItem('token');
+  }
+
+  private setSession(token: string, role: string, name: string, id: any) {
+    localStorage.setItem('token', token);
+    localStorage.setItem('role', role);
+    localStorage.setItem('name', name);
+    localStorage.setItem('id', id);
   }
 
   logout(): Observable<any> {
@@ -66,10 +103,9 @@ export class AuthServiceService {
       tap(() => {
         this.clearSession();
         this.authStatusSubject.next(false);
-        this.router.navigate(['/login'])
+        this.router.navigate(['/login']);
       })
-    )
-
+    );
   }
   private clearSession() {
     localStorage.clear();
@@ -88,7 +124,6 @@ export class AuthServiceService {
     return localStorage.getItem('role');
   }
 
-
   getCurrentUser(): Subadmin | null {
     if (!this.isAuthenticated) {
       return null;
@@ -104,8 +139,7 @@ export class AuthServiceService {
       created_at: '',
       updated_at: '',
       deleted_at: null,
-      parent_admin_id: null
+      parent_admin_id: null,
     };
-
   }
 }

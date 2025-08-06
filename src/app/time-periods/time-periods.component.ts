@@ -1,49 +1,97 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
+import { SystemService } from '../services/system/system.service';
+import { Period } from '../interfaces/period';
 
 @Component({
   selector: 'app-time-periods',
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './time-periods.component.html',
-  styleUrl: './time-periods.component.css'
+  styleUrl: './time-periods.component.css',
 })
 export class TimePeriodsComponent {
   timePeriodForm: FormGroup;
-  
-  constructor(private fb: FormBuilder) {
+  loading = false;
+  error: string = '';
+  success: string = '';
+
+  constructor(private fb: FormBuilder, private systemService: SystemService) {
     this.timePeriodForm = this.fb.group({
-      periodCode: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9]+$/)]],
-      displayName: ['', [Validators.required]],
+      period_code: [
+        '',
+        [Validators.required, Validators.pattern(/^[a-zA-Z0-9]+$/)],
+      ],
+      display_name: ['', [Validators.required]],
       months: ['', [Validators.required, Validators.min(1)]],
       days: ['', [Validators.required, Validators.min(1)]],
-      displayOrder: [5, [Validators.required, Validators.min(1)]],
-      active: [true]
+      display_order: [5, [Validators.required, Validators.min(1)]],
+      active: [true],
+      price: [0, [Validators.required, Validators.min(0)]], // Add this line
+      plan: [0, [Validators.required, Validators.min(0)]], // Add this line
     });
   }
 
+  // time-periods.component.ts
   addPeriod() {
+    this.error = '';
+    this.success = '';
+
     if (this.timePeriodForm.valid) {
-      console.log('Adding new time period:', this.timePeriodForm.value);
-      // Here you would typically make an API call to save the time period
-      alert('Time period added successfully!');
-      this.resetForm();
+      this.loading = true;
+      console.log('Submitting:', this.timePeriodForm.value); // Debug
+
+      this.systemService.addPeriod(this.timePeriodForm.value).subscribe({
+        next: (response) => {
+          this.success = 'Time period added successfully!';
+          this.resetForm();
+          this.loading = false;
+        },
+        error: (err) => {
+          this.error =
+            err.error?.message ||
+            err.error?.error ||
+            'Failed to add period. Please try again.';
+          if (err.status === 401) {
+            this.error = 'Session expired. Please login again.';
+          }
+          this.loading = false;
+          console.error('Error details:', err); // Debug
+        },
+      });
     } else {
-      alert('Please check the form for errors.');
+      this.error = 'Please correct the errors in the form.';
+      this.markAllAsTouched();
     }
   }
 
-  resetForm() {
-    this.timePeriodForm.patchValue({
-      periodCode: '',
-      displayName: '',
-      months: '',
-      days: '',
-      displayOrder: 5,
-      active: true
+  // Add this helper method
+  markAllAsTouched() {
+    Object.values(this.timePeriodForm.controls).forEach((control) => {
+      control.markAsTouched();
     });
   }
 
+  resetForm() {
+    this.timePeriodForm.reset({
+      period_code: '',
+      display_name: '',
+      months: '',
+      days: '',
+      display_order: 5,
+      active: true,
+      price: 0, // Add this
+      plan: 0, // Add this
+    });
+  }
+
+  // Update getErrorMessage()
   getErrorMessage(controlName: string): string {
     const control = this.timePeriodForm.get(controlName);
     if (control?.errors && control.touched) {
@@ -54,6 +102,9 @@ export class TimePeriodsComponent {
         return 'Invalid format';
       }
       if (control.errors['min']) {
+        if (controlName === 'price' || controlName === 'plan') {
+          return 'Value must be 0 or more';
+        }
         return 'Value must be greater than 0';
       }
     }
