@@ -28,7 +28,7 @@
             </svg>
             Add New SubAdmin
         </button>
-        <button class="action-btn secondary" (click)="viewSubAdminDashboard()">
+        <!-- <button class="action-btn secondary" (click)="viewSubAdminDashboard()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <rect x="3" y="3" width="7" height="7" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                     stroke-linejoin="round" />
@@ -40,7 +40,7 @@
                     stroke-linejoin="round" />
             </svg>
             SubAdmin Dashboard
-        </button>
+        </button> -->
     </div>
 
     <!-- Summary Cards -->
@@ -170,7 +170,7 @@
                         <th>Admin</th>
                         <th>Customers</th>
                         <th>Created</th>
-                        <th>Actions</th>
+                        <th>Details</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -191,17 +191,8 @@
                                 </svg>
                                 Manage Balance
                             </button>
-                            <button class="action-btn set-prices" (click)="setPrices(subadmin.username)">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <rect x="2" y="6" width="20" height="12" rx="2" ry="2" stroke="currentColor"
-                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                    <line x1="2" y1="10" x2="22" y2="10" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round" />
-                                </svg>
-                                Set Prices
-                            </button>
-                            <button class="action-btn customers" (click)="viewCustomers(subadmin.username)">
+                            
+                            <button class="action-btn customers" (click)="viewCustomers(subadmin.id)">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor"
@@ -211,18 +202,7 @@
                                 </svg>
                                 Customers
                             </button>
-                            <!-- <button class="action-btn stats" (click)="viewStats(subadmin.username)">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M18 20V10" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" />
-                                    <path d="M12 20V4" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" />
-                                    <path d="M6 20v-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" />
-                                </svg>
-                                Stats
-                            </button> -->
+                            
                         </td>
                     </tr>
                 </tbody>
@@ -265,7 +245,7 @@
                         <td class="customers">{{ subadmin.customers.length }}</td>
                         <td class="created">{{ subadmin.date |date:'medium' }}</td>
                         <td class="actions">
-                            <button class="action-btn add-balance" (click)="addBalance(subadmin.username)">
+                            <button class="action-btn add-balance" (click)="addBalance(subadmin.id)">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <line x1="12" y1="5" x2="12" y2="19" stroke="currentColor" stroke-width="2"
@@ -275,17 +255,8 @@
                                 </svg>
                                 Add Balance
                             </button>
-                            <button class="action-btn set-prices" (click)="setPrices(subadmin.username)">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <rect x="2" y="6" width="20" height="12" rx="2" ry="2" stroke="currentColor"
-                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                    <line x1="2" y1="10" x2="22" y2="10" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round" />
-                                </svg>
-                                Set Prices
-                            </button>
-                            <button class="action-btn customers" (click)="viewCustomers(subadmin.username)">
+
+                            <button class="action-btn customers" (click)="viewCustomers(subadmin.id)">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor"
@@ -295,18 +266,7 @@
                                 </svg>
                                 Customers
                             </button>
-                            <!-- <button class="action-btn stats" (click)="viewStats(subadmin.username)">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M18 20V10" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" />
-                                    <path d="M12 20V4" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" />
-                                    <path d="M6 20v-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" />
-                                </svg>
-                                Stats
-                            </button> -->
+
                         </td>
                     </tr>
                 </tbody>

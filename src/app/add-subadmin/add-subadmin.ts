@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { SystemService } from '../services/system/system.service';
 
 @Component({
     selector: 'app-add-subadmin',
@@ -10,39 +11,118 @@ import { Router } from '@angular/router';
     templateUrl: './add-subadmin.html',
     styleUrl: './add-subadmin.css'
 })
-export class AddSubAdminComponent {
+export class AddSubAdminComponent implements OnInit {
     // Form data
     subAdminData = {
-        username: '',
+        name: '',
         password: '',
-        fullName: '',
-        initialBalance: '0'
+        status: 'active',
+        balance: '',
+        role: 'subadmin',
+        parent_admin_id: ''
     };
+
+    // Admin list
+    adminList: any[] = [];
+    selectedAdminBalance: number = 0;
+    isAdmin: boolean = false;
 
     // Validation states
     errors = {
-        username: '',
+        name: '',
         password: '',
-        fullName: '',
-        initialBalance: ''
+        status: '',
+        balance: '',
+        role: '',
+        parent_admin_id: ''
     };
 
     // Available balance
     availableBalance = 0;
 
-    constructor(private router: Router) { }
+    constructor(
+        private router: Router,
+        private systemService: SystemService
+    ) { }
+
+    ngOnInit(): void {
+        const userRole = localStorage.getItem('role');
+        this.isAdmin = userRole === 'admin';
+
+        if (this.isAdmin) {
+            // If user is admin, set parent_admin_id from localStorage and load their balance
+            const adminId = localStorage.getItem('id');
+            if (adminId) {
+                this.subAdminData.parent_admin_id = adminId;
+                this.loadAdminBalance(adminId);
+            }
+        } else {
+            // If superadmin, load all admins
+            this.loadAdmins();
+        }
+    }
+
+    loadAdminBalance(adminId: string): void {
+        this.systemService.getAdminById(adminId).subscribe({
+            next: (res: any) => {
+                this.selectedAdminBalance = res.admin.balance;
+                this.availableBalance = res.admin.balance;
+            },
+            error: (error) => {
+                console.error('Error loading admin balance:', error);
+            }
+        });
+    }
+
+    onAdminSelect(event: Event): void {
+        const selectElement = event.target as HTMLSelectElement;
+        const selectedId = selectElement.value;
+
+        if (selectedId) {
+            this.systemService.getAdminById(selectedId).subscribe({
+                next: (res: any) => {
+                    this.selectedAdminBalance = res.admin.balance;
+                    this.availableBalance = res.admin.balance; // Update available balance for validation
+                },
+                error: (error) => {
+                    console.error('Error loading admin details:', error);
+                }
+            });
+        } else {
+            this.selectedAdminBalance = 0;
+            this.availableBalance = 0;
+        }
+    }
+
+    loadAdmins(): void {
+        this.systemService.getAllAdmins().subscribe({
+            next: (response: any) => {
+                this.adminList = response.admins || [];
+            },
+            error: (error) => {
+                console.error('Error loading admins:', error);
+            }
+        });
+    }
+
+    // loadAvailableBalance(): void {
+    //     this.systemService.getAdminBalance().subscribe({
+    //         next: (response: any) => {
+    //             this.availableBalance = response.balance || 0;
+    //         },
+    //         error: (error) => {
+    //             console.error('Error loading balance:', error);
+    //         }
+    //     });
+    // }
 
     // Validation methods
-    validateUsername(): boolean {
-        if (!this.subAdminData.username.trim()) {
-            this.errors.username = 'Username is required';
+    validateName(): boolean {
+        if (!this.subAdminData.name.trim()) {
+            this.errors.name = 'Name is required';
             return false;
         }
-        if (this.subAdminData.username.length < 3) {
-            this.errors.username = 'Username must be at least 3 characters';
-            return false;
-        }
-        this.errors.username = '';
+        this.errors.name = '';
         return true;
     }
 
@@ -51,56 +131,80 @@ export class AddSubAdminComponent {
             this.errors.password = 'Password is required';
             return false;
         }
-        if (this.subAdminData.password.length < 6) {
-            this.errors.password = 'Password must be at least 6 characters';
+        if (this.subAdminData.password.length < 3) {
+            this.errors.password = 'Password must be at least 3 characters';
             return false;
         }
         this.errors.password = '';
         return true;
     }
 
-    validateFullName(): boolean {
-        if (!this.subAdminData.fullName.trim()) {
-            this.errors.fullName = 'Full name is required';
+    validateBalance(): boolean {
+        if (!this.subAdminData.balance) {
+            this.errors.balance = 'Balance is required';
             return false;
         }
-        this.errors.fullName = '';
+        const balanceNum = parseInt(this.subAdminData.balance, 10);
+        if (isNaN(balanceNum) || balanceNum < 0) {
+            this.errors.balance = 'Balance must be a valid positive integer';
+            return false;
+        }
+        if (balanceNum > this.selectedAdminBalance) {
+            this.errors.balance = 'Balance cannot exceed selected admin\'s balance';
+            return false;
+        }
+        this.errors.balance = '';
         return true;
     }
 
-    validateInitialBalance(): boolean {
-        if (!this.subAdminData.initialBalance) {
-            this.errors.initialBalance = 'Initial balance is required';
+    validateParentAdmin(): boolean {
+        if (!this.subAdminData.parent_admin_id) {
+            this.errors.parent_admin_id = 'Parent admin is required';
             return false;
         }
-        const balanceNum = parseFloat(this.subAdminData.initialBalance);
-        if (isNaN(balanceNum) || balanceNum < 0) {
-            this.errors.initialBalance = 'Initial balance must be a valid positive number';
+        this.errors.parent_admin_id = '';
+        return true;
+    }
+
+    validateStatus(): boolean {
+        if (!this.subAdminData.status) {
+            this.errors.status = 'Status is required';
             return false;
         }
-        if (balanceNum > this.availableBalance) {
-            this.errors.initialBalance = 'Initial balance cannot exceed available balance';
-            return false;
-        }
-        this.errors.initialBalance = '';
+        this.errors.status = '';
         return true;
     }
 
     validateForm(): boolean {
-        const isUsernameValid = this.validateUsername();
+        const isNameValid = this.validateName();
         const isPasswordValid = this.validatePassword();
-        const isFullNameValid = this.validateFullName();
-        const isBalanceValid = this.validateInitialBalance();
-        return isUsernameValid && isPasswordValid && isFullNameValid && isBalanceValid;
+        const isBalanceValid = this.validateBalance();
+        const isStatusValid = this.validateStatus();
+
+        // Only validate parent admin if user is superadmin
+        const isParentAdminValid = this.isAdmin ? true : this.validateParentAdmin();
+
+        return isNameValid && isPasswordValid && isBalanceValid && isParentAdminValid && isStatusValid;
     }
 
     // Form submission
     addSubAdmin(): void {
         if (this.validateForm()) {
-            console.log('Adding sub-admin:', this.subAdminData);
-            // Here you would typically make an API call to add the sub-admin
-            alert('Sub-admin added successfully!');
-            this.router.navigate(['/subadmin']);
+            const data = {
+                ...this.subAdminData,
+                balance: parseInt(this.subAdminData.balance, 10)
+            };
+
+            this.systemService.addAdmin(data).subscribe({
+                next: (response: any) => {
+                    alert('Sub-admin added successfully!');
+                    this.router.navigate(['/subadmin']);
+                },
+                error: (error: any) => {
+                    console.error('Error adding sub-admin:', error);
+                    alert('Error adding sub-admin. Please try again.');
+                }
+            });
         }
     }
 
