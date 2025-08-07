@@ -10,7 +10,7 @@ interface LoginResponse {
   balance: any;
   token: string;
   id: any;
-  status: string; // Add this line
+  status: string;
 }
 
 interface Subadmin {
@@ -90,7 +90,7 @@ export class AuthServiceService {
 
   login(name: string, password: string): Observable<LoginResponse> {
     return this.http
-      .post<any>(`${this.base}/api/login`, { name, password })
+      .post<LoginResponse>(`${this.base}/api/login`, { name, password })
       .pipe(
         tap((res) => {
           this.setSession(
@@ -132,35 +132,24 @@ export class AuthServiceService {
     role: string,
     name: string,
     id: any,
-<<<<<<< HEAD
-    balance: any
-  ) {
-    localStorage.setItem('token', token);
-    localStorage.setItem('balance', balance);
-=======
     balance: any,
-    status: string // Add this parameter
+    status: string
   ) {
     localStorage.setItem('token', token);
     localStorage.setItem('balance', balance);
-    localStorage.setItem('status', status); // Store the status
->>>>>>> c5682c4384fc70a39ff4306db68ac4f07fbd8fa1
+    localStorage.setItem('status', status);
+    localStorage.setItem('name', name);
+    localStorage.setItem('id', id);
 
     // Normalize the role to lowercase and handle all variations
     const normalizedRole = role.toLowerCase();
     if (normalizedRole === 'super admin' || normalizedRole === 'superadmin') {
       localStorage.setItem('role', 'superadmin');
-    } else if (
-      normalizedRole === 'sub admin' ||
-      normalizedRole === 'subadmin'
-    ) {
+    } else if (normalizedRole === 'sub admin' || normalizedRole === 'subadmin') {
       localStorage.setItem('role', 'subadmin');
     } else {
       localStorage.setItem('role', normalizedRole);
     }
-
-    localStorage.setItem('name', name);
-    localStorage.setItem('id', id);
   }
 
   logout(): Observable<any> {
@@ -176,6 +165,7 @@ export class AuthServiceService {
       })
     );
   }
+
   private clearSession() {
     localStorage.clear();
   }
@@ -183,12 +173,15 @@ export class AuthServiceService {
   isAuthenticated(): boolean {
     return this.hasToken();
   }
+
   getToken(): string | null {
     return localStorage.getItem('token');
   }
+
   getUserName(): string | null {
     return localStorage.getItem('name');
   }
+
   getRole(): string | null {
     const role = localStorage.getItem('role');
     if (!role) return null;
@@ -203,24 +196,25 @@ export class AuthServiceService {
     }
     return normalizedRole;
   }
+
   getBalance(): any {
     return localStorage.getItem('balance');
   }
-  // auth-service.service.ts
+
   getStatus(): string | null {
     return localStorage.getItem('status');
   }
 
   getCurrentUser(): Subadmin | null {
-    if (!this.isAuthenticated) {
+    if (!this.isAuthenticated()) {
       return null;
     }
 
     return {
-      id: 0,
+      id: Number(localStorage.getItem('id')) || 0,
       name: this.getUserName() || '',
       password: '',
-      status: '',
+      status: this.getStatus() || '',
       role: this.getRole() || '',
       balance: this.getBalance(),
       created_at: '',
