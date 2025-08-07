@@ -7,6 +7,7 @@ export interface Period {
   display_order: number;
   active: boolean;
   price?: number; // Optional, for Default Prices integration
+  plan?: number; // Optional, for Default Prices integration
 }
 
 export interface PeriodRoot {

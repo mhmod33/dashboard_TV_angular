@@ -28,41 +28,52 @@ export class LayoutComponent {
     }
 
     private getAllowedPages() {
+        // This method is now just for reference
+        // The actual page access is determined by authService.canAccess
         const role = this.authService.getRole();
-        if (role === 'superadmin') {
-            // superadmin has access to all pages
-            this.allowedPages = [
-                'dashboard',
-                'payment-history',
-                'customers',
-                'admin-users',
-                'subadmin',
-                'default-prices',
-                'time-periods',
-                'remove-customer',
-                'delete-all-customers',
-            ];
-        } else if (role === 'admin') {
-            // Admin has access to most pages except admin-users and delete-all-customers
-            this.allowedPages = [
-                'dashboard',
-                'payment-history',
-                'customers',
-                'subadmin',
-                'default-prices',
-                'time-periods',
-                'remove-customer',
-            ];
-        } else if (role === 'sub admin') {
-            // Sub Admin has limited access
-            this.allowedPages = [
-                'dashboard',
-                'payment-history',
-                'customers',
-                'default-prices',
-                'time-periods',
-                'remove-customer',
-            ];
+        console.log('Current user role:', role);
+        
+        // For debugging purposes, log if delete-all-customers is allowed
+        const canAccessDeleteAll = this.authService.canAccess('delete-all-customers');
+        console.log('Can access delete-all-customers:', canAccessDeleteAll);
+        
+        if (role) {
+            const normalizedRole = role.toLowerCase();
+            if (normalizedRole === 'superadmin' || normalizedRole === 'super admin') {
+                // superadmin has access to all pages
+                this.allowedPages = [
+                    'dashboard',
+                    'payment-history',
+                    'customers',
+                    'admin-users',
+                    'subadmin',
+                    'default-prices',
+                    'time-periods',
+                    'remove-customer',
+                    'delete-all-customers',
+                ];
+            } else if (normalizedRole === 'admin') {
+                // Admin has access to most pages except admin-users and delete-all-customers
+                this.allowedPages = [
+                    'dashboard',
+                    'payment-history',
+                    'customers',
+                    'subadmin',
+                    'default-prices',
+                    'time-periods',
+                    'remove-customer',
+                ];
+            } else if (normalizedRole === 'subadmin' || normalizedRole === 'sub admin') {
+                // Sub Admin has limited access
+                this.allowedPages = [
+                    'dashboard',
+                    'payment-history',
+                    'customers',
+                    'default-prices',
+                    'time-periods',
+                    'remove-customer',
+                ];
+            }
         }
     }
 
