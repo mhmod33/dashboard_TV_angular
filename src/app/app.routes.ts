@@ -2,7 +2,6 @@ import { Routes } from '@angular/router';
 import { DefaultPricesComponent } from './default-prices/default-prices.component';
 import { TimePeriodsComponent } from './time-periods/time-periods.component';
 import { RemoveCustomerComponent } from './remove-customer/remove-customer.component';
-import { DeleteAllCustomersComponent } from './delete-all-customers/delete-all-customers.component';
 import { AuthGuard } from './guards/auth.guard';
 import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
 import { ProfileComponent } from './profile/profile';
@@ -133,17 +132,6 @@ export const routes: Routes = [
     data: { role: ['superadmin', 'admin', 'subadmin'] },
     children: [
       { path: '', component: RemoveCustomerComponent }
-    ]
-  },
-
-  // Delete All Customers - superadmin only
-  {
-    path: 'delete-all-customers',
-    component: LayoutComponent,
-    canActivate: [AuthGuard],
-    data: { role: 'superadmin' },
-    children: [
-      { path: '', component: DeleteAllCustomersComponent }
     ]
   },
 
