@@ -10,6 +10,7 @@ interface LoginResponse {
   balance: any;
   token: string;
   id: any;
+  status: string; // Add this line
 }
 
 interface Subadmin {
@@ -92,7 +93,14 @@ export class AuthServiceService {
       .post<any>(`${this.base}/api/login`, { name, password })
       .pipe(
         tap((res) => {
-          this.setSession(res.token, res.role, res.name, res.id, res.balance);
+          this.setSession(
+            res.token,
+            res.role,
+            res.name,
+            res.id,
+            res.balance,
+            res.status
+          );
           this.authStatusSubject.next(true);
         })
       );
@@ -124,10 +132,19 @@ export class AuthServiceService {
     role: string,
     name: string,
     id: any,
+<<<<<<< HEAD
     balance: any
   ) {
     localStorage.setItem('token', token);
     localStorage.setItem('balance', balance);
+=======
+    balance: any,
+    status: string // Add this parameter
+  ) {
+    localStorage.setItem('token', token);
+    localStorage.setItem('balance', balance);
+    localStorage.setItem('status', status); // Store the status
+>>>>>>> c5682c4384fc70a39ff4306db68ac4f07fbd8fa1
 
     // Normalize the role to lowercase and handle all variations
     const normalizedRole = role.toLowerCase();
@@ -189,6 +206,11 @@ export class AuthServiceService {
   getBalance(): any {
     return localStorage.getItem('balance');
   }
+  // auth-service.service.ts
+  getStatus(): string | null {
+    return localStorage.getItem('status');
+  }
+
   getCurrentUser(): Subadmin | null {
     if (!this.isAuthenticated) {
       return null;
