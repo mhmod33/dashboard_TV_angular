@@ -36,24 +36,36 @@ export class AuthGuard implements CanActivate {
     if (!userRole) return false;
 
     // Normalize role names
-    userRole = userRole.toLowerCase();
+    let normalizedUserRole = userRole.toLowerCase();
+    
+    // Handle both formats of superadmin role
+    if (normalizedUserRole === 'super admin') {
+      normalizedUserRole = 'superadmin';
+    }
+    
     if (Array.isArray(requiredRole)) {
-      requiredRole = requiredRole.map(r => r.toLowerCase());
-      return requiredRole.includes(userRole);
+      const normalizedRequiredRoles = requiredRole.map(r => r.toLowerCase());
+      return normalizedRequiredRoles.includes(normalizedUserRole);
     }
 
-    requiredRole = requiredRole.toLowerCase();
+    let normalizedRequiredRole = requiredRole.toLowerCase();
+    
+    // Handle both formats of superadmin role in required role
+    if (normalizedRequiredRole === 'super admin') {
+      normalizedRequiredRole = 'superadmin';
+    }
 
     // Role hierarchy: superadmin > admin > sub admin
     const roleHierarchy = {
       'superadmin': 3,
       'admin': 2,
-      'sub admin': 1
+      'sub admin': 1,
+      'subadmin': 1
     };
 
-    const userRoleLevel = roleHierarchy[userRole as keyof typeof roleHierarchy] || 0;
-    const requiredRoleLevel = roleHierarchy[requiredRole as keyof typeof roleHierarchy] || 0;
+    const userRoleLevel = roleHierarchy[normalizedUserRole as keyof typeof roleHierarchy] || 0;
+    const requiredRoleLevel = roleHierarchy[normalizedRequiredRole as keyof typeof roleHierarchy] || 0;
 
     return userRoleLevel >= requiredRoleLevel;
   }
-} 
+}

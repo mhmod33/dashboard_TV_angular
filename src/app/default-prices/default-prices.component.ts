@@ -58,7 +58,12 @@ export class DefaultPricesComponent implements OnInit {
     }
 
     this.loading = true;
-    const updateData = { price: this.editPrice }; // Only send the price field
+    // Include both price and plan fields in the update data
+    // The plan field is required by the backend API
+    const updateData = { 
+      price: this.editPrice,
+      plan: period.plan || this.editPrice // Use existing plan value or default to price value
+    };
 
     this.systemService
       .updatePeriod(period.id.toString(), updateData)

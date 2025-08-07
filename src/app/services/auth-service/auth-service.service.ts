@@ -35,7 +35,7 @@ export class AuthServiceService {
 
   // Role permissions mapping based on the access matrix
   private rolePermissions: { [key: string]: string[] } = {
-    'superadmin': [
+    superadmin: [
       'dashboard',
       'payment-history',
       'customers',
@@ -55,7 +55,27 @@ export class AuthServiceService {
       'time-periods',
       'remove-customer',
     ],
-    'subadmin': [
+    subadmin: [
+      'dashboard',
+      'payment-history',
+      'customers',
+      'default-prices',
+      'time-periods',
+      'remove-customer',
+    ],
+    // Add normalized versions of the roles
+    'super admin': [
+      'dashboard',
+      'payment-history',
+      'customers',
+      'admin-users',
+      'subadmin',
+      'default-prices',
+      'time-periods',
+      'remove-customer',
+      'delete-all-customers',
+    ],
+    'sub admin': [
       'dashboard',
       'payment-history',
       'customers',
@@ -65,7 +85,7 @@ export class AuthServiceService {
     ],
   };
 
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(private http: HttpClient, private router: Router) {}
 
   login(name: string, password: string): Observable<LoginResponse> {
     return this.http
@@ -81,17 +101,47 @@ export class AuthServiceService {
   // Add method to check page access
   canAccess(page: string): boolean {
     const role = this.getRole();
-    return role ? this.rolePermissions[role]?.includes(page) || false : false;
+    if (!role) return false;
+
+    // Normalize role to lowercase for consistent comparison
+    let normalizedRole = role.toLowerCase();
+
+    // Handle both formats of superadmin role
+    if (normalizedRole === 'super admin') {
+      normalizedRole = 'superadmin';
+    }
+
+    // Check if the normalized role exists in rolePermissions
+    return this.rolePermissions[normalizedRole]?.includes(page) || false;
   }
 
   private hasToken(): boolean {
     return !!localStorage.getItem('token');
   }
 
-  private setSession(token: string, role: string, name: string, id: any, balance: any) {
+  private setSession(
+    token: string,
+    role: string,
+    name: string,
+    id: any,
+    balance: any
+  ) {
     localStorage.setItem('token', token);
     localStorage.setItem('balance', balance);
-    localStorage.setItem('role', role);
+
+    // Normalize the role to lowercase and handle all variations
+    const normalizedRole = role.toLowerCase();
+    if (normalizedRole === 'super admin' || normalizedRole === 'superadmin') {
+      localStorage.setItem('role', 'superadmin');
+    } else if (
+      normalizedRole === 'sub admin' ||
+      normalizedRole === 'subadmin'
+    ) {
+      localStorage.setItem('role', 'subadmin');
+    } else {
+      localStorage.setItem('role', normalizedRole);
+    }
+
     localStorage.setItem('name', name);
     localStorage.setItem('id', id);
   }
@@ -123,9 +173,20 @@ export class AuthServiceService {
     return localStorage.getItem('name');
   }
   getRole(): string | null {
-    return localStorage.getItem('role');
+    const role = localStorage.getItem('role');
+    if (!role) return null;
+
+    // Ensure consistent role naming
+    const normalizedRole = role.toLowerCase();
+    if (normalizedRole === 'super admin') {
+      return 'superadmin';
+    }
+    if (normalizedRole === 'sub admin') {
+      return 'subadmin';
+    }
+    return normalizedRole;
   }
-  getBalance():any{
+  getBalance(): any {
     return localStorage.getItem('balance');
   }
   getCurrentUser(): Subadmin | null {

@@ -73,29 +73,41 @@ export class RoleNavigationService {
   }
 
   private hasRequiredRole(userRole: string, requiredRole: string | string[]): boolean {
+    if (!userRole) return false;
+    
+    // Normalize user role
+    const normalizedUserRole = userRole.toLowerCase();
+    
+    // Handle array of required roles
     if (Array.isArray(requiredRole)) {
-      return requiredRole.includes(userRole);
+        const normalizedRequiredRoles = requiredRole.map(r => r.toLowerCase());
+        return normalizedRequiredRoles.some(r => 
+            r === normalizedUserRole ||
+            (r === 'superadmin' && normalizedUserRole === 'super admin') ||
+            (r === 'super admin' && normalizedUserRole === 'superadmin') ||
+            (r === 'subadmin' && normalizedUserRole === 'sub admin') ||
+            (r === 'sub admin' && normalizedUserRole === 'subadmin')
+        );
     }
-
-    // Role hierarchy: superadmin > admin > subadmin
-    const roleHierarchy = {
-      'superadmin': 3,
-      'admin': 2,
-      'subadmin': 1
-    };
-
-    const userRoleLevel = roleHierarchy[userRole as keyof typeof roleHierarchy] || 0;
-    const requiredRoleLevel = roleHierarchy[requiredRole as keyof typeof roleHierarchy] || 0;
-
-    return userRoleLevel >= requiredRoleLevel;
-  }
+    
+    // Normalize required role
+    const normalizedRequiredRole = requiredRole.toLowerCase();
+    
+    // Check for exact match or known variations
+    return normalizedUserRole === normalizedRequiredRole ||
+        (normalizedUserRole === 'superadmin' && normalizedRequiredRole === 'super admin') ||
+        (normalizedUserRole === 'super admin' && normalizedRequiredRole === 'superadmin') ||
+        (normalizedUserRole === 'subadmin' && normalizedRequiredRole === 'sub admin') ||
+        (normalizedUserRole === 'sub admin' && normalizedRequiredRole === 'subadmin');
+}
 
   getUserRole(): string | null {
     return this.authService.getRole();
   }
 
   isSuperAdmin(): boolean {
-    return this.authService.getRole() === 'superadmin';
+    const role = this.authService.getRole();
+    return role ? role.toLowerCase() === 'superadmin' || role.toLowerCase() === 'super admin' : false;
   }
 
   isAdmin(): boolean {
