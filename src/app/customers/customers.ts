@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Customer } from '../interfaces/customer';
+import { AuthServiceService } from '../services/auth-service/auth-service.service';
 
 @Component({
   selector: 'app-customers',

@@ -109,6 +109,72 @@
     box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
 }
 
+.form-input.valid {
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.form-input.checking {
+    border-color: #f59e0b;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+}
+
+/* Serial Number Container */
+.serial-number-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.serial-number-container .form-input {
+    padding-right: 40px;
+}
+
+.loading-indicator,
+.success-indicator,
+.error-indicator {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+}
+
+.loading-indicator i {
+    color: #f59e0b;
+    font-size: 16px;
+}
+
+.success-indicator i {
+    color: #10b981 !important;
+    font-size: 16px;
+}
+
+.error-indicator i {
+    color: #ef4444;
+    font-size: 16px;
+}
+
+/* Success Message */
+.success-message {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #10b981;
+    font-size: 14px;
+    margin-top: 4px;
+    font-weight: 500;
+}
+
+.success-message i {
+    color: #10b981;
+    font-size: 14px;
+}
+
 .form-input::placeholder {
     color: #9ca3af;
 }

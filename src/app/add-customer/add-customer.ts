@@ -17,6 +17,8 @@ export class AddCustomerComponent {
     admins: any;
     role: any;
     isSubmitting = false;
+    isCheckingSerialNumber = false;
+    serialNumberStatus: 'idle' | 'checking' | 'valid' | 'invalid' = 'idle';
 
     // Plan options
     planOptions = [
@@ -62,7 +64,7 @@ export class AddCustomerComponent {
 
     initForm() {
         this.customerForm = this.fb.group({
-            serial_number: ['', [Validators.required, Validators.minLength(12), Validators.maxLength(12)]],
+            serial_number: ['', [Validators.required, Validators.minLength(12), Validators.maxLength(12), Validators.pattern(/^[A-Fa-f0-9]+$/)]],
             customer_name: ['', [Validators.required, Validators.minLength(2)]],
             address: [''],
             phone: [''],
@@ -75,23 +77,44 @@ export class AddCustomerComponent {
         if (this.role !== 'subadmin') {
             this.customerForm.get('admin_id')?.setValidators([Validators.required]);
         }
+
+        // Listen to serial number changes for real-time validation
+        this.customerForm.get('serial_number')?.valueChanges.subscribe(value => {
+            if (value && value.length === 12 && this.customerForm.get('serial_number')?.valid) {
+                this.validateSerialNumber();
+            } else {
+                this.serialNumberStatus = 'idle';
+            }
+        });
     }
 
     // SN validation method
     validateSerialNumber(): void {
         const serialNumber = this.customerForm.get('serial_number')?.value;
-        if (serialNumber && serialNumber.length === 12) {
+        if (serialNumber && serialNumber.length === 12 && this.customerForm.get('serial_number')?.valid) {
+            this.isCheckingSerialNumber = true;
+            this.serialNumberStatus = 'checking';
+            
             // Call API to check if SN exists
             this.systemService.getCustomerBysn({ serial_number: serialNumber }).subscribe({
                 next: (response: any) => {
+                    this.isCheckingSerialNumber = false;
                     if (response.customer) {
+                        this.serialNumberStatus = 'invalid';
                         this.customerForm.get('serial_number')?.setErrors({ 'snExists': true });
+                    } else {
+                        this.serialNumberStatus = 'valid';
+                        this.customerForm.get('serial_number')?.setErrors(null);
                     }
                 },
                 error: (error: any) => {
+                    this.isCheckingSerialNumber = false;
+                    this.serialNumberStatus = 'idle';
                     console.error('Error checking serial number:', error);
                 }
             });
+        } else {
+            this.serialNumberStatus = 'idle';
         }
     }
 
@@ -107,6 +130,9 @@ export class AddCustomerComponent {
 
         if (field.hasError('required')) {
             return `${this.getFieldLabel(fieldName)} is required`;
+        }
+        if (field.hasError('pattern')) {
+            return `${this.getFieldLabel(fieldName)} must contain only hexadecimal characters (A-F, a-f, 0-9)`;
         }
         if (field.hasError('minlength')) {
             const requiredLength = field.errors?.['minlength']?.requiredLength;

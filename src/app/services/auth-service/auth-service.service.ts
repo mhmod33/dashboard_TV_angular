@@ -88,6 +88,7 @@ export class AuthServiceService {
             res.status
           );
           this.authStatusSubject.next(true);
+          this.router.navigate(['/home'])
         })
       );
   }

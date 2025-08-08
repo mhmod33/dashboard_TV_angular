@@ -19,6 +19,9 @@ export class SubAdminComponent {
     subadmins: any;
     allMySubadmins: any
 
+    // Loading states
+    isLoading = true;
+    isLoadingSubadmins = false;
 
     // Summary stats
     summaryStats = {
@@ -50,20 +53,62 @@ export class SubAdminComponent {
         this.getRole = this.authService.getRole() ?? ''
     }
 
-
     ngOnInit() {
-        this.systemService.getAllSubadmins().subscribe((res) => {
-            this.subadmins = res.subadmins
-            // console.log(res)
-        })
-        this.systemService.getMysubadmins().subscribe((res) => {
-            console.log(res.subadmins)
-            this.mySubadminslength = res.subadmins.length
-        })
-        this.systemService.getMysubadmins().subscribe((res) => {
-            console.log(res.subadmins)
-            this.allMySubadmins = res.subadmins
-        })
+        this.isLoading = true;
+        this.isLoadingSubadmins = true;
+        
+        this.systemService.getAllSubadmins().subscribe({
+            next: (res) => {
+                this.subadmins = res.subadmins;
+                console.log(res.subadmins);
+                this.isLoadingSubadmins = false;
+                this.isLoading = false;
+            },
+            error: (error) => {
+                console.error('Error loading subadmins:', error);
+                this.subadmins = [];
+                this.isLoadingSubadmins = false;
+                this.isLoading = false;
+            }
+        });
+        
+        this.systemService.getMysubadmins().subscribe({
+            next: (res) => {
+                console.log(res.subadmins);
+                this.mySubadminslength = res.subadmins.length;
+            },
+            error: (error) => {
+                console.error('Error loading my subadmins:', error);
+                this.mySubadminslength = 0;
+            }
+        });
+        
+        this.systemService.getMysubadmins().subscribe({
+            next: (res) => {
+                this.allMySubadmins = res.subadmins;
+            },
+            error: (error) => {
+                console.error('Error loading all my subadmins:', error);
+                this.allMySubadmins = [];
+            }
+        });
+
+        // Load total customers for superadmin only
+        if (this.getRole === 'superadmin') {
+            this.loadTotalCustomers();
+        }
+    }
+
+    loadTotalCustomers() {
+        this.systemService.allSuperCustomers().subscribe({
+            next: (res) => {
+                this.summaryStats.totalCustomers = res.customers ? res.customers.length : 0;
+            },
+            error: (error) => {
+                console.error('Error loading total customers:', error);
+                this.summaryStats.totalCustomers = 0;
+            }
+        });
     }
     // Navigation methods
     addNewSubAdmin() {
@@ -81,37 +126,38 @@ export class SubAdminComponent {
     // }
 
     addBalance(adminId: number) {
-        console.log('Add balance for admin:', adminId);
+        // console.log('Add balance for admin:', adminId);
         this.router.navigate(['/add-balance', adminId]);
     }
     setPrices(username: string) {
-        console.log('Set prices for:', username);
+        // console.log('Set prices for:', username);
         this.router.navigate(['/set-prices', username]);
     }
 
     viewCustomers(id: string) {
-        console.log('View customers for:', id);
+        // console.log('View customers for:', id);
         this.router.navigate(['/subadmin-customers', id]);
     }
 
     viewStats(username: string) {
-        console.log('View stats for:', username);
+        // console.log('View stats for:', username);
     }
 
     // View details methods
     viewSubAdminDetails(username: string) {
-        console.log('View details for:', username);
+        // console.log('View details for:', username);
     }
 
     viewBalanceDetails() {
-        console.log('View balance details');
+        // console.log('View balance details');
     }
 
     viewCustomerDetails() {
-        console.log('View customer details');
+        // Navigate to customers page
+        this.router.navigate(['/customers']);
     }
 
     viewCreditTransferDetails() {
-        console.log('View credit transfer details');
+        // console.log('View credit transfer details');
     }
 } 
