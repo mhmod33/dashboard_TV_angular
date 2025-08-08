@@ -64,7 +64,7 @@ export class EditAdminComponent implements OnInit {
             this.systemService.updateAdmin(this.adminId, data).subscribe({
                 next: (res) => {
                     alert('Admin updated successfully!');
-                    this.router.navigate(['/admin-details', this.adminId]);
+                    this.router.navigate(['/admin-users']);
                 },
                 error: (err) => {
                     alert('Error updating admin.');

@@ -151,10 +151,6 @@ export class SystemService {
     return this.http.get<any>(this.admin);
   }
 
-  getCustomersbyAdminId(id: string): Observable<CustomerRoot> {
-    return this.http.get<CustomerRoot>(`${this.getCustomersByAdminId}/${id}`);
-  }
-
   // Bulk action methods
   bulkUpdateStatus(customerIds: string[], status: string): Observable<any> {
     return this.http.put<any>(`${this.allCustomers}/bulk/status`, {
@@ -170,6 +166,19 @@ export class SystemService {
     return this.http.put<any>(`${this.allCustomers}/bulk/payment-status`, {
       customer_ids: customerIds,
       payment_status: paymentStatus,
+    });
+  }
+
+  bulkUpdateOwner(customerIds: string[], adminId: string): Observable<any> {
+    return this.http.put<any>(`${this.allCustomers}/bulk/changeadmin`, {
+      customer_ids: customerIds,
+      admin_id: adminId,
+    });
+  }
+
+  bulkDeleteSelected(customerIds: string[]): Observable<any> {
+    return this.http.put<any>(`${this.allCustomers}/bulk/delete`, {
+      customer_ids: customerIds,
     });
   }
 

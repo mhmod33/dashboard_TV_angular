@@ -1,8 +1,16 @@
 <div class="customers-container">
+    <!-- Loading Overlay -->
+    <div *ngIf="isLoading" class="loading-overlay">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Loading customers...</p>
+        </div>
+    </div>
+
     <!-- Bootstrap Modal for Confirm/Notification -->
     <div class="modal fade" tabindex="-1" [ngClass]="{show: showModal}" [style.display]="showModal ? 'block' : 'none'"
         role="dialog">
-        <div class="modal-dialog modal-dialog-centered  $modal-fade-transform: scale(.8)" role="document">
+        <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">{{ modalTitle }}</h5>
@@ -12,9 +20,20 @@
                 </div>
                 <div class="modal-body">
                     <p>{{ modalMessage }}</p>
+                    
+                    <!-- Change Owner Form -->
+                    <div *ngIf="bulkAction === 'change-owner' && modalType === 'confirm'" class="change-owner-form">
+                        <label for="newAdmin" class="form-label">Select New Admin:</label>
+                        <select id="newAdmin" [(ngModel)]="selectedAdminId" class="form-select">
+                            <option value="">Select an admin</option>
+                            <option [value]="admin.id" *ngFor="let admin of admins">{{admin.name}}</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="modal-footer" *ngIf="modalType === 'confirm'">
-                    <button type="button" class="btn btn-danger" (click)="confirmModal()">Yes</button>
+                    <button type="button" class="btn btn-danger" (click)="confirmModal()">
+                        {{ bulkAction === 'change-owner' ? 'Change Owner' : (bulkAction === 'delete-selected' ? 'Delete' : 'Yes') }}
+                    </button>
                     <button type="button" class="btn btn-secondary" (click)="closeModal()">No</button>
                 </div>
                 <div class="modal-footer" *ngIf="modalType === 'info'">
@@ -23,6 +42,7 @@
             </div>
         </div>
     </div>
+    
     <!-- Header Section -->
     <div class="page-header">
         <div class="header-left">
@@ -59,20 +79,13 @@
                 <option value="active">Active</option>
                 <option value="expired">Expired</option>
             </select>
-            <!-- <select [(ngModel)]="customerFilter" class="filter-select">
-                <option value="All My Customers">All My Customers</option>
-                <option value="My Customers">My Customers</option>
-                <option value="Shared Customers">Shared Customers</option>
-            </select> -->
-            <!-- <button class="search-btn" (click)="performSearch()">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    <path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                </svg>
-                Go
-            </button> -->
+            
+            <!-- Admin filter for superadmin only -->
+            <select *ngIf="currentUserRole === 'superadmin'" [(ngModel)]="selectedAdminId" (change)="filterCustomersByAdmin()" class="filter-select">
+                <option value="">All Admins</option>
+                <option [value]="admin.id" *ngFor="let admin of admins">{{admin.name}}</option>
+            </select>
+            
             <select [(ngModel)]="rowsPerPage" class="rows-select">
                 <option value="10">10 rows</option>
                 <option value="25">25 rows</option>
@@ -156,6 +169,8 @@
                 <option value="disable">Disable Selected</option>
                 <option value="mark-paid">Mark as Paid</option>
                 <option value="mark-unpaid">Mark as Unpaid</option>
+                <option value="change-owner">Change Owner</option>
+                <option value="delete-selected">Delete Selected</option>
             </select>
             <button class="apply-btn" (click)="applyBulkAction()"
                 [disabled]="!bulkAction || selectedCustomers.length === 0">
@@ -194,8 +209,9 @@
                     <th>Name</th>
                     <th>Device SN</th>
                     <th>Owner</th>
-                    <th>Dates</th>
-                    <th>Registered</th>
+                    <th>Status</th>
+                    <th>Payment Status</th>
+                    <th>Created Date</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -206,21 +222,20 @@
                             (change)="toggleCustomerSelection(customer.id)">
                     </td>
                     <td>{{ i + 1 }}</td>
-                    <td class="customer-name">{{ customer.name }}</td>
+                    <td class="customer-name">{{ customer.name || customer.customer_name }}</td>
                     <td class="device-sn">{{ customer.serial_number }}</td>
                     <td>{{ customer.owner }}</td>
-                    <td class="date">
-                        <div class="date-range">
-                            <span class="start-date">{{ customer.created_at |date:'medium'}}</span>
-                            <!-- <span class="date-separator">-</span>
-                            <span class="end-date">{{ customer.endDate }}</span> -->
-                        </div>
-                    </td>
-                    <td class="remaining">
-                        <span class="remaining-text" [class.expired]="customer.status === 'expired'">
-                            {{ customer.created_at |date:'medium'}}
+                    <td class="status">
+                        <span class="status-badge" [ngClass]="customer.status">
+                            {{ customer.status }}
                         </span>
                     </td>
+                    <td class="payment-status">
+                        <span class="payment-badge" [ngClass]="customer.payment_status">
+                            {{ customer.payment_status }}
+                        </span>
+                    </td>
+                    <td class="created-date">{{ customer.created_at | date:'medium' }}</td>
                     <td class="actions">
                         <button class="action-btn edit" (click)="editCustomer(customer.id)" title="Edit">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -245,8 +260,8 @@
                         </button>
                     </td>
                 </tr>
-                <tr *ngIf="filteredCustomers.length === 0" class="empty-row">
-                    <td colspan="8" class="empty-message">
+                <tr *ngIf="!isLoading && filteredCustomers.length === 0" class="empty-row">
+                    <td colspan="9" class="empty-message">
                         <div class="empty-content">
                             <svg width="64" height="64" viewBox="0 0 24 24" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">

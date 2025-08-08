@@ -30,14 +30,19 @@ export class SubadminCustomersComponent implements OnInit {
     }
 
     loadCustomers() {
-        this.systemService.getCustomersbyAdminId(this.adminId).subscribe({
-
+        // Get admin details which includes customers
+        this.systemService.getAdminById(this.adminId).subscribe({
             next: (res: any) => {
-                console.log('reponse', res)
-                this.customers = res.customers || [];
+                console.log('response', res);
+                if (res.admin && res.admin.customers) {
+                    this.customers = res.admin.customers;
+                } else {
+                    this.customers = [];
+                }
             },
             error: (error: any) => {
                 console.error('Error loading customers:', error);
+                this.customers = [];
             }
         });
     }

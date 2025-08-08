@@ -1,4 +1,12 @@
 <div class="subadmin-container">
+    <!-- Loading Overlay -->
+    <div *ngIf="isLoading" class="loading-overlay">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Loading subadmins...</p>
+        </div>
+    </div>
+
     <!-- Header Section -->
     <div class="page-header">
         <div class="header-left">
@@ -28,7 +36,6 @@
             </svg>
             Add New SubAdmin
         </button>
-        
     </div>
 
     <!-- Summary Cards -->
@@ -53,15 +60,13 @@
             </div>
             }@else {
             <div class="card-content">
-                <div class="card-value">{{ subadmins.length }}</div>
+                <div class="card-value">{{ subadmins?.length || 0 }}</div>
                 <div class="card-label">Total SubAdmins</div>
             </div>
             }
         </div>
 
-
-
-        <div class="summary-card">
+        <div class="summary-card" *ngIf="getRole === 'superadmin'">
             <div class="card-icon">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2"
@@ -84,8 +89,6 @@
                 </button>
             </div>
         </div>
-
-
     </div>
 
     <!-- Sub-Admin Performance Table -->
@@ -104,7 +107,11 @@
             </h2>
         </div>
         <div class="table-container">
-            <table class="performance-table">
+            <div *ngIf="isLoadingSubadmins" class="loading-spinner">
+                <div class="spinner"></div>
+                <p>Loading subadmins...</p>
+            </div>
+            <table class="performance-table" *ngIf="!isLoadingSubadmins">
                 <thead>
                     <tr>
                         <th>Username</th>
@@ -119,8 +126,8 @@
                     <tr *ngFor="let subadmin of subadmins" class="performance-row">
                         <td class="username">{{ subadmin.name }}</td>
                         <td class="balance">{{ subadmin.balance }}</td>
-                        <td class="admin">{{ subadmin.admin.name }}</td>
-                        <td class="customers">{{ subadmin.customers.length }}</td>
+                        <td class="admin">{{ subadmin.admin?.name }}</td>
+                        <td class="customers">{{ subadmin.customers?.length || 0 }}</td>
                         <td class="created">{{ subadmin.date |date:'medium' }}</td>
                         <td class="actions">
                             <button class="action-btn add-balance" (click)="addBalance(subadmin.id)">
@@ -144,7 +151,6 @@
                                 </svg>
                                 Customers
                             </button>
-
                         </td>
                     </tr>
                 </tbody>

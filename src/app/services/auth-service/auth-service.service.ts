@@ -45,24 +45,24 @@ export class AuthServiceService {
       'default-prices',
       'time-periods',
       'remove-customer',
-      'delete-all-customers',
+      // 'delete-all-customers',
     ],
     admin: [
       'dashboard',
-      'payment-history',
+      // 'payment-history',
       'customers',
       'subadmin',
-      'default-prices',
-      'time-periods',
-      'remove-customer',
+      // 'default-prices',
+      // 'time-periods',
+      // 'remove-customer',
     ],
     subadmin: [
       'dashboard',
-      'payment-history',
+      // 'payment-history',
       'customers',
-      'default-prices',
-      'time-periods',
-      'remove-customer',
+      // 'default-prices',
+      // 'time-periods',
+      // 'remove-customer',
     ],
     // Add normalized versions of the roles
     'super admin': [
@@ -102,6 +102,7 @@ export class AuthServiceService {
             res.status
           );
           this.authStatusSubject.next(true);
+          this.router.navigate(['/home'])
         })
       );
   }

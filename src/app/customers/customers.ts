@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Customer } from '../interfaces/customer';
+import { AuthServiceService } from '../services/auth-service/auth-service.service';
 
 @Component({
     selector: 'app-customers',
@@ -18,11 +19,17 @@ export class CustomersComponent {
     modalMessage = '';
     modalType: 'confirm' | 'info' = 'info';
     modalAction: (() => void) | null = null;
+    
+    // Loading states
+    isLoading = true;
+    isLoadingAdmins = false;
+    
     // Search and filter properties
     searchTerm = '';
     nameFilter = '';
     customerFilter = 'All My Customers';
     rowsPerPage = 25;
+    selectedAdminId = '';
 
     // View filter
     currentView = 'all'; // 'all', 'active', 'expired', 'paid'
@@ -69,18 +76,102 @@ export class CustomersComponent {
     //     }
     // ];
     customers: Customer[] = [];
+    admins: any[] = [];
+    currentUserRole: string = '';
+    currentUserId: string = '';
+
     constructor(
         private router: Router,
-        private systemService: SystemService
+        private systemService: SystemService,
+        private authService: AuthServiceService
     ) { }
 
     ngOnInit() {
-        this.systemService.allSuperCustomers().subscribe((res) => {
-            console.log('res', res)
-            this.customers = res.customers
-        })
-
+        this.currentUserRole = this.authService.getRole() || '';
+        this.currentUserId = this.authService.getCurrentUser()?.id?.toString() || '';
+        
+        this.loadCustomers();
+        
+        // Load admins if superadmin
+        if (this.currentUserRole != 'subadmin') {
+            this.loadAdmins();
+        }
     }
+
+    loadCustomers() {
+        this.isLoading = true;
+        if (this.currentUserRole === 'superadmin') {
+            // Superadmin sees all customers
+            this.systemService.allSuperCustomers().subscribe({
+                next: (res) => {
+                    console.log('res', res);
+                    this.customers = res.customers || [];
+                    this.isLoading = false;
+                },
+                error: (error) => {
+                    console.error('Error loading customers:', error);
+                    this.customers = [];
+                    this.isLoading = false;
+                }
+            });
+        } else {
+            // Admin and subadmin see their own customers
+            this.systemService.getMyCustomers().subscribe({
+                next: (res) => {
+                    console.log('My customers:', res);
+                    this.customers = res.customers || [];
+                    this.isLoading = false;
+                },
+                error: (error) => {
+                    console.error('Error loading customers:', error);
+                    this.customers = [];
+                    this.isLoading = false;
+                }
+            });
+        }
+    }
+
+    loadAdmins() {
+        this.isLoadingAdmins = true;
+        this.systemService.getAllAdmins().subscribe({
+            next: (res) => {
+                console.log(res);
+                this.admins = res.admins || [];
+                this.isLoadingAdmins = false;
+            },
+            error: (error) => {
+                console.error('Error loading admins:', error);
+                this.admins = [];
+                this.isLoadingAdmins = false;
+            }
+        });
+    }
+
+    // Filter customers by selected admin (for superadmin only)
+    filterCustomersByAdmin() {
+        if (this.currentUserRole === 'superadmin' && this.selectedAdminId) {
+            // Get admin details which includes customers
+            this.systemService.getAdminById(this.selectedAdminId).subscribe({
+                next: (res) => {
+                    if (res.admin && res.admin.customers) {
+                        this.customers = res.admin.customers;
+                    } else {
+                        this.customers = [];
+                    }
+                },
+                error: (error) => {
+                    console.error('Error loading customers by admin:', error);
+                    this.customers = [];
+                }
+            });
+        } else if (this.currentUserRole === 'superadmin' && !this.selectedAdminId) {
+            // If no admin selected, show all customers
+            this.loadCustomers();
+        } else {
+            this.loadCustomers();
+        }
+    }
+
     // Filtered customers based on current view
     get filteredCustomers() {
         let filtered = this.customers;
@@ -140,6 +231,12 @@ export class CustomersComponent {
 
     applyBulkAction() {
         if (!this.bulkAction || this.selectedCustomers.length === 0) return;
+        
+        if (this.bulkAction === 'delete-selected') {
+            this.deleteSelectedCustomers();
+            return;
+        }
+        
         this.showModal = true;
         this.modalType = 'confirm';
         this.modalTitle = 'Confirm Bulk Action';
@@ -152,6 +249,7 @@ export class CustomersComponent {
                             this.showInfoModal('Customers enabled successfully');
                             this.selectedCustomers = [];
                             this.selectAll = false;
+                            this.loadCustomers();
                         },
                         error: (error) => {
                             this.showInfoModal('Error enabling customers. Please try again.');
@@ -164,6 +262,7 @@ export class CustomersComponent {
                             this.showInfoModal('Customers disabled successfully');
                             this.selectedCustomers = [];
                             this.selectAll = false;
+                            this.loadCustomers();
                         },
                         error: (error) => {
                             this.showInfoModal('Error disabling customers. Please try again.');
@@ -176,6 +275,7 @@ export class CustomersComponent {
                             this.showInfoModal('Customers marked as paid successfully');
                             this.selectedCustomers = [];
                             this.selectAll = false;
+                            this.loadCustomers();
                         },
                         error: (error) => {
                             this.showInfoModal('Error marking customers as paid. Please try again.');
@@ -188,13 +288,67 @@ export class CustomersComponent {
                             this.showInfoModal('Customers marked as unpaid successfully');
                             this.selectedCustomers = [];
                             this.selectAll = false;
+                            this.loadCustomers();
                         },
                         error: (error) => {
                             this.showInfoModal('Error marking customers as unpaid. Please try again.');
                         }
                     });
                     break;
+                case 'change-owner':
+                    this.showChangeOwnerModal();
+                    break;
             }
+        };
+    }
+
+    showChangeOwnerModal() {
+        this.showModal = true;
+        this.modalType = 'confirm';
+        this.modalTitle = 'Change Owner';
+        this.modalMessage = 'Please select a new admin to assign the selected customers to.';
+        // This will be handled in the template with a custom modal
+    }
+
+    changeOwner(newAdminId: string) {
+        if (!newAdminId) {
+            this.showInfoModal('Please select an admin');
+            return;
+        }
+
+        this.systemService.bulkUpdateOwner(this.selectedCustomers, newAdminId).subscribe({
+            next: (res) => {
+                this.showInfoModal('Owner changed successfully');
+                this.selectedCustomers = [];
+                this.selectAll = false;
+                this.loadCustomers();
+            },
+            error: (error) => {
+                this.showInfoModal('Error changing owner. Please try again.');
+                console.error('Error changing owner:', error);
+            }
+        });
+    }
+
+    deleteSelectedCustomers() {
+        this.showModal = true;
+        this.modalType = 'confirm';
+        this.modalTitle = 'Delete Selected Customers';
+        this.modalMessage = `Are you sure you want to delete ${this.selectedCustomers.length} selected customers? This action cannot be undone.`;
+        this.modalAction = () => {
+            // Use the new bulk delete method
+            this.systemService.bulkDeleteSelected(this.selectedCustomers).subscribe({
+                next: (res) => {
+                    this.showInfoModal('Selected customers deleted successfully');
+                    this.selectedCustomers = [];
+                    this.selectAll = false;
+                    this.loadCustomers();
+                },
+                error: (error) => {
+                    this.showInfoModal('Error deleting customers. Please try again.');
+                    console.error('Error deleting customers:', error);
+                }
+            });
         };
     }
 
@@ -257,6 +411,7 @@ export class CustomersComponent {
             this.systemService.deleteCustomer(customerId).subscribe({
                 next: () => {
                     this.showInfoModal('Customer deleted successfully!');
+                    this.loadCustomers();
                 },
                 error: () => {
                     this.showInfoModal('Error deleting customer. Please try again.');
@@ -280,8 +435,32 @@ export class CustomersComponent {
     confirmModal() {
         if (this.modalAction) {
             this.showModal = false;
-            this.modalAction();
+            if (this.bulkAction === 'change-owner') {
+                this.changeOwner(this.selectedAdminId);
+            } else if (this.bulkAction === 'delete-selected') {
+                this.modalAction();
+            } else {
+                this.modalAction();
+            }
             this.modalAction = null;
+        } else if (this.bulkAction === 'change-owner') {
+            this.changeOwner(this.selectedAdminId);
+            this.showModal = false;
+        } else if (this.bulkAction === 'delete-selected') {
+            // Handle delete-selected when modalAction is null
+            this.systemService.bulkDeleteSelected(this.selectedCustomers).subscribe({
+                next: (res) => {
+                    this.showInfoModal('Selected customers deleted successfully');
+                    this.selectedCustomers = [];
+                    this.selectAll = false;
+                    this.loadCustomers();
+                },
+                error: (error) => {
+                    this.showInfoModal('Error deleting customers. Please try again.');
+                    console.error('Error deleting customers:', error);
+                }
+            });
+            this.showModal = false;
         }
     }
 
