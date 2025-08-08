@@ -1,70 +1,69 @@
 <div class="customers-container">
-    <!-- Bootstrap Modal for Confirm/Notification -->
-    <div class="modal fade" tabindex="-1" [ngClass]="{show: showModal}" [style.display]="showModal ? 'block' : 'none'"
-        role="dialog">
-        <div class="modal-dialog modal-dialog-centered  $modal-fade-transform: scale(.8)" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">{{ modalTitle }}</h5>
-                    <button type="button" class="close" (click)="closeModal()" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p>{{ modalMessage }}</p>
-                </div>
-                <div class="modal-footer" *ngIf="modalType === 'confirm'">
-                    <button type="button" class="btn btn-danger" (click)="confirmModal()">Yes</button>
-                    <button type="button" class="btn btn-secondary" (click)="closeModal()">No</button>
-                </div>
-                <div class="modal-footer" *ngIf="modalType === 'info'">
-                    <button type="button" class="btn btn-primary" (click)="closeModal()">OK</button>
-                </div>
-            </div>
+  <!-- Bootstrap Modal for Confirm/Notification -->
+  <div class="modal fade" tabindex="-1" [ngClass]="{show: showModal}" [style.display]="showModal ? 'block' : 'none'" role="dialog">
+    <div class="modal-dialog modal-dialog-centered  $modal-fade-transform: scale(.8)" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            {{ modalTitle }}
+          </h5>
+          <button type="button" class="close" (click)="closeModal()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
         </div>
+        <div class="modal-body">
+          <p>
+            {{ modalMessage }}
+          </p>
+        </div>
+        <div class="modal-footer" *ngIf="modalType === 'confirm'">
+          <button type="button" class="btn btn-danger" (click)="confirmModal()">Yes</button>
+          <button type="button" class="btn btn-secondary" (click)="closeModal()">No</button>
+        </div>
+        <div class="modal-footer" *ngIf="modalType === 'info'">
+          <button type="button" class="btn btn-primary" (click)="closeModal()">OK</button>
+        </div>
+      </div>
     </div>
-    <!-- Header Section -->
-    <div class="page-header">
-        <div class="header-left">
-            <h1>EgyBest Customers</h1>
-        </div>
-        <div class="header-right">
-            <div class="breadcrumb">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round" />
-                    <polyline points="9,22 9,12 15,12 15,22" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-                <span>Home > Customers</span>
-            </div>
-            <button class="add-customer-btn" (click)="addCustomer()">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <line x1="12" y1="5" x2="12" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    <line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                </svg>
-                Add EgyBest Customer
-            </button>
-        </div>
+  </div>
+  <!-- Header Section -->
+  <div class="page-header">
+    <div class="header-left">
+      <h1>EgyBest Customers</h1>
     </div>
+    <div class="header-right">
+      <div class="breadcrumb">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          <polyline points="9,22 9,12 15,12 15,22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <span>Home > Customers</span>
+      </div>
+      <button class="add-customer-btn" (click)="addCustomer()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line x1="12" y1="5" x2="12" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          <line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        Add EgyBest Customer
+      </button>
+    </div>
+  </div>
 
-    <!-- Search and Filter Bar -->
-    <div class="search-filter-bar">
-        <div class="search-inputs">
-            <input type="text" placeholder="Search by name or SN" [(ngModel)]="searchTerm" class="search-input">
-            <select [(ngModel)]="nameFilter" class="filter-select">
-                <option value="">Name</option>
-                <option value="active">Active</option>
-                <option value="expired">Expired</option>
-            </select>
-            <!-- <select [(ngModel)]="customerFilter" class="filter-select">
+  <!-- Search and Filter Bar -->
+  <div class="search-filter-bar">
+    <div class="search-inputs">
+      <input type="text" placeholder="Search by name or SN" [(ngModel)]="searchTerm" class="search-input">
+      <select [(ngModel)]="nameFilter" class="filter-select">
+        <option value="">Name</option>
+        <option value="active">Active</option>
+        <option value="expired">Expired</option>
+      </select>
+      <!-- <select [(ngModel)]="customerFilter" class="filter-select">
                 <option value="All My Customers">All My Customers</option>
                 <option value="My Customers">My Customers</option>
                 <option value="Shared Customers">Shared Customers</option>
             </select> -->
-            <!-- <button class="search-btn" (click)="performSearch()">
+      <!-- <button class="search-btn" (click)="performSearch()">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                         stroke-linejoin="round" />
@@ -73,198 +72,180 @@
                 </svg>
                 Go
             </button> -->
-            <select [(ngModel)]="rowsPerPage" class="rows-select">
-                <option value="10">10 rows</option>
-                <option value="25">25 rows</option>
-                <option value="50">50 rows</option>
-                <option value="100">100 rows</option>
-            </select>
-        </div>
+      <select [(ngModel)]="rowsPerPage" class="rows-select">
+        <option value="10">10 rows</option>
+        <option value="25">25 rows</option>
+        <option value="50">50 rows</option>
+        <option value="100">100 rows</option>
+      </select>
     </div>
+  </div>
 
-    <!-- Export Button -->
-    <div class="export-section">
-        <button class="export-btn" (click)="exportToExcel()">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round" />
-                <polyline points="7,10 12,15 17,10" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" />
-                <line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" />
-            </svg>
-            Export to Excel▾
-        </button>
+  <!-- Export Button -->
+  <div class="export-section">
+    <button class="export-btn" (click)="exportToExcel()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        <polyline points="7,10 12,15 17,10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        <line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      Export to Excel▾
+    </button>
+  </div>
+
+  <!-- Customer View Filters -->
+  <div class="view-filters">
+    <button class="view-btn" [class.active]="currentView === 'all'" (click)="setView('all')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line x1="8" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        <line x1="8" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        <line x1="8" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        <line x1="3" y1="6" x2="3.01" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        <line x1="3" y1="12" x2="3.01" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        <line x1="3" y1="18" x2="3.01" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      Show All Customers
+    </button>
+    <button class="view-btn" [class.active]="currentView === 'active'" (click)="setView('active')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        <polyline points="22,4 12,14.01 9,11.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      Show Active Customers
+    </button>
+    <button class="view-btn" [class.active]="currentView === 'expired'" (click)="setView('expired')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        <line x1="12" y1="8" x2="12" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        <line x1="12" y1="16" x2="12.01" y2="16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      Show Expired Customers
+    </button>
+    <button class="view-btn" [class.active]="currentView === 'paid'" (click)="setView('paid')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="6" width="20" height="12" rx="2" ry="2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        <line x1="2" y1="10" x2="22" y2="10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      Show Paid
+    </button>
+  </div>
+
+  <!-- Bulk Actions Section -->
+  <div class="bulk-actions">
+    <div class="bulk-controls">
+      <select [(ngModel)]="bulkAction" class="bulk-select">
+        <option value="">Bulk Actions</option>
+        <option value="enable">Enable Selected</option>
+        <option value="disable">Disable Selected</option>
+        <option value="mark-paid">Mark as Paid</option>
+        <option value="mark-unpaid">Mark as Unpaid</option>
+      </select>
+      <button class="apply-btn" (click)="applyBulkAction()" [disabled]="!bulkAction || selectedCustomers.length === 0">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          <polyline points="22,4 12,14.01 9,11.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        ✔ Apply
+      </button>
     </div>
-
-    <!-- Customer View Filters -->
-    <div class="view-filters">
-        <button class="view-btn" [class.active]="currentView === 'all'" (click)="setView('all')">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <line x1="8" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" />
-                <line x1="8" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" />
-                <line x1="8" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" />
-                <line x1="3" y1="6" x2="3.01" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" />
-                <line x1="3" y1="12" x2="3.01" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" />
-                <line x1="3" y1="18" x2="3.01" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" />
-            </svg>
-            Show All Customers
-        </button>
-        <button class="view-btn" [class.active]="currentView === 'active'" (click)="setView('active')">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round" />
-                <polyline points="22,4 12,14.01 9,11.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" />
-            </svg>
-            Show Active Customers
-        </button>
-        <button class="view-btn" [class.active]="currentView === 'expired'" (click)="setView('expired')">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" />
-                <line x1="12" y1="8" x2="12" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" />
-                <line x1="12" y1="16" x2="12.01" y2="16" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" />
-            </svg>
-            Show Expired Customers
-        </button>
-        <button class="view-btn" [class.active]="currentView === 'paid'" (click)="setView('paid')">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="2" y="6" width="20" height="12" rx="2" ry="2" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round" />
-                <line x1="2" y1="10" x2="22" y2="10" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" />
-            </svg>
-            Show Paid
-        </button>
+    <div class="select-controls">
+      <label class="checkbox-label">
+        <input type="checkbox" [checked]="selectAll" (change)="toggleSelectAll()">
+        <span class="checkmark"></span>
+        ✔ Select All
+      </label>
+      <label class="checkbox-label">
+        <input type="checkbox" [checked]="selectedCustomers.length === 0" (change)="selectedCustomers = []">
+        <span class="checkmark"></span>
+        Deselect All
+      </label>
     </div>
+  </div>
 
-    <!-- Bulk Actions Section -->
-    <div class="bulk-actions">
-        <div class="bulk-controls">
-            <select [(ngModel)]="bulkAction" class="bulk-select">
-                <option value="">Bulk Actions</option>
-                <option value="enable">Enable Selected</option>
-                <option value="disable">Disable Selected</option>
-                <option value="mark-paid">Mark as Paid</option>
-                <option value="mark-unpaid">Mark as Unpaid</option>
-            </select>
-            <button class="apply-btn" (click)="applyBulkAction()"
-                [disabled]="!bulkAction || selectedCustomers.length === 0">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round" />
-                    <polyline points="22,4 12,14.01 9,11.01" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-                ✔ Apply
-            </button>
-        </div>
-        <div class="select-controls">
-            <label class="checkbox-label">
-                <input type="checkbox" [checked]="selectAll" (change)="toggleSelectAll()">
-                <span class="checkmark"></span>
-                ✔ Select All
-            </label>
-            <label class="checkbox-label">
-                <input type="checkbox" [checked]="selectedCustomers.length === 0" (change)="selectedCustomers = []">
-                <span class="checkmark"></span>
-                Deselect All
-            </label>
-        </div>
-    </div>
-
-    <!-- Customers Table -->
-    <div class="table-container">
-        <table class="customers-table">
-            <thead>
-                <tr>
-                    <th class="checkbox-header">
-                        <input type="checkbox" [checked]="selectAll" (change)="toggleSelectAll()">
-                    </th>
-                    <th>#</th>
-                    <th>Name</th>
-                    <th>Device SN</th>
-                    <th>Owner</th>
-                    <th>Dates</th>
-                    <th>Registered</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let customer of filteredCustomers; let i = index" class="customer-row">
-                    <td class="checkbox-cell">
-                        <input type="checkbox" [checked]="isCustomerSelected(customer.id)"
-                            (change)="toggleCustomerSelection(customer.id)">
-                    </td>
-                    <td>{{ i + 1 }}</td>
-                    <td class="customer-name">{{ customer.name }}</td>
-                    <td class="device-sn">{{ customer.serial_number }}</td>
-                    <td>{{ customer.owner }}</td>
-                    <td class="date">
-                        <div class="date-range">
-                            <span class="start-date">{{ customer.created_at |date:'medium'}}</span>
-                            <!-- <span class="date-separator">-</span>
+  <!-- Customers Table -->
+  <div class="table-container">
+    <table class="customers-table">
+      <thead>
+        <tr>
+          <th class="checkbox-header">
+            <input type="checkbox" [checked]="selectAll" (change)="toggleSelectAll()">
+          </th>
+          <th>#</th>
+          <th>Name</th>
+          <th>Device SN</th>
+          <th>Owner</th>
+          <th>Dates</th>
+          <th>Registered</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let customer of filteredCustomers; let i = index" class="customer-row">
+          <td class="checkbox-cell">
+            <input type="checkbox" [checked]="isCustomerSelected(customer.id)" (change)="toggleCustomerSelection(customer.id)">
+          </td>
+          <td>
+            {{ i + 1 }}
+          </td>
+          <td class="customer-name">
+            {{ customer.name }}
+          </td>
+          <td class="device-sn">
+            {{ customer.serial_number }}
+          </td>
+          <td>
+            {{ customer.owner }}
+          </td>
+          <td class="date">
+            <div class="date-range">
+              <span class="start-date">
+                {{ customer.created_at |date:'medium'}}</span>
+              <!-- <span class="date-separator">-</span>
                             <span class="end-date">{{ customer.endDate }}</span> -->
-                        </div>
-                    </td>
-                    <td class="remaining">
-                        <span class="remaining-text" [class.expired]="customer.status === 'expired'">
-                            {{ customer.created_at |date:'medium'}}
-                        </span>
-                    </td>
-                    <td class="actions">
-                        <button class="action-btn edit" (click)="editCustomer(customer.id)" title="Edit">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
-                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" />
-                                <path d="m18.5 2.5 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round" />
-                            </svg>
-                        </button>
-                        <button class="action-btn delete" (click)="deleteCustomer(customer.id)" title="Delete">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <polyline points="3,6 5,6 21,6" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round" />
-                                <path
-                                    d="M19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"
-                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" />
-                            </svg>
-                        </button>
-                    </td>
-                </tr>
-                <tr *ngIf="filteredCustomers.length === 0" class="empty-row">
-                    <td colspan="8" class="empty-message">
-                        <div class="empty-content">
-                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor"
-                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round" />
-                                <path d="M23 21v-2a4 4 0 0 0-3-3.87" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round" />
-                                <path d="M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round" />
-                            </svg>
-                            <h3>No customers found</h3>
-                            <p>No customers match your current filters or the database is empty.</p>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+            </div>
+          </td>
+          <td class="remaining">
+            <span class="remaining-text" [class.expired]="customer.status === 'expired'">
+              {{ customer.created_at |date:'medium'}}
+            </span>
+          </td>
+          <td class="actions">
+            <!-- Edit button with explicit ID check -->
+            <button class="action-btn edit" (click)="editCustomer(customer.id)" title="Edit" [attr.data-customer-id]="customer.id">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="m18.5 2.5 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+            <!-- <button class="action-btn edit" (click)="editCustomer(customer.id)" title="Edit">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="m18.5 2.5 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button> -->
+            <button class="action-btn delete" (click)="deleteCustomer(customer.id)" title="Delete">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <polyline points="3,6 5,6 21,6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="filteredCustomers.length === 0" class="empty-row">
+          <td colspan="8" class="empty-message">
+            <div class="empty-content">
+              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <h3>No customers found</h3>
+              <p>No customers match your current filters or the database is empty.</p>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

@@ -44,25 +44,16 @@ export class AuthServiceService {
       'subadmin',
       'default-prices',
       'time-periods',
-      'remove-customer',
-      'delete-all-customers',
+      'remove-customer'
     ],
     admin: [
       'dashboard',
-      'payment-history',
       'customers',
       'subadmin',
-      'default-prices',
-      'time-periods',
-      'remove-customer',
     ],
     subadmin: [
       'dashboard',
-      'payment-history',
       'customers',
-      'default-prices',
-      'time-periods',
-      'remove-customer',
     ],
     // Add normalized versions of the roles
     'super admin': [
@@ -74,15 +65,10 @@ export class AuthServiceService {
       'default-prices',
       'time-periods',
       'remove-customer',
-      'delete-all-customers',
     ],
     'sub admin': [
       'dashboard',
-      'payment-history',
       'customers',
-      'default-prices',
-      'time-periods',
-      'remove-customer',
     ],
   };
 
