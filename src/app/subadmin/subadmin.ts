@@ -54,14 +54,14 @@ export class SubAdminComponent {
     ngOnInit() {
         this.systemService.getAllSubadmins().subscribe((res) => {
             this.subadmins = res.subadmins
-            // console.log(res)
+            console.log(res.subadmins)
         })
         this.systemService.getMysubadmins().subscribe((res) => {
             console.log(res.subadmins)
             this.mySubadminslength = res.subadmins.length
         })
         this.systemService.getMysubadmins().subscribe((res) => {
-            console.log(res.subadmins)
+            // console.log(res.subadmins)
             this.allMySubadmins = res.subadmins
         })
     }
@@ -81,37 +81,37 @@ export class SubAdminComponent {
     // }
 
     addBalance(adminId: number) {
-        console.log('Add balance for admin:', adminId);
+        // console.log('Add balance for admin:', adminId);
         this.router.navigate(['/add-balance', adminId]);
     }
     setPrices(username: string) {
-        console.log('Set prices for:', username);
+        // console.log('Set prices for:', username);
         this.router.navigate(['/set-prices', username]);
     }
 
     viewCustomers(id: string) {
-        console.log('View customers for:', id);
+        // console.log('View customers for:', id);
         this.router.navigate(['/subadmin-customers', id]);
     }
 
     viewStats(username: string) {
-        console.log('View stats for:', username);
+        // console.log('View stats for:', username);
     }
 
     // View details methods
     viewSubAdminDetails(username: string) {
-        console.log('View details for:', username);
+        // console.log('View details for:', username);
     }
 
     viewBalanceDetails() {
-        console.log('View balance details');
+        // console.log('View balance details');
     }
 
     viewCustomerDetails() {
-        console.log('View customer details');
+        // console.log('View customer details');
     }
 
     viewCreditTransferDetails() {
-        console.log('View credit transfer details');
+        // console.log('View credit transfer details');
     }
 } 

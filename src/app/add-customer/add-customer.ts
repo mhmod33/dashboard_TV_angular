@@ -62,7 +62,7 @@ export class AddCustomerComponent {
 
     initForm() {
         this.customerForm = this.fb.group({
-            serial_number: ['', [Validators.required, Validators.minLength(12), Validators.maxLength(12)]],
+            serial_number: ['', [Validators.required, Validators.minLength(12), Validators.maxLength(12)],Validators.pattern('/^[A-Fa-f0-9]+$/')],
             customer_name: ['', [Validators.required, Validators.minLength(2)]],
             address: [''],
             phone: [''],
@@ -107,6 +107,9 @@ export class AddCustomerComponent {
 
         if (field.hasError('required')) {
             return `${this.getFieldLabel(fieldName)} is required`;
+        }
+        if (field.hasError('pattern')) {
+            return `${this.getFieldLabel(fieldName)} must be 12 numbser a-f 0-9`;
         }
         if (field.hasError('minlength')) {
             const requiredLength = field.errors?.['minlength']?.requiredLength;
