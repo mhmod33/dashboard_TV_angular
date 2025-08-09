@@ -21,6 +21,9 @@ interface Customer {
     status: 'active' | 'expired';
     owner: string;
     created_at: string;
+    customer_name: string
+    plan_id: number | string
+    admin_id?: number | string
 }
 
 

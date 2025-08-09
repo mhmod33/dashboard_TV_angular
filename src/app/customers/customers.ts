@@ -7,11 +7,11 @@ import { Customer } from '../interfaces/customer';
 import { AuthServiceService } from '../services/auth-service/auth-service.service';
 
 @Component({
-    selector: 'app-customers',
-    standalone: true,
-    imports: [CommonModule, FormsModule],
-    templateUrl: './customers.html',
-    styleUrl: './customers.css'
+  selector: 'app-customers',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './customers.html',
+  styleUrl: './customers.css',
 })
 export class CustomersComponent {
     showModal = false;
@@ -39,42 +39,6 @@ export class CustomersComponent {
     selectAll = false;
     selectedCustomers: string[] = [];
 
-    // Sample customers data
-    // customers = [
-    //     {
-    //         id: '1',
-    //         name: 'Ahmed Mohamed',
-    //         deviceSN: 'SN001234',
-    //         owner: 'Admin',
-    //         startDate: '2024-01-01',
-    //         endDate: '2024-02-01',
-    //         remaining: '15 days',
-    //         status: 'active',
-    //         paid: true
-    //     },
-    //     {
-    //         id: '2',
-    //         name: 'Sarah Ali',
-    //         deviceSN: 'SN567890',
-    //         owner: 'Admin',
-    //         startDate: '2024-01-15',
-    //         endDate: '2024-02-15',
-    //         remaining: '30 days',
-    //         status: 'active',
-    //         paid: true
-    //     },
-    //     {
-    //         id: '3',
-    //         name: 'Mohamed Hassan',
-    //         deviceSN: 'SN123456',
-    //         owner: 'Admin',
-    //         startDate: '2023-12-01',
-    //         endDate: '2024-01-01',
-    //         remaining: 'Expired',
-    //         status: 'expired',
-    //         paid: false
-    //     }
-    // ];
     customers: Customer[] = [];
     admins: any[] = [];
     currentUserRole: string = '';
@@ -105,7 +69,16 @@ export class CustomersComponent {
             this.systemService.allSuperCustomers().subscribe({
                 next: (res) => {
                     console.log('res', res);
-                    this.customers = res.customers || [];
+                    this.customers = (res.customers || [])
+                        .map((customer) => {
+                            if (!customer.id) {
+                                console.error('Customer missing ID:', customer);
+                                return null;
+                            }
+                            customer.id = String(customer.id);
+                            return customer;
+                        })
+                        .filter((customer) => customer !== null) as Customer[];
                     this.isLoading = false;
                 },
                 error: (error) => {
@@ -178,22 +151,27 @@ export class CustomersComponent {
 
         // Apply search filter
         if (this.searchTerm) {
-            filtered = filtered.filter(customer =>
-                customer.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-                customer.serial_number.toLowerCase().includes(this.searchTerm.toLowerCase())
+            filtered = filtered.filter(
+                (customer) =>
+                    customer.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+                    customer.serial_number
+                        .toLowerCase()
+                        .includes(this.searchTerm.toLowerCase())
             );
         }
 
         // Apply view filter
         switch (this.currentView) {
             case 'active':
-                filtered = filtered.filter(customer => customer.status === 'active');
+                filtered = filtered.filter((customer) => customer.status === 'active');
                 break;
             case 'expired':
-                filtered = filtered.filter(customer => customer.status === 'expired');
+                filtered = filtered.filter((customer) => customer.status === 'expired');
                 break;
             case 'paid':
-                filtered = filtered.filter(customer => customer.payment_status === 'paid');
+                filtered = filtered.filter(
+                    (customer) => customer.payment_status === 'paid'
+                );
                 break;
         }
 
@@ -209,7 +187,7 @@ export class CustomersComponent {
     toggleSelectAll() {
         this.selectAll = !this.selectAll;
         if (this.selectAll) {
-            this.selectedCustomers = this.filteredCustomers.map(c => c.id);
+            this.selectedCustomers = this.filteredCustomers.map((c) => c.id);
         } else {
             this.selectedCustomers = [];
         }
@@ -226,12 +204,12 @@ export class CustomersComponent {
     }
 
     updateSelectAllState() {
-        this.selectAll = this.selectedCustomers.length === this.filteredCustomers.length;
+        this.selectAll =
+            this.selectedCustomers.length === this.filteredCustomers.length;
     }
 
     applyBulkAction() {
         if (!this.bulkAction || this.selectedCustomers.length === 0) return;
-        
         if (this.bulkAction === 'delete-selected') {
             this.deleteSelectedCustomers();
             return;
@@ -307,7 +285,6 @@ export class CustomersComponent {
         this.modalType = 'confirm';
         this.modalTitle = 'Change Owner';
         this.modalMessage = 'Please select a new admin to assign the selected customers to.';
-        // This will be handled in the template with a custom modal
     }
 
     changeOwner(newAdminId: string) {
@@ -336,7 +313,6 @@ export class CustomersComponent {
         this.modalTitle = 'Delete Selected Customers';
         this.modalMessage = `Are you sure you want to delete ${this.selectedCustomers.length} selected customers? This action cannot be undone.`;
         this.modalAction = () => {
-            // Use the new bulk delete method
             this.systemService.bulkDeleteSelected(this.selectedCustomers).subscribe({
                 next: (res) => {
                     this.showInfoModal('Selected customers deleted successfully');
@@ -399,7 +375,16 @@ export class CustomersComponent {
 
     // Action methods for individual customers
     editCustomer(customerId: string) {
-        console.log('Edit customer:', customerId);
+        if (!customerId) {
+            console.error('No customer ID provided');
+            return;
+        }
+        if (customerId.startsWith('temp-')) {
+            console.error('Cannot edit customer with temporary ID:', customerId);
+            return;
+        }
+        console.log('Attempting to edit customer with ID:', customerId);
+        this.router.navigate(['/edit-customer', customerId]);
     }
 
     deleteCustomer(customerId: string) {
@@ -419,6 +404,7 @@ export class CustomersComponent {
             });
         };
     }
+
     showInfoModal(message: string) {
         this.showModal = true;
         this.modalType = 'info';
@@ -447,7 +433,6 @@ export class CustomersComponent {
             this.changeOwner(this.selectedAdminId);
             this.showModal = false;
         } else if (this.bulkAction === 'delete-selected') {
-            // Handle delete-selected when modalAction is null
             this.systemService.bulkDeleteSelected(this.selectedCustomers).subscribe({
                 next: (res) => {
                     this.showInfoModal('Selected customers deleted successfully');
@@ -467,4 +452,4 @@ export class CustomersComponent {
     isCustomerSelected(customerId: string): boolean {
         return this.selectedCustomers.includes(customerId);
     }
-} 
+}

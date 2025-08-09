@@ -8,6 +8,7 @@ export interface Period {
   active: boolean;
   price?: number; // Optional, for Default Prices integration
   plan?: number; // Optional, for Default Prices integration
+  duration_months: number;
 }
 
 export interface PeriodRoot {
