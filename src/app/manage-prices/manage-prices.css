@@ -1,0 +1,9 @@
+.manage-prices-container { padding: 16px; }
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.save-btn { padding: 8px 12px; background: #2563eb; color: #fff; border: none; border-radius: 6px; cursor: pointer; }
+.periods-table { width: 100%; border-collapse: collapse; }
+.periods-table th, .periods-table td { border: 1px solid #e5e7eb; padding: 8px; }
+.error { color: #b91c1c; margin-bottom: 8px; }
+.success { color: #16a34a; margin-bottom: 8px; }
+
+

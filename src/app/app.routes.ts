@@ -19,6 +19,7 @@ import { AddAdminComponent } from './add-admin/add-admin';
 import { AdminUsersComponent } from './admin-users/admin-users';
 import { AddCustomerComponent } from './add-customer/add-customer';
 import { EditCustomerComponent } from './edit-customer/edit-customer';
+import { ManagePricesComponent } from './manage-prices/manage-prices';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -31,6 +32,13 @@ export const routes: Routes = [
     component: LayoutComponent,
     canActivate: [AuthGuard],
     children: [{ path: '', component: HomeComponent }],
+  },
+  {
+    path: 'manage-prices/:id',
+    component: LayoutComponent,
+    canActivate: [AuthGuard],
+    data: { role: ['superadmin', 'admin'] },
+    children: [{ path: '', component: ManagePricesComponent }],
   },
 
   // Payment History

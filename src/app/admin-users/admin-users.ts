@@ -95,6 +95,11 @@ export class AdminUsersComponent {
         this.router.navigate(['/add-balance', adminId]);
     }
 
+    managePrices(adminId: number) {
+        // Only allow navigating for subadmins; disable handled in template too
+        this.router.navigate(['/manage-prices', adminId]);
+    }
+
     banAdmin(adminId: number) {
         if (confirm('Are you sure you want to ban this admin?')) {
             this.systemService.banAdmin(adminId).subscribe({

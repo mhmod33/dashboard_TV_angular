@@ -129,6 +129,9 @@ export class SubAdminComponent {
         // console.log('Add balance for admin:', adminId);
         this.router.navigate(['/add-balance', adminId]);
     }
+    managePrices(adminId: number) {
+        this.router.navigate(['/manage-prices', adminId]);
+    }
     setPrices(username: string) {
         // console.log('Set prices for:', username);
         this.router.navigate(['/set-prices', username]);

@@ -1,0 +1,39 @@
+<div class="manage-prices-container">
+  <div class="header">
+    <h2>Manage Prices for ID: {{ adminId }}</h2>
+    <button class="save-btn" (click)="save()" [disabled]="loading">Save</button>
+  </div>
+
+  <div *ngIf="loading">Loading...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+  <div *ngIf="success" class="success">{{ success }}</div>
+
+  <table class="periods-table" *ngIf="!loading">
+    <thead>
+      <tr>
+        <th>Code</th>
+        <th>Name</th>
+        <th>Months</th>
+        <th>Days</th>
+        <th>Price</th>
+        <th>Plan</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let p of periods">
+        <td>{{ p.period_code }}</td>
+        <td>{{ p.display_name }}</td>
+        <td>{{ p.months }}</td>
+        <td>{{ p.days }}</td>
+        <td>
+          <input type="number" [(ngModel)]="overrides[p.id].price" min="0" />
+        </td>
+        <td>
+          <input type="number" [(ngModel)]="overrides[p.id].plan" min="0" />
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+

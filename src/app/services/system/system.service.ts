@@ -16,6 +16,7 @@ export class SystemService {
   private payments = `${this.base}/api/payments`;
   private allCustomers = `${this.base}/api/customers`;
   private allAdmins = `${this.base}/api/admins`;
+  private adminPeriods = `${this.base}/api/admins`;
   private allSubadmins = `${this.base}/api/subadmins`;
   private superadmin = `${this.base}/api/superadmin/superadminProfile`;
   private admin = `${this.base}/api/subadminProfile`;
@@ -124,6 +125,21 @@ export class SystemService {
       Authorization: `Bearer ${this.authService.getToken()}`,
     });
     return this.http.put<any>(`${this.periods}/${id}`, data, { headers });
+  }
+
+  // Per-admin overrides
+  getAdminPeriods(adminId: number): Observable<Period[]> {
+    return this.http
+      .get<{ periods: Period[] }>(`${this.adminPeriods}/${adminId}/periods`)
+      .pipe(map((r) => r.periods));
+  }
+
+  upsertAdminPeriods(adminId: number, overrides: Array<{ period_id: number; price?: number; plan?: number }>): Observable<any> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${this.authService.getToken()}`,
+    });
+    return this.http.put(`${this.adminPeriods}/${adminId}/periods`, { overrides }, { headers });
   }
 
   deletePeriod(id: string): Observable<any> {
