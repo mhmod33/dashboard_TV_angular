@@ -1,0 +1,32 @@
+@import '../add-customer/add-customer.css';
+
+.loading-plans {
+  padding: 10px;
+  text-align: center;
+  color: #666;
+}
+
+.loading-plans .fa-spinner {
+  margin-right: 8px;
+}
+
+/* In edit-customer.css */
+.loading-plans {
+  padding: 10px;
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+}
+
+.loading-plans .fa-spinner {
+  margin-right: 8px;
+}
+
+.no-plans-message {
+  padding: 10px;
+  background: #f8f9fa;
+  border: 1px dashed #dee2e6;
+  border-radius: 4px;
+  text-align: center;
+  color: #6c757d;
+}

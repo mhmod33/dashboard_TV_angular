@@ -2,7 +2,6 @@ import { Routes } from '@angular/router';
 import { DefaultPricesComponent } from './default-prices/default-prices.component';
 import { TimePeriodsComponent } from './time-periods/time-periods.component';
 import { RemoveCustomerComponent } from './remove-customer/remove-customer.component';
-import { DeleteAllCustomersComponent } from './delete-all-customers/delete-all-customers.component';
 import { AuthGuard } from './guards/auth.guard';
 import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
 import { ProfileComponent } from './profile/profile';
@@ -19,6 +18,7 @@ import { SubAdminComponent } from './subadmin/subadmin';
 import { AddAdminComponent } from './add-admin/add-admin';
 import { AdminUsersComponent } from './admin-users/admin-users';
 import { AddCustomerComponent } from './add-customer/add-customer';
+import { EditCustomerComponent } from './edit-customer/edit-customer';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -30,9 +30,7 @@ export const routes: Routes = [
     path: 'home',
     component: LayoutComponent,
     canActivate: [AuthGuard],
-    children: [
-      { path: '', component: HomeComponent }
-    ]
+    children: [{ path: '', component: HomeComponent }],
   },
 
   // Payment History
@@ -40,9 +38,7 @@ export const routes: Routes = [
     path: 'payment-history',
     component: LayoutComponent,
     canActivate: [AuthGuard],
-    children: [
-      { path: '', component: PaymentHistoryComponent }
-    ]
+    children: [{ path: '', component: PaymentHistoryComponent }],
   },
 
   // Customers
@@ -50,17 +46,13 @@ export const routes: Routes = [
     path: 'customers',
     component: LayoutComponent,
     canActivate: [AuthGuard],
-    children: [
-      { path: '', component: CustomersComponent }
-    ]
+    children: [{ path: '', component: CustomersComponent }],
   },
   {
     path: 'add-customer',
     component: LayoutComponent,
     canActivate: [AuthGuard],
-    children: [
-      { path: '', component: AddCustomerComponent }
-    ]
+    children: [{ path: '', component: AddCustomerComponent }],
   },
 
   // Admin Users - superadmin only
@@ -69,18 +61,14 @@ export const routes: Routes = [
     component: LayoutComponent,
     canActivate: [AuthGuard],
     data: { role: 'superadmin' },
-    children: [
-      { path: '', component: AdminUsersComponent }
-    ]
+    children: [{ path: '', component: AdminUsersComponent }],
   },
   {
     path: 'add-admin',
     component: LayoutComponent,
     canActivate: [AuthGuard],
     data: { role: 'superadmin' },
-    children: [
-      { path: '', component: AddAdminComponent }
-    ]
+    children: [{ path: '', component: AddAdminComponent }],
   },
 
   // SubAdmin - superadmin and Admin only
@@ -89,18 +77,14 @@ export const routes: Routes = [
     component: LayoutComponent,
     canActivate: [AuthGuard],
     data: { role: ['superadmin', 'admin'] },
-    children: [
-      { path: '', component: SubAdminComponent }
-    ]
+    children: [{ path: '', component: SubAdminComponent }],
   },
   {
     path: 'add-subadmin',
     component: LayoutComponent,
     canActivate: [AuthGuard],
     data: { role: ['superadmin', 'admin'] },
-    children: [
-      { path: '', component: AddSubAdminComponent }
-    ]
+    children: [{ path: '', component: AddSubAdminComponent }],
   },
 
   // Default Prices
@@ -109,9 +93,7 @@ export const routes: Routes = [
     component: LayoutComponent,
     canActivate: [AuthGuard],
     data: { role: ['superadmin', 'admin', 'subadmin'] },
-    children: [
-      { path: '', component: DefaultPricesComponent }
-    ]
+    children: [{ path: '', component: DefaultPricesComponent }],
   },
 
   // Time Periods
@@ -120,9 +102,7 @@ export const routes: Routes = [
     component: LayoutComponent,
     canActivate: [AuthGuard],
     data: { role: ['superadmin', 'admin', 'subadmin'] },
-    children: [
-      { path: '', component: TimePeriodsComponent }
-    ]
+    children: [{ path: '', component: TimePeriodsComponent }],
   },
 
   // Remove Customer
@@ -131,20 +111,14 @@ export const routes: Routes = [
     component: LayoutComponent,
     canActivate: [AuthGuard],
     data: { role: ['superadmin', 'admin', 'subadmin'] },
-    children: [
-      { path: '', component: RemoveCustomerComponent }
-    ]
+    children: [{ path: '', component: RemoveCustomerComponent }],
   },
 
-  // Delete All Customers - superadmin only
   {
-    path: 'delete-all-customers',
+    path: 'edit-customer/:id',
     component: LayoutComponent,
     canActivate: [AuthGuard],
-    data: { role: 'superadmin' },
-    children: [
-      { path: '', component: DeleteAllCustomersComponent }
-    ]
+    children: [{ path: '', component: EditCustomerComponent }],
   },
 
   // Other routes
@@ -152,39 +126,35 @@ export const routes: Routes = [
     path: 'add-payment',
     component: LayoutComponent,
     canActivate: [AuthGuard],
-    children: [
-      { path: '', component: AddPaymentComponent }
-    ]
+    children: [{ path: '', component: AddPaymentComponent }],
   },
   {
     path: 'add-balance/:id',
     component: LayoutComponent,
     canActivate: [AuthGuard],
-    children: [
-      { path: '', component: AddBalanceComponent }
-    ]
+    children: [{ path: '', component: AddBalanceComponent }],
   },
   {
     path: 'subadmin-customers/:id',
     component: LayoutComponent,
     canActivate: [AuthGuard],
-    children: [
-      { path: '', component: SubadminCustomersComponent }
-    ]
+    children: [{ path: '', component: SubadminCustomersComponent }],
   },
   {
     path: 'admin-details/:id',
-    loadComponent: () => import('./admin-details/admin-details').then(m => m.AdminDetailsComponent)
+    loadComponent: () =>
+      import('./admin-details/admin-details').then(
+        (m) => m.AdminDetailsComponent
+      ),
   },
   {
     path: 'edit-admin/:id',
-    loadComponent: () => import('./edit-admin/edit-admin').then(m => m.EditAdminComponent)
+    loadComponent: () =>
+      import('./edit-admin/edit-admin').then((m) => m.EditAdminComponent),
   },
   {
     path: 'profile',
     component: LayoutComponent,
-    children: [
-      { path: '', component: ProfileComponent }
-    ]
-  }
+    children: [{ path: '', component: ProfileComponent }],
+  },
 ];

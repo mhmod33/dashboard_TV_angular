@@ -1,0 +1,192 @@
+<div class="add-customer-container">
+  <!-- Add this loading indicator at the top -->
+  @if (isSubmitting) {
+  <div class="loading-overlay">
+    <div class="loading-spinner"></div>
+    <div>Loading customer data...</div>
+  </div>
+  }
+  <!-- Header Section -->
+  <div class="page-header">
+    <div class="header-left">
+      <h1>Edit Customer</h1>
+    </div>
+    <div class="header-right">
+      <div class="breadcrumb">
+        <i class="fa fa-home"></i>
+        <span>Home > Edit customer</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-container">
+    <!-- Main Form -->
+    <div class="main-form">
+      <form [formGroup]="customerForm" (ngSubmit)="onSubmit()" class="edit-form">
+        <!-- Serial Number Field -->
+        <div class="form-group">
+          <label for="serialNumber" class="form-label">
+            Serial Number (SN) *
+          </label>
+          <input type="text" id="serialNumber" formControlName="serial_number" placeholder="Enter 12 character SN" class="form-input" [class.error]="isFieldInvalid('serial_number')" maxlength="12" (blur)="validateSerialNumber()">
+          @if (isFieldInvalid('serial_number')) {
+          <div class="error-message">
+            <i class="fa fa-times-circle"></i>
+            {{ getErrorMessage('serial_number') }}
+          </div>
+          }
+          <div class="hint-message">
+            <i class="fa fa-info-circle"></i>
+            Enter the 12-character SN from the device. Example: 0011223344FF: 0011223344FF
+          </div>
+        </div>
+
+        <!-- Customer Name Field -->
+        <div class="form-group">
+          <label for="customerName" class="form-label">
+            Customer Name *
+          </label>
+          <input type="text" id="customerName" formControlName="customer_name" placeholder="Enter customer name" class="form-input" [class.error]="isFieldInvalid('customer_name')">
+          @if (isFieldInvalid('customer_name')) {
+          <div class="error-message">
+            <i class="fa fa-times-circle"></i>
+            {{ getErrorMessage('customer_name') }}
+          </div>
+          }
+        </div>
+
+        <!-- Address Field -->
+        <div class="form-group">
+          <label for="address" class="form-label">
+            Address
+          </label>
+          <input type="text" id="address" formControlName="address" placeholder="Optimal address" class="form-input">
+        </div>
+
+        <!-- Phone Field -->
+        <div class="form-group">
+          <label for="phone" class="form-label">
+            Phone
+          </label>
+          <input type="tel" id="phone" formControlName="phone" placeholder="Optimal phone number" class="form-input">
+        </div>
+
+        <!-- Plan Duration Section -->
+        <!-- In edit-customer.html -->
+        <div class="form-group">
+          <label class="form-label">
+            Plan Duration *
+          </label>
+          @if (isLoadingPlans) {
+          <div class="loading-plans">
+            <i class="fa fa-spinner fa-spin"></i>
+            Loading plans...
+          </div>
+          } @else {
+          @if (planOptions.length > 0) {
+          <div class="plan-options">
+            <div *ngFor="let plan of planOptions" class="plan-option" [class.selected]="isPlanSelected(plan.id)" (click)="selectPlan(plan.id)">
+              <div class="plan-header">
+                <span class="plan-name">
+                  {{ plan.name }}</span>
+                <i *ngIf="isPlanSelected(plan.id)" class="fa fa-check check-icon"></i>
+              </div>
+              <div class="plan-value">
+                {{ plan.value }}
+              </div>
+            </div>
+          </div>
+          } @else {
+          <div class="no-plans-message">
+            No plans available
+          </div>
+          }
+          @if (isFieldInvalid('plan_id')) {
+          <div class="error-message">
+            <i class="fa fa-times-circle"></i>
+            {{ getErrorMessage('plan_id') }}
+          </div>
+          }
+          }
+        </div>
+
+        <!-- Payment Status Section -->
+        <div class="form-group">
+          <label class="form-label">
+            Payment Status
+          </label>
+          <div class="payment-options">
+            <div *ngFor="let payment of paymentOptions" class="payment-option" [class.selected]="isPaymentSelected(payment.id)" (click)="selectPaymentStatus(payment.id)">
+              <span class="payment-name">
+                {{ payment.name }}</span>
+              <i *ngIf="isPaymentSelected(payment.id)" class="fa fa-check check-icon"></i>
+            </div>
+          </div>
+          @if (isFieldInvalid('payment_status')) {
+          <div class="error-message">
+            <i class="fa fa-times-circle"></i>
+            {{ getErrorMessage('payment_status') }}
+          </div>
+          }
+          <div class="hint-message">
+            <i class="fa fa-info-circle"></i>
+            Mark if customer has paid or not. You can change this later
+          </div>
+        </div>
+
+        <div class="form-group" *ngIf="role!=='subadmin'">
+          <label class="form-label">Admin</label>
+          <div class="payment-options position-relative">
+            <select formControlName="admin_id" class="form-select pe-5">
+              <option value="">Select admin</option>
+              <option [ngValue]="admin.id" *ngFor="let admin of admins">{{admin.name}}</option>
+            </select>
+            <i class="fa fa-caret-down"></i>
+          </div>
+          @if (isFieldInvalid('admin_id')) {
+          <div class="error-message">
+            <i class="fa fa-times-circle"></i>
+            {{ getErrorMessage('admin_id') }}
+          </div>
+          }
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="form-actions">
+          <button type="submit" class="save-btn">
+            <i class="fa fa-save"></i>
+            Update customer
+          </button>
+          <button type="button" class="cancel-btn" (click)="cancelForm()">
+            <i class="fa fa-times"></i>
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Information Sidebar -->
+    <div class="info-sidebar">
+      <div class="info-header">
+        <i class="fa fa-info-circle"></i>
+        <span>Information</span>
+      </div>
+
+      <div class="info-content">
+        <p>Please edit the form to update customer information.</p>
+        <p>Required fields are marked with *</p>
+      </div>
+
+      <div class="info-box">
+        <div class="info-box-header">
+          <i class="fa fa-info-circle"></i>
+          <span>Serial Number</span>
+        </div>
+        <div class="info-box-content">
+          <p>Please enter the 12-character serial number from the device. Example: 0011223344FF</p>
+          <p>SN is required for ACAS customers only</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

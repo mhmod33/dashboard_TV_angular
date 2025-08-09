@@ -1,10 +1,11 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { PaymentRoot } from '../../interfaces/payment';
 import { CustomerRoot } from '../../interfaces/customer';
 import { SubadminRoot } from '../../interfaces/subadmin';
 import { AuthServiceService } from '../auth-service/auth-service.service';
+import { Period } from '../../interfaces/period';
 
 @Injectable({
   providedIn: 'root',
@@ -33,6 +34,17 @@ export class SystemService {
     private http: HttpClient,
     private authService: AuthServiceService
   ) {}
+
+  // In system.service.ts
+  getAllPeriods(): Observable<Period[]> {
+    return this.http
+      .get<Period[] | { periods: Period[] }>(this.periods)
+      .pipe(
+        map((response) =>
+          Array.isArray(response) ? response : response.periods
+        )
+      );
+  }
 
   allPayments(): Observable<PaymentRoot[]> {
     return this.http.get<PaymentRoot[]>(this.payments);
@@ -92,11 +104,11 @@ export class SystemService {
   }
 
   // Period methods
-  getAllPeriods(): Observable<any> {
-    return this.http.get<any>(this.periods);
-  }
-  getMysubadmins():Observable<SubadminRoot>{
-    return this.http.get<SubadminRoot>(this.getMySubadmins)
+  // getAllPeriods(): Observable<any> {
+  //   return this.http.get<any>(this.periods);
+  // }
+  getMysubadmins(): Observable<SubadminRoot> {
+    return this.http.get<SubadminRoot>(this.getMySubadmins);
   }
   addPeriod(data: any): Observable<any> {
     const headers = new HttpHeaders({
@@ -188,5 +200,22 @@ export class SystemService {
 
   getMyCustomers(): Observable<any> {
     return this.http.get<any>(this.AddmyCustomer);
+  }
+
+  getCustomerById(customerId: string): Observable<Customer> {
+    return this.http
+      .get<{ customer: Customer }>(`${this.allCustomers}/${customerId}`)
+      .pipe(map((response) => response.customer));
+  }
+
+  updateCustomer(customerId: string, data: any): Observable<any> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${this.authService.getToken()}`,
+    });
+
+    return this.http.put<any>(`${this.allCustomers}/${customerId}`, data, {
+      headers,
+    });
   }
 }

@@ -33,13 +33,14 @@ export class DefaultPricesComponent implements OnInit {
   loadPeriods() {
     this.loading = true;
     this.systemService.getAllPeriods().subscribe({
-      next: (res) => {
-        this.periods = res.periods || [];
+      next: (periods: Period[]) => {
+        this.periods = periods;
         this.loading = false;
       },
-      error: () => {
+      error: (err) => {
         this.error = 'Failed to load periods.';
         this.loading = false;
+        console.error('Error loading periods:', err);
       },
     });
   }
@@ -60,9 +61,9 @@ export class DefaultPricesComponent implements OnInit {
     this.loading = true;
     // Include both price and plan fields in the update data
     // The plan field is required by the backend API
-    const updateData = { 
+    const updateData = {
       price: this.editPrice,
-      plan: period.plan || this.editPrice // Use existing plan value or default to price value
+      plan: period.plan || this.editPrice, // Use existing plan value or default to price value
     };
 
     this.systemService
