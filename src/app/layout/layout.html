@@ -144,7 +144,7 @@
       <div class="balance-info">
         <span class="balance-label">Available Balance</span>
         <span class="balance-amount">$
-          {{ currentUser.balance }}</span>
+          {{ currentUser.balance | number:'1.2-2' }}</span>
       </div>
     </div>
 
