@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { Router } from '@angular/router';
 import { SystemService } from '../services/system/system.service';
 import { AuthServiceService } from '../services/auth-service/auth-service.service';
+import { Period } from '../interfaces/period';
 
 @Component({
     selector: 'app-add-customer',
@@ -20,13 +21,9 @@ export class AddCustomerComponent {
     isCheckingSerialNumber = false;
     serialNumberStatus: 'idle' | 'checking' | 'valid' | 'invalid' = 'idle';
 
-    // Plan options
-    planOptions = [
-        { id: '1', name: '1 Month', value: '120000' },
-        { id: '3', name: '3 Months', value: '120' },
-        { id: '6', name: '6 Months', value: '1600000' },
-        { id: '12', name: '12 Months', value: '3200000' }
-    ];
+    // Plan options - loaded dynamically from database
+    planOptions: any[] = [];
+    isLoadingPlans = false;
 
     // Payment status options
     paymentOptions = [
@@ -48,6 +45,9 @@ export class AddCustomerComponent {
     }
 
     ngOnInit() {
+        // Load plans from database
+        this.loadPlans();
+        
         // Only load admins if not subadmin
         if (this.role !== 'subadmin') {
             this.systemService.getAllAdmins().subscribe({
@@ -60,6 +60,37 @@ export class AddCustomerComponent {
             });
         }
         console.log('Current role:', this.role);
+    }
+    
+    // Load plans from database
+    loadPlans() {
+        this.isLoadingPlans = true;
+        this.systemService.getAllPeriods().subscribe({
+            next: (periods: Period[]) => {
+                this.planOptions = periods.map((period: Period) => ({
+                    id: period.id.toString(),
+                    name: period.display_name || `${period.duration_months} Month${period.duration_months > 1 ? 's' : ''}`,
+                    value: period.price?.toString() || '0'
+                }));
+                this.isLoadingPlans = false;
+                
+                // Set default plan if none selected
+                if (!this.customerForm.get('plan_id')?.value && this.planOptions.length > 0) {
+                    this.customerForm.patchValue({ plan_id: this.planOptions[0].id });
+                }
+            },
+            error: (error) => {
+                console.error('Error loading plans:', error);
+                this.isLoadingPlans = false;
+                // Fallback to default plans if loading fails
+                this.planOptions = [
+                    { id: '1', name: '1 Month', value: '120000' },
+                    { id: '3', name: '3 Months', value: '120' },
+                    { id: '6', name: '6 Months', value: '1600000' },
+                    { id: '12', name: '12 Months', value: '3200000' }
+                ];
+            }
+        });
     }
 
     initForm() {

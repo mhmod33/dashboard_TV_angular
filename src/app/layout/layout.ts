@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { AuthServiceService } from '../services/auth-service/auth-service.service';
+import { BalanceService } from '../services/balance/balance.service';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-layout',
@@ -10,13 +12,18 @@ import { AuthServiceService } from '../services/auth-service/auth-service.servic
     templateUrl: './layout.html',
     styleUrl: './layout.css',
 })
-export class LayoutComponent {
+export class LayoutComponent implements OnInit, OnDestroy {
     isSidebarOpen = true;
     showLogoutAlert = false;
     currentUser: { name: string; avatar: string; balance: number; role: string };
     allowedPages: string[] = [];
+    private balanceSubscription!: Subscription;
 
-    constructor(public router: Router, private authService: AuthServiceService) {
+    constructor(
+        public router: Router, 
+        private authService: AuthServiceService,
+        private balanceService: BalanceService
+    ) {
         this.currentUser = {
             name: this.authService.getUserName() ?? '',
             balance: this.authService.getBalance(),
@@ -25,6 +32,21 @@ export class LayoutComponent {
             role: this.authService.getRole() ?? '',
         };
         this.getAllowedPages();
+    }
+
+    ngOnInit() {
+        // Subscribe to balance changes
+        this.balanceSubscription = this.balanceService.balance$.subscribe(newBalance => {
+            console.log('Layout received new balance:', newBalance);
+            this.currentUser.balance = newBalance;
+        });
+    }
+
+    ngOnDestroy() {
+        // Unsubscribe to prevent memory leaks
+        if (this.balanceSubscription) {
+            this.balanceSubscription.unsubscribe();
+        }
     }
 
     private getAllowedPages() {

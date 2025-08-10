@@ -87,6 +87,33 @@
   color: #dc2626;
 }
 
+/* Time Badge Styles */
+.time-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.time-badge.active {
+  background: rgba(5, 150, 105, 0.1);
+  color: #059669;
+}
+
+.time-badge.expiring-soon {
+  background: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+}
+
+.time-badge.expired {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
 /* Header Section */
 .page-header {
   display: flex;
@@ -686,4 +713,4 @@
     flex-direction: column;
     gap: 12px;
   }
-} 
+}
