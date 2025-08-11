@@ -9,6 +9,7 @@ import {
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthServiceService } from '../services/auth-service/auth-service.service';
+import { ModalService } from '../services/modal.service';
 
 @Component({
   selector: 'app-login',
@@ -33,6 +34,7 @@ export class LoginComponent {
     private fb: FormBuilder,
     private authService: AuthServiceService,
     private router: Router,
+    private modalService: ModalService
   ) {
     this.loginForm = fb.group({
       name: ['', [Validators.required]],
@@ -100,7 +102,7 @@ export class LoginComponent {
     
     setTimeout(() => {
       this.isLoading = false;
-      alert(`A support request has been sent for account: ${username}\n\nOur team will review your account status and contact you shortly.`);
+      this.modalService.showInfoMessage(`A support request has been sent for account: ${username}\n\nOur team will review your account status and contact you shortly.`);
       this.closeInactiveModal();
     }, 1500);
   }

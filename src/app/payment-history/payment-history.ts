@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { SystemService } from '../services/system/system.service';
 import { PaymentRoot } from '../interfaces/payment';
+import { ModalService } from '../services/modal.service';
 
 @Component({
     selector: 'app-payment-history',
@@ -16,7 +17,8 @@ export class PaymentHistoryComponent {
     confirmingPaymentId: number | null = null;
     constructor(
         private systemService: SystemService,
-        private router: Router
+        private router: Router,
+        private modalService: ModalService
     ) { }
 
     payments: Payemnt[] = [];
@@ -55,7 +57,7 @@ export class PaymentHistoryComponent {
             },
             error: (error) => {
                 console.error('Error deleting payment:', error);
-                alert('Error deleting payment. Please try again.');
+                this.modalService.showErrorMessage('Error deleting payment. Please try again.');
             }
         });
     }

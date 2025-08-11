@@ -11,6 +11,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { SystemService } from '../services/system/system.service';
 import { AuthServiceService } from '../services/auth-service/auth-service.service';
 import { Period } from '../interfaces/period';
+import { ModalService } from '../services/modal.service';
 
 @Component({
   selector: 'app-edit-customer',
@@ -45,7 +46,8 @@ export class EditCustomerComponent {
     private route: ActivatedRoute,
     private fb: FormBuilder,
     private systemService: SystemService,
-    private authService: AuthServiceService
+    private authService: AuthServiceService,
+    private modalService: ModalService
   ) {
     this.role = this.authService.getRole();
     this.initForm();
@@ -292,12 +294,12 @@ loadPlans() {
               if (this.role === 'admin' && res.admin && res.admin.balance !== undefined) {
                 this.userBalance = res.admin.balance;
                 this.systemService.balanceService.updateBalance(res.admin.balance);
-                alert(`Customer updated successfully! Your balance has been decreased by ${res.price_difference}.`);
+                this.modalService.showSuccessMessage(`Customer updated successfully! Your balance has been decreased by ${res.price_difference}.`);
               } 
               else if (this.role === 'subadmin' && res.subadmin && res.subadmin.balance !== undefined) {
                 this.userBalance = res.subadmin.balance;
                 this.systemService.balanceService.updateBalance(res.subadmin.balance);
-                alert(`Customer updated successfully! Your balance has been decreased by ${res.price_difference}.`);
+                this.modalService.showSuccessMessage(`Customer updated successfully! Your balance has been decreased by ${res.price_difference}.`);
               }
               else {
                 alert('Customer updated successfully! Admin balance has been adjusted.');
@@ -311,22 +313,22 @@ loadPlans() {
               if (this.role === 'admin' && res.admin && res.admin.balance !== undefined) {
                 this.userBalance = res.admin.balance;
                 this.systemService.balanceService.updateBalance(res.admin.balance);
-                alert(`Customer updated successfully! Your balance has been increased by ${refundAmount}.`);
+                this.modalService.showSuccessMessage(`Customer updated successfully! Your balance has been increased by ${refundAmount}.`);
               } 
               else if (this.role === 'subadmin' && res.subadmin && res.subadmin.balance !== undefined) {
                 this.userBalance = res.subadmin.balance;
                 this.systemService.balanceService.updateBalance(res.subadmin.balance);
-                alert(`Customer updated successfully! Your balance has been increased by ${refundAmount}.`);
+                this.modalService.showSuccessMessage(`Customer updated successfully! Your balance has been increased by ${refundAmount}.`);
               }
               else {
                 alert('Customer updated successfully! Admin balance has been adjusted.');
               }
             }
             else {
-              alert('Customer updated successfully!');
+              this.modalService.showSuccessMessage('Customer updated successfully!');
             }
           } else {
-            alert('Customer updated successfully!');
+            this.modalService.showSuccessMessage('Customer updated successfully!');
           }
           
           this.router.navigate(['/customers']);
@@ -341,7 +343,7 @@ loadPlans() {
               errorMsg += ` Server says: ${error.error.message || JSON.stringify(error.error)}`;
             }
           }
-          alert(errorMsg);
+          this.modalService.showErrorMessage(errorMsg);
           this.isSubmitting = false;
         },
       });

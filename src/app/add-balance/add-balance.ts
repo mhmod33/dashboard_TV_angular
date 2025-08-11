@@ -85,7 +85,7 @@ export class AddBalanceComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading admin details:', error);
-        alert('Error loading admin details.');
+        this.showInfoModal('Error loading admin details.');
       },
     });
   }

@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { ActivatedRoute, Router } from '@angular/router';
 import { SystemService } from '../services/system/system.service';
 import { LayoutComponent } from '../layout/layout';
+import { ModalService } from '../services/modal.service';
 
 @Component({
     selector: 'app-edit-admin',
@@ -22,7 +23,8 @@ export class EditAdminComponent implements OnInit {
         private fb: FormBuilder,
         private route: ActivatedRoute,
         public router: Router, // CHANGED: public for template access
-        private systemService: SystemService
+        private systemService: SystemService,
+        private modalService: ModalService
     ) { }
 
     ngOnInit() {
@@ -63,11 +65,11 @@ export class EditAdminComponent implements OnInit {
             if (!data.password) delete data.password;
             this.systemService.updateAdmin(this.adminId, data).subscribe({
                 next: (res) => {
-                    alert('Admin updated successfully!');
+                    this.modalService.showSuccessMessage('Admin updated successfully!');
                     this.router.navigate(['/admin-users']);
                 },
                 error: (err) => {
-                    alert('Error updating admin.');
+                    this.modalService.showErrorMessage('Error updating admin.');
                     this.isSubmitting = false;
                 }
             });

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SystemService } from '../services/system/system.service';
+import { ModalService } from '../services/modal.service';
 
 @Component({
     selector: 'app-add-payment',
@@ -19,7 +20,8 @@ export class AddPaymentComponent {
     constructor(
         private router: Router,
         private fb: FormBuilder,
-        private systemService: SystemService
+        private systemService: SystemService,
+        private modalService: ModalService
     ) {
         this.initForm();
     }
@@ -123,15 +125,15 @@ export class AddPaymentComponent {
             console.log('Saving payment:', data);
 
             this.systemService.addPayment(data).subscribe({
-                next: (res) => {
-                    alert('Payment added successfully!');
-                    this.router.navigate(['/payment-history']);
-                },
-                error: (error) => {
-                    console.error('Error adding payment:', error);
-                    alert('Error adding payment. Please try again.');
-                    this.isSubmitting = false;
-                }
+                            next: (res) => {
+                this.modalService.showSuccessMessage('Payment added successfully!');
+                this.router.navigate(['/payment-history']);
+            },
+            error: (error) => {
+                console.error('Error adding payment:', error);
+                this.modalService.showErrorMessage('Error adding payment. Please try again.');
+                this.isSubmitting = false;
+            }
             });
         } else {
             this.markFormGroupTouched();

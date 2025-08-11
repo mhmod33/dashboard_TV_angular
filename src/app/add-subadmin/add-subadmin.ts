@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SystemService } from '../services/system/system.service';
+import { ModalService } from '../services/modal.service';
 
 @Component({
     selector: 'app-add-subadmin',
@@ -42,7 +43,8 @@ export class AddSubAdminComponent implements OnInit {
 
     constructor(
         private router: Router,
-        private systemService: SystemService
+        private systemService: SystemService,
+        private modalService: ModalService
     ) { }
 
     ngOnInit(): void {
@@ -209,9 +211,9 @@ export class AddSubAdminComponent implements OnInit {
                         // Update the balance in the balance service
                         this.systemService.balanceService.updateBalance(response.admin.balance);
                         
-                        alert(`Sub-admin added successfully! Your balance decreased by ${addedBalance}.`);
+                        this.modalService.showSuccessMessage(`Sub-admin added successfully! Your balance decreased by ${addedBalance}.`);
                     } else {
-                        alert('Sub-admin added successfully!');
+                        this.modalService.showSuccessMessage('Sub-admin added successfully!');
                     }
                     
                     this.router.navigate(['/subadmin']);
@@ -221,9 +223,9 @@ export class AddSubAdminComponent implements OnInit {
                     
                     // Check if the error is due to insufficient balance
                     if (error.error && error.error.message && error.error.message.includes('insufficient balance')) {
-                        alert('Error: You have insufficient balance to add this sub-admin.');
+                        this.modalService.showErrorMessage('Error: You have insufficient balance to add this sub-admin.');
                     } else {
-                        alert('Error adding sub-admin. Please try again.');
+                        this.modalService.showErrorMessage('Error adding sub-admin. Please try again.');
                     }
                 }
             });

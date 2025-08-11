@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LayoutComponent } from '../layout/layout';
 import { SystemService } from '../services/system/system.service';
+import { ModalService } from '../services/modal.service';
 
 @Component({
     selector: 'app-add-admin',
@@ -37,7 +38,8 @@ export class AddAdminComponent {
 
     constructor(
         private router: Router,
-        private systemService: SystemService
+        private systemService: SystemService,
+        private modalService: ModalService
     ) { }
 
     // Validation methods
@@ -98,7 +100,7 @@ export class AddAdminComponent {
         if (this.validateForm()) {
             console.log('Saving admin:', this.adminData);
             this.systemService.addAdmin(this.adminData).subscribe((res) => {
-                alert('Admin user saved successfully!');
+                this.modalService.showSuccessMessage('Admin user saved successfully!');
             })
             this.router.navigate(['/admin-users']);
         }

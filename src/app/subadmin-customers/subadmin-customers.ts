@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { SystemService } from '../services/system/system.service';
+import { ModalService } from '../services/modal.service';
 
 @Component({
     selector: 'app-subadmin-customers',
@@ -20,7 +21,8 @@ export class SubadminCustomersComponent implements OnInit {
     constructor(
         private router: Router,
         private route: ActivatedRoute,
-        private systemService: SystemService
+        private systemService: SystemService,
+        private modalService: ModalService
     ) { }
 
     ngOnInit() {
@@ -126,18 +128,22 @@ export class SubadminCustomersComponent implements OnInit {
     }
 
     deleteCustomer(customerId: string) {
-        if (confirm('Are you sure you want to delete this customer?')) {
-            this.systemService.deleteCustomer(String(customerId)).subscribe({
-                next: (res) => {
-                    console.log('Customer deleted successfully');
-                    this.loadCustomers();
-                },
-                error: (error: any) => {
-                    console.error('Error deleting customer:', error);
-                    alert('Error deleting customer. Please try again.');
-                }
-            });
-        }
+        this.modalService.showConfirm(
+            'Confirm Delete',
+            'Are you sure you want to delete this customer?',
+            () => {
+                this.systemService.deleteCustomer(String(customerId)).subscribe({
+                    next: (res) => {
+                        console.log('Customer deleted successfully');
+                        this.loadCustomers();
+                    },
+                    error: (error: any) => {
+                        console.error('Error deleting customer:', error);
+                        this.modalService.showErrorMessage('Error deleting customer. Please try again.');
+                    }
+                });
+            }
+        );
     }
 
     // Navigate back to subadmin page

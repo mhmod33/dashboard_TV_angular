@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { SystemService } from '../services/system/system.service';
 import { AuthServiceService } from '../services/auth-service/auth-service.service';
 import { Period } from '../interfaces/period';
+import { ModalService } from '../services/modal.service';
 
 @Component({
     selector: 'app-add-customer',
@@ -39,6 +40,7 @@ export class AddCustomerComponent {
         private fb: FormBuilder,
         private systemService: SystemService,
         private authService: AuthServiceService,
+        private modalService: ModalService
     ) {
         this.role = this.authService.getRole();
         this.initForm();
@@ -221,15 +223,15 @@ export class AddCustomerComponent {
                             this.userBalance = res.subadmin.balance;
                         }
                         
-                        alert(`Customer saved successfully! Your balance has been decreased by ${planPrice}.`);
+                        this.modalService.showSuccessMessage(`Customer saved successfully! Your balance has been decreased by ${planPrice}.`);
                         this.router.navigate(['/customers']);
                     },
                     error: (error) => {
                         console.error('Error saving customer:', error);
                         if (error.error && error.error.message === 'Insufficient balance') {
-                            alert('Error: You do not have enough balance to add this customer.');
+                            this.modalService.showErrorMessage('Error: You do not have enough balance to add this customer.');
                         } else {
-                            alert('Error saving customer. Please try again.');
+                            this.modalService.showErrorMessage('Error saving customer. Please try again.');
                         }
                         this.isSubmitting = false;
                     }
@@ -244,11 +246,11 @@ export class AddCustomerComponent {
                         } 
                         // If superadmin is adding a customer for an admin
                         else if (this.role === 'superadmin' && data.admin_id) {
-                            alert(`Customer saved successfully! Admin's balance has been decreased by ${planPrice}.`);
+                            this.modalService.showSuccessMessage(`Customer saved successfully! Admin's balance has been decreased by ${planPrice}.`);
                         }
                         // Default message
                         else {
-                            alert('Customer saved successfully!');
+                            this.modalService.showSuccessMessage('Customer saved successfully!');
                         }
                         
                         this.router.navigate(['/customers']);
@@ -256,11 +258,11 @@ export class AddCustomerComponent {
                     error: (error) => {
                         console.error('Error saving customer:', error);
                         if (error.error && error.error.message === 'Admin has insufficient balance') {
-                            alert('Error: The selected admin does not have enough balance.');
+                            this.modalService.showErrorMessage('Error: The selected admin does not have enough balance.');
                         } else if (error.error && error.error.message === 'Insufficient balance') {
-                            alert('Error: You do not have enough balance to add this customer.');
+                            this.modalService.showErrorMessage('Error: You do not have enough balance to add this customer.');
                         } else {
-                            alert('Error saving customer. Please try again.');
+                            this.modalService.showErrorMessage('Error saving customer. Please try again.');
                         }
                         this.isSubmitting = false;
                     }

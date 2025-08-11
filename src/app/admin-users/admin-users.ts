@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SystemService } from '../services/system/system.service';
+import { ModalService } from '../services/modal.service';
 
 @Component({
     selector: 'app-admin-users',
@@ -22,7 +23,8 @@ export class AdminUsersComponent {
     adminUsers: Admin[] = [];
     constructor(
         private router: Router,
-        private systemService: SystemService
+        private systemService: SystemService,
+        private modalService: ModalService
     ) { }
     ngOnInit() {
         this.systemService.getAllAdmins().subscribe((res) => {
@@ -76,18 +78,22 @@ export class AdminUsersComponent {
     }
 
     deleteAdmin(adminId: number) {
-        if (confirm('Are you sure you want to delete this admin?')) {
-            this.systemService.deleteAdmin(adminId).subscribe({
-                next: (res) => {
-                    console.log('Admin deleted successfully');
-                    this.loadAdmins();
-                },
-                error: (error) => {
-                    console.error('Error deleting admin:', error);
-                    alert('Error deleting admin. Please try again.');
-                }
-            });
-        }
+        this.modalService.showConfirm(
+            'Confirm Delete',
+            'Are you sure you want to delete this admin?',
+            () => {
+                this.systemService.deleteAdmin(adminId).subscribe({
+                    next: (res) => {
+                        console.log('Admin deleted successfully');
+                        this.loadAdmins();
+                    },
+                    error: (error) => {
+                        console.error('Error deleting admin:', error);
+                        this.modalService.showErrorMessage('Error deleting admin. Please try again.');
+                    }
+                });
+            }
+        );
     }
 
     addBalance(adminId: number) {
@@ -101,18 +107,22 @@ export class AdminUsersComponent {
     }
 
     banAdmin(adminId: number) {
-        if (confirm('Are you sure you want to ban this admin?')) {
-            this.systemService.banAdmin(adminId).subscribe({
-                next: (res) => {
-                    console.log('Admin banned successfully');
-                    this.loadAdmins();
-                },
-                error: (error) => {
-                    console.error('Error banning admin:', error);
-                    alert('Error banning admin. Please try again.');
-                }
-            });
-        }
+        this.modalService.showConfirm(
+            'Confirm Ban',
+            'Are you sure you want to ban this admin?',
+            () => {
+                this.systemService.banAdmin(adminId).subscribe({
+                    next: (res) => {
+                        console.log('Admin banned successfully');
+                        this.loadAdmins();
+                    },
+                    error: (error) => {
+                        console.error('Error banning admin:', error);
+                        this.modalService.showErrorMessage('Error banning admin. Please try again.');
+                    }
+                });
+            }
+        );
     }
 
     viewAdminDetails(adminId: number) {
