@@ -1,11 +1,12 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { map, Observable, tap } from 'rxjs';
 import { PaymentRoot } from '../../interfaces/payment';
 import { CustomerRoot } from '../../interfaces/customer';
 import { SubadminRoot } from '../../interfaces/subadmin';
 import { AuthServiceService } from '../auth-service/auth-service.service';
 import { Period } from '../../interfaces/period';
+import { BalanceService } from '../balance/balance.service';
 
 @Injectable({
   providedIn: 'root',
@@ -33,7 +34,8 @@ export class SystemService {
 
   constructor(
     private http: HttpClient,
-    private authService: AuthServiceService
+    private authService: AuthServiceService,
+    private balanceService: BalanceService
   ) {}
 
   // In system.service.ts
@@ -158,13 +160,27 @@ export class SystemService {
   updateBalance(adminId: string, balance: number): Observable<any> {
     return this.http.patch(`${this.updatebalance}/${adminId}`, {
       balance: balance,
-    });
+    }).pipe(
+      tap((response: any) => {
+        // Update the balance in the balance service after successful API call
+        if (response && response.admin && response.admin.balance) {
+          this.balanceService.updateBalance(parseFloat(response.admin.balance));
+        }
+      })
+    );
   }
 
   decreaseBalance(adminId: string, balance: number): Observable<any> {
     return this.http.patch(`${this.decreasebalance}/${adminId}`, {
       balance: balance,
-    });
+    }).pipe(
+      tap((response: any) => {
+        // Update the balance in the balance service after successful API call
+        if (response && response.admin && response.admin.balance) {
+          this.balanceService.updateBalance(parseFloat(response.admin.balance));
+        }
+      })
+    );
   }
 
   updateAdmin(adminId: string, data: any): Observable<any> {

@@ -112,6 +112,13 @@
                     <label class="form-label">
                         Plan Duration *
                     </label>
+                    @if (isLoadingPlans) {
+                    <div class="loading-plans">
+                        <i class="fa fa-spinner fa-spin"></i>
+                        Loading plans...
+                    </div>
+                    } @else {
+                    @if (planOptions.length > 0) {
                     <div class="plan-options">
                         <div *ngFor="let plan of planOptions" class="plan-option"
                             [class.selected]="isPlanSelected(plan.id)" (click)="selectPlan(plan.id)">
@@ -122,11 +129,17 @@
                             <div class="plan-value">{{ plan.value }}</div>
                         </div>
                     </div>
+                    } @else {
+                    <div class="no-plans-message">
+                        No plans available
+                    </div>
+                    }
                     @if (isFieldInvalid('plan_id')) {
                     <div class="error-message">
                         <i class="fa fa-times-circle"></i>
                         {{ getErrorMessage('plan_id') }}
                     </div>
+                    }
                     }
                 </div>
 

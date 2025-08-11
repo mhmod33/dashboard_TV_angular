@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BalanceService } from '../balance/balance.service';
 
 interface LoginResponse {
   message: string;
@@ -72,7 +73,11 @@ export class AuthServiceService {
     ],
   };
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private http: HttpClient, 
+    private router: Router,
+    private balanceService: BalanceService
+  ) {}
 
   login(name: string, password: string): Observable<LoginResponse> {
     return this.http
@@ -127,6 +132,11 @@ export class AuthServiceService {
     localStorage.setItem('status', status);
     localStorage.setItem('name', name);
     localStorage.setItem('id', id);
+
+    // Update balance in the balance service
+    if (balance) {
+      this.balanceService.updateBalance(parseFloat(balance));
+    }
 
     // Normalize the role to lowercase and handle all variations
     const normalizedRole = role.toLowerCase();
@@ -185,7 +195,8 @@ export class AuthServiceService {
   }
 
   getBalance(): any {
-    return localStorage.getItem('balance');
+    // Use the balance service to get the current balance
+    return this.balanceService.getCurrentBalance();
   }
 
   getStatus(): string | null {

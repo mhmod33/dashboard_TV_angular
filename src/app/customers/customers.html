@@ -196,6 +196,8 @@
                     <th>Status</th>
                     <th>Payment Status</th>
                     <th>Created Date</th>
+                    <th>Expiration Date</th>
+                    <th>Remaining Time</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -220,6 +222,12 @@
                         </span>
                     </td>
                     <td class="created-date">{{ customer.created_at | date:'medium' }}</td>
+                    <td class="expiration-date">{{ formatExpirationDate(calculateExpirationDate(customer)) }}</td>
+                    <td class="remaining-time">
+                        <span class="time-badge" [ngClass]="getRemainingTimeStatus(calculateRemainingDays(calculateExpirationDate(customer))).class">
+                            {{ getRemainingTimeStatus(calculateRemainingDays(calculateExpirationDate(customer))).text }}
+                        </span>
+                    </td>
                     <td class="actions">
                         <button class="action-btn edit" (click)="editCustomer(customer.id)" title="Edit" [attr.data-customer-id]="customer.id">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none"

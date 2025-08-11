@@ -28,6 +28,12 @@
                             <label>Current Balance:</label>
                             <span>${{ admin.balance }}</span>
                         </div>
+                        <div class="info-item" *ngIf="previewBalance !== null">
+                            <label>Preview Balance:</label>
+                            <span [style.color]="previewBalance >= admin.balance ? 'green' : 'red'">
+                                ${{ previewBalance }}
+                            </span>
+                        </div>
                         <div class="info-item">
                             <label>Role:</label>
                             <span>{{ admin.role }}</span>

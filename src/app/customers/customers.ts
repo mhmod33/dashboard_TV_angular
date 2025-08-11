@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Customer } from '../interfaces/customer';
 import { AuthServiceService } from '../services/auth-service/auth-service.service';
+import { Period } from '../interfaces/period';
 
 @Component({
   selector: 'app-customers',
@@ -41,6 +42,7 @@ export class CustomersComponent {
 
     customers: Customer[] = [];
     admins: any[] = [];
+    periods: Period[] = [];
     currentUserRole: string = '';
     currentUserId: string = '';
 
@@ -49,19 +51,236 @@ export class CustomersComponent {
         private systemService: SystemService,
         private authService: AuthServiceService
     ) { }
+    
+    // Calculate expiration date based on customer creation date and plan duration
+    calculateExpirationDate(customer: Customer): Date | null {
+        if (!customer.created_at || !customer.plan_id) {
+            console.log('Missing created_at or plan_id for customer:', customer);
+            return null;
+        }
+        
+        // Find the period that matches the customer's plan_id
+        // Convert both to numbers to ensure proper comparison
+        const planId = Number(customer.plan_id);
+        const period = this.periods.find(p => Number(p.id) === planId);
+        
+        if (!period) {
+            console.log('No matching period found for plan_id:', planId, 'Available periods:', this.periods);
+            return null;
+        }
+        
+        // Create a date from the customer's creation date
+        const creationDate = new Date(customer.created_at);
+        if (isNaN(creationDate.getTime())) {
+            console.log('Invalid creation date:', customer.created_at);
+            return null;
+        }
+        
+        // Add the period's months to the creation date
+        const expirationDate = new Date(creationDate);
+        
+        // Use months field from Period interface as primary source
+        // Fallback to duration_months if months is not available
+        const monthsToAdd = period.months || period.duration_months || 0;
+        
+        console.log('Period details:', {
+            periodId: period.id,
+            periodCode: period.period_code,
+            displayName: period.display_name,
+            months: period.months,
+            days: period.days,
+            durationMonths: period.duration_months
+        });
+        
+        expirationDate.setMonth(expirationDate.getMonth() + monthsToAdd);
+        
+        // If there are additional days in the period, add them too
+        if (period.days && period.days > 0) {
+            expirationDate.setDate(expirationDate.getDate() + period.days);
+        }
+        
+        console.log('Calculated expiration date:', {
+            customer: customer.customer_name,
+            planId: planId,
+            monthsToAdd: monthsToAdd,
+            daysToAdd: period.days || 0,
+            creationDate: creationDate,
+            expirationDate: expirationDate
+        });
+        
+        return expirationDate;
+    }
+    
+    // Calculate remaining time in hours
+    calculateRemainingDays(expirationDate: Date | null): { days: number, hours: number } | null {
+        if (!expirationDate) {
+            console.log('No expiration date provided');
+            return null;
+        }
+        
+        if (isNaN(expirationDate.getTime())) {
+            console.log('Invalid expiration date:', expirationDate);
+            return null;
+        }
+        
+        const today = new Date();
+        const diffTime = expirationDate.getTime() - today.getTime();
+        
+        // If expired, return 0 days and 0 hours
+        if (diffTime <= 0) {
+            return { days: 0, hours: 0 };
+        }
+        
+        // Calculate days and remaining hours
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        const remainingMs = diffTime % (1000 * 60 * 60 * 24);
+        const diffHours = Math.floor(remainingMs / (1000 * 60 * 60));
+        
+        console.log('Remaining time calculation:', {
+            expirationDate: expirationDate,
+            today: today,
+            diffTime: diffTime,
+            diffDays: diffDays,
+            diffHours: diffHours
+        });
+        
+        return { days: diffDays, hours: diffHours };
+    }
+    
+    // Format expiration date for display with time
+    formatExpirationDate(expirationDate: Date | null): string {
+        if (!expirationDate) {
+            return 'N/A';
+        }
+        
+        // Check if the date is valid before formatting
+        if (isNaN(expirationDate.getTime())) {
+            console.log('Invalid date in formatExpirationDate:', expirationDate);
+            return 'Invalid Date';
+        }
+        
+        try {
+            // Use toLocaleString to include date and time
+            return expirationDate.toLocaleString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        } catch (error) {
+            console.error('Error formatting date:', error);
+            return 'Error';
+        }
+    }
+    
+    // Get remaining time with status color including hours
+    getRemainingTimeStatus(timeRemaining: { days: number, hours: number } | null): { text: string, class: string } {
+        if (timeRemaining === null || timeRemaining === undefined) {
+            console.log('Null or undefined timeRemaining in getRemainingTimeStatus');
+            return { text: 'N/A', class: '' };
+        }
+        
+        const { days, hours } = timeRemaining;
+        console.log('Getting status for time remaining:', { days, hours });
+        
+        if (days <= 0 && hours <= 0) {
+            return { text: 'Expired', class: 'expired' };
+        } else if (days === 0) {
+            // Less than a day remaining
+            return { text: `${hours} hours`, class: 'expiring-soon' };
+        } else if (days <= 7) {
+            // Less than a week remaining
+            return { text: `${days} days, ${hours} hrs`, class: 'expiring-soon' };
+        } else {
+            // More than a week remaining
+            return { text: `${days} days, ${hours} hrs`, class: 'active' };
+        }
+    }
 
     ngOnInit() {
         this.currentUserRole = this.authService.getRole() || '';
         this.currentUserId = this.authService.getCurrentUser()?.id?.toString() || '';
         
-        this.loadCustomers();
+        // Load periods first to calculate expiration dates
+        // loadCustomers will be called after periods are loaded
+        this.loadPeriods();
         
         // Load admins if superadmin
         if (this.currentUserRole != 'subadmin') {
             this.loadAdmins();
         }
     }
+    
+    // Load all periods for expiration date calculation
+    loadPeriods() {
+        this.systemService.getAllPeriods().subscribe({
+            next: (response: any) => {
+                // Check if the response has a 'periods' property (PeriodRoot interface)
+                if (response && response.periods) {
+                    this.periods = response.periods;
+                } else if (Array.isArray(response)) {
+                    // If response is already an array, use it directly
+                    this.periods = response;
+                } else {
+                    console.error('Unexpected periods response format:', response);
+                    this.periods = [];
+                }
+                
+                // Log the periods data for debugging
+                console.log('Periods loaded successfully:', this.periods);
+                
+                // Ensure each period has the required duration fields
+                this.periods.forEach(period => {
+                    // Log each period for debugging
+                    console.log('Period:', period);
+                    
+                    // Ensure months is set if duration_months is available but months is not
+                    if (period.duration_months !== undefined && period.months === undefined) {
+                        period.months = period.duration_months;
+                    }
+                    
+                    // Ensure duration_months is set if months is available but duration_months is not
+                    if (period.months !== undefined && period.duration_months === undefined) {
+                        period.duration_months = period.months;
+                    }
+                    
+                    // Set default values if neither is available
+                    if (period.months === undefined && period.duration_months === undefined) {
+                        console.warn('Period has no duration information:', period);
+                        period.months = 0;
+                        period.duration_months = 0;
+                    }
+                });
+                
+                // Load customers after periods are loaded
+                this.loadCustomers();
+            },
+            error: (error) => {
+                console.error('Error loading periods:', error);
+                this.periods = [];
+                // Still load customers even if periods failed to load
+                this.loadCustomers();
+            }
+        });
+    }
 
+    // Update customer status based on expiration date
+    updateCustomerStatus(customer: Customer): Customer {
+        const expirationDate = this.calculateExpirationDate(customer);
+        const remainingTime = this.calculateRemainingDays(expirationDate);
+        
+        // If remaining time is null or both days and hours are 0 or less, mark as expired
+        if (remainingTime === null || (remainingTime.days <= 0 && remainingTime.hours <= 0)) {
+            customer.status = 'expired';
+        } else if (customer.status === 'expired' && (remainingTime.days > 0 || remainingTime.hours > 0)) {
+            // If customer is marked as expired but has remaining time, correct it to active
+            customer.status = 'active';
+        }
+        
+        return customer;
+    }
+    
     loadCustomers() {
         this.isLoading = true;
         if (this.currentUserRole === 'superadmin') {
@@ -76,7 +295,8 @@ export class CustomersComponent {
                                 return null;
                             }
                             customer.id = String(customer.id);
-                            return customer;
+                            // Update customer status based on expiration date
+                            return this.updateCustomerStatus(customer);
                         })
                         .filter((customer) => customer !== null) as Customer[];
                     this.isLoading = false;
@@ -92,7 +312,8 @@ export class CustomersComponent {
             this.systemService.getMyCustomers().subscribe({
                 next: (res) => {
                     console.log('My customers:', res);
-                    this.customers = res.customers || [];
+                    // Update customer status based on expiration date
+                    this.customers = (res.customers || []).map((customer: Customer) => this.updateCustomerStatus(customer));
                     this.isLoading = false;
                 },
                 error: (error) => {
