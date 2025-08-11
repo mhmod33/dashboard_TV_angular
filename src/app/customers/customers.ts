@@ -600,10 +600,6 @@ export class CustomersComponent {
             console.error('No customer ID provided');
             return;
         }
-        if (customerId.startsWith('temp-')) {
-            console.error('Cannot edit customer with temporary ID:', customerId);
-            return;
-        }
         console.log('Attempting to edit customer with ID:', customerId);
         this.router.navigate(['/edit-customer', customerId]);
     }
