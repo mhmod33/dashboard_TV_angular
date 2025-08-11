@@ -29,13 +29,13 @@ export class SystemService {
   private getCustomerBySn = `${this.base}/api/getcustomerbysn`;
   private periods = `${this.base}/api/periods`;
   private getCustomersByAdminId = `${this.base}/api/customers/by-admin`;
-  private subadminEndpoint = `${this.base}/api/add-subadmin`;
+  private subadminEndpoint = `${this.base}/api/subadmins`;
   private getMySubadmins = `${this.base}/api/getMySubadmins`;
 
   constructor(
     private http: HttpClient,
     private authService: AuthServiceService,
-    private balanceService: BalanceService
+    public balanceService: BalanceService
   ) {}
 
   // In system.service.ts

@@ -195,14 +195,36 @@ export class AddSubAdminComponent implements OnInit {
                 balance: parseInt(this.subAdminData.balance, 10)
             };
 
-            this.systemService.addAdmin(data).subscribe({
+            this.systemService.addSubAdmin(data).subscribe({
                 next: (response: any) => {
-                    alert('Sub-admin added successfully!');
+                    // Get the balance that was added to the subadmin
+                    const addedBalance = parseInt(this.subAdminData.balance, 10);
+                    
+                    // Update the displayed balance for the admin
+                    if (response.admin && response.admin.balance !== undefined) {
+                        // Update the local balance display
+                        this.selectedAdminBalance = response.admin.balance;
+                        this.availableBalance = response.admin.balance;
+                        
+                        // Update the balance in the balance service
+                        this.systemService.balanceService.updateBalance(response.admin.balance);
+                        
+                        alert(`Sub-admin added successfully! Your balance decreased by ${addedBalance}.`);
+                    } else {
+                        alert('Sub-admin added successfully!');
+                    }
+                    
                     this.router.navigate(['/subadmin']);
                 },
                 error: (error: any) => {
                     console.error('Error adding sub-admin:', error);
-                    alert('Error adding sub-admin. Please try again.');
+                    
+                    // Check if the error is due to insufficient balance
+                    if (error.error && error.error.message && error.error.message.includes('insufficient balance')) {
+                        alert('Error: You have insufficient balance to add this sub-admin.');
+                    } else {
+                        alert('Error adding sub-admin. Please try again.');
+                    }
                 }
             });
         }
@@ -212,4 +234,4 @@ export class AddSubAdminComponent implements OnInit {
     cancelForm(): void {
         this.router.navigate(['/subadmin']);
     }
-} 
+}
