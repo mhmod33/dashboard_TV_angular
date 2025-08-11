@@ -19,6 +19,14 @@
     </div>
   </div>
 
+  <!-- Balance Display -->
+  <div class="balance-display" *ngIf="role === 'admin' || role === 'subadmin'">
+    <div class="balance-info">
+      <i class="fa fa-eye"></i>
+      <span>Your Balance: {{ userBalance }}</span>
+    </div>
+  </div>
+
   <div class="form-container">
     <!-- Main Form -->
     <div class="main-form">
