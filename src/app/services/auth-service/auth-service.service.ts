@@ -196,7 +196,8 @@ export class AuthServiceService {
 
   getBalance(): any {
     // Use the balance service to get the current balance
-    return this.balanceService.getCurrentBalance();
+    const balance =localStorage.getItem('balance') ||0;
+    return balance
   }
 
   getStatus(): string | null {

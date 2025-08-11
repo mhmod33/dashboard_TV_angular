@@ -24,6 +24,13 @@ export class AddBalanceComponent implements OnInit {
   admin: any = null;
   isSubmitting = false;
   balanceAction: 'increase' | 'decrease' = 'increase'; // NEW: track action
+  
+  // Modal properties
+  showModal: boolean = false;
+  modalType: 'info' | 'confirm' = 'info';
+  modalTitle: string = '';
+  modalMessage: string = '';
+  modalAction: (() => void) | null = null;
 
   constructor(
     private router: Router,
@@ -118,6 +125,36 @@ export class AddBalanceComponent implements OnInit {
     return '';
   }
 
+  // Modal methods
+  showInfoModal(message: string) {
+    this.showModal = true;
+    this.modalType = 'info';
+    this.modalTitle = 'Notification';
+    this.modalMessage = message;
+    this.modalAction = null;
+  }
+
+  showConfirmModal(message: string, action: () => void) {
+    this.showModal = true;
+    this.modalType = 'confirm';
+    this.modalTitle = 'Confirmation';
+    this.modalMessage = message;
+    this.modalAction = action;
+  }
+
+  closeModal() {
+    this.showModal = false;
+    this.modalAction = null;
+  }
+
+  confirmModal() {
+    if (this.modalAction) {
+      this.showModal = false;
+      this.modalAction();
+      this.modalAction = null;
+    }
+  }
+
   onSubmit(): void {
     if (this.balanceForm.valid && !this.isSubmitting) {
       this.isSubmitting = true;
@@ -133,56 +170,146 @@ export class AddBalanceComponent implements OnInit {
 
       // Additional validation for decrease
       if (action === 'decrease' && changeAmount > currentBalance) {
-        alert('Cannot decrease more than current balance');
+        this.showInfoModal('Cannot decrease more than current balance');
         this.isSubmitting = false;
         return;
       }
 
-      const newBalance = action === 'increase'
-        ? +(currentBalance + changeAmount).toFixed(2)
-        : +(currentBalance - changeAmount).toFixed(2);
-
-      // Update UI immediately
-      this.admin.balance = newBalance;
-      this.balanceService.updateBalance(newBalance);
-
-      if (action === 'increase') {
-        this.systemService
-          .updateBalance(data.admin_id, changeAmount)
-          .subscribe({
-            next: (res) => {
-              // alert('Balance added successfully!');
-              this.isSubmitting = false;
-            },
-            error: (error) => {
-              // Revert the balance on error
-              this.admin.balance = currentBalance;
-              this.balanceService.updateBalance(currentBalance);
-              console.error('Error adding balance:', error);
-              alert('Error adding balance. Please try again.');
-              this.isSubmitting = false;
-            },
-          });
-      } else if (action === 'decrease') {
-        this.systemService
-          .decreaseBalance(data.admin_id, changeAmount)
-          .subscribe({
-            next: (res) => {
-              // alert('Balance decreased successfully!');
-              this.isSubmitting = false;
-            },
-            error: (error) => {
-              // Revert the balance on error
-              this.admin.balance = currentBalance;
-              this.balanceService.updateBalance(currentBalance);
-              console.error('Error decreasing balance:', error);
-              alert('Error decreasing balance. Please try again.');
-              this.isSubmitting = false;
-            },
-          });
+      // Get current user role
+      const currentUserRole = localStorage.getItem('role');
+      const currentUserId = localStorage.getItem('id');
+      
+      // Show confirmation message based on role and action
+      let confirmMessage = '';
+      
+      if (currentUserRole === 'superadmin') {
+        if (action === 'increase') {
+          if (this.admin.role === 'admin') {
+            confirmMessage = `This will decrease your balance by ${changeAmount}. Continue?`;
+          } else if (this.admin.role === 'subadmin') {
+            confirmMessage = `This will decrease the parent admin's balance by ${changeAmount}. Continue?`;
+          }
+        } else { // decrease
+          if (this.admin.role === 'admin') {
+            confirmMessage = `This will increase your balance by ${changeAmount}. Continue?`;
+          } else if (this.admin.role === 'subadmin') {
+            confirmMessage = `This will increase the parent admin's balance by ${changeAmount}. Continue?`;
+          }
+        }
+      } else if (currentUserRole === 'admin') {
+        if (action === 'increase') {
+          confirmMessage = `This will decrease your balance by ${changeAmount}. Continue?`;
+        } else { // decrease
+          confirmMessage = `This will increase your balance by ${changeAmount}. Continue?`;
+        }
       }
+      
+      // If we have a confirmation message, show it
+      if (confirmMessage) {
+        this.showConfirmModal(confirmMessage, () => {
+          this.processBalanceChange(action, data, currentBalance, changeAmount);
+        });
+        this.isSubmitting = false;
+        return;
+      }
+
+      // If no confirmation needed, proceed directly
+      this.processBalanceChange(action, data, currentBalance, changeAmount);
     } else {
       this.markFormGroupTouched();
+    }
+  }
+
+  processBalanceChange(action: string, data: any, currentBalance: number, changeAmount: number): void {
+    this.isSubmitting = true;
+    const currentUserRole = localStorage.getItem('role');
+
+    // Calculate new balance for the target admin
+    const newBalance = action === 'increase'
+      ? +(currentBalance + changeAmount).toFixed(2)
+      : +(currentBalance - changeAmount).toFixed(2);
+
+    // Update UI immediately for the target admin
+    this.admin.balance = newBalance;
+
+    if (action === 'increase') {
+      this.systemService
+        .updateBalance(data.admin_id, changeAmount)
+        .subscribe({
+          next: (res) => {
+            // Handle success response
+            this.isSubmitting = false;
+            
+            // Show success message with details
+            let successMessage = 'Balance added successfully!';
+            
+            if (currentUserRole === 'superadmin' && this.admin.role === 'admin') {
+              successMessage += ` Your balance has been decreased by ${changeAmount}.`;
+            } else if (currentUserRole === 'superadmin' && this.admin.role === 'subadmin') {
+              successMessage += ` The subadmin's balance has been increased by ${changeAmount} and the parent admin's balance has been decreased by ${changeAmount}.`;
+            } else if (currentUserRole === 'admin') {
+              successMessage += ` Your balance has been decreased by ${changeAmount}.`;
+            }
+            
+            this.showInfoModal(successMessage);
+          },
+          error: (error) => {
+            // Revert the balance on error
+            this.admin.balance = currentBalance;
+            console.error('Error adding balance:', error);
+            
+            // Show appropriate error message
+            let errorMessage = 'Error adding balance. ';
+            
+            if (error.error && error.error.message) {
+              errorMessage += error.error.message;
+            } else {
+              errorMessage += 'Please try again.';
+            }
+            
+            this.showInfoModal(errorMessage);
+            this.isSubmitting = false;
+          },
+        });
+    } else if (action === 'decrease') {
+      this.systemService
+        .decreaseBalance(data.admin_id, changeAmount)
+        .subscribe({
+          next: (res) => {
+            // Handle success response
+            this.isSubmitting = false;
+            
+            // Show success message with details
+            let successMessage = 'Balance decreased successfully!';
+            
+            if (currentUserRole === 'superadmin' && this.admin.role === 'admin') {
+              successMessage += ` Your balance has been increased by ${changeAmount}.`;
+            } else if (currentUserRole === 'superadmin' && this.admin.role === 'subadmin') {
+              successMessage += ` The subadmin's balance has been decreased by ${changeAmount} and the parent admin's balance has been increased by ${changeAmount}.`;
+            } else if (currentUserRole === 'admin') {
+              successMessage += ` Your balance has been increased by ${changeAmount}.`;
+            }
+            
+            this.showInfoModal(successMessage);
+          },
+          error: (error) => {
+            // Revert the balance on error
+            this.admin.balance = currentBalance;
+            console.error('Error decreasing balance:', error);
+            
+            // Show appropriate error message
+            let errorMessage = 'Error decreasing balance. ';
+            
+            if (error.error && error.error.message) {
+              errorMessage += error.error.message;
+            } else {
+              errorMessage += 'Please try again.';
+            }
+            
+            this.showInfoModal(errorMessage);
+            this.isSubmitting = false;
+          },
+        });
     }
   }
 

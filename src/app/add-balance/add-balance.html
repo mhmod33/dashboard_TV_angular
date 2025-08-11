@@ -1,4 +1,30 @@
 <div class="add-balance-container">
+    <!-- Bootstrap Modal for Confirm/Notification -->
+    <div class="modal fade" tabindex="-1" [ngClass]="{show: showModal}" [style.display]="showModal ? 'block' : 'none'"
+        role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ modalTitle }}</h5>
+                    <button type="button" class="close" (click)="closeModal()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>{{ modalMessage }}</p>
+                </div>
+                <div class="modal-footer" *ngIf="modalType === 'confirm'">
+                    <button type="button" class="btn btn-danger" (click)="confirmModal()">Yes</button>
+                    <button type="button" class="btn btn-secondary" (click)="closeModal()">No</button>
+                </div>
+                <div class="modal-footer" *ngIf="modalType === 'info'">
+                    <button type="button" class="btn btn-primary" (click)="closeModal()">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Backdrop -->
+    <div class="modal-backdrop fade show" *ngIf="showModal"></div>
     <!-- Header Section -->
     <div class="page-header">
         <div class="header-left">

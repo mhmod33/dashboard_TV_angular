@@ -162,8 +162,17 @@ export class SystemService {
       balance: balance,
     }).pipe(
       tap((response: any) => {
-        // Update the balance in the balance service after successful API call
-        if (response && response.admin && response.admin.balance) {
+        const currentUserRole = localStorage.getItem('role');
+        
+        // Update the current user's balance in the balance service after successful API call
+        if (currentUserRole === 'superadmin' && response.superadmin) {
+          // If superadmin increasing admin's balance, update superadmin's balance
+          this.balanceService.updateBalance(parseFloat(response.superadmin.balance));
+        } else if (currentUserRole === 'admin' && response.current_user) {
+          // If admin increasing subadmin's balance, update admin's balance
+          this.balanceService.updateBalance(parseFloat(response.current_user.balance));
+        } else if (response.admin && response.admin.balance) {
+          // Default case
           this.balanceService.updateBalance(parseFloat(response.admin.balance));
         }
       })
@@ -175,8 +184,17 @@ export class SystemService {
       balance: balance,
     }).pipe(
       tap((response: any) => {
-        // Update the balance in the balance service after successful API call
-        if (response && response.admin && response.admin.balance) {
+        const currentUserRole = localStorage.getItem('role');
+        
+        // Update the current user's balance in the balance service after successful API call
+        if (currentUserRole === 'superadmin' && response.superadmin) {
+          // If superadmin decreasing admin's balance, update superadmin's balance
+          this.balanceService.updateBalance(parseFloat(response.superadmin.balance));
+        } else if (currentUserRole === 'admin' && response.current_user) {
+          // If admin decreasing subadmin's balance, update admin's balance
+          this.balanceService.updateBalance(parseFloat(response.current_user.balance));
+        } else if (response.admin && response.admin.balance) {
+          // Default case
           this.balanceService.updateBalance(parseFloat(response.admin.balance));
         }
       })

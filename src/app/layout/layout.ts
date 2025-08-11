@@ -1,3 +1,4 @@
+import { SystemService } from './../services/system/system.service';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
@@ -15,18 +16,30 @@ import { Subscription } from 'rxjs';
 export class LayoutComponent implements OnInit, OnDestroy {
     isSidebarOpen = true;
     showLogoutAlert = false;
-    currentUser: { name: string; avatar: string; balance: number; role: string };
+    currentUser: { name: string; avatar: string; balance: any; role: string };
     allowedPages: string[] = [];
-    private balanceSubscription!: Subscription;
+    admin: any = null;
 
+    private balanceSubscription!: Subscription;
+    
     constructor(
         public router: Router, 
         private authService: AuthServiceService,
-        private balanceService: BalanceService
+        private balanceService: BalanceService,
+        private systemService:SystemService
     ) {
+        const adminId = localStorage.getItem('id');
         this.currentUser = {
             name: this.authService.getUserName() ?? '',
-            balance: this.authService.getBalance(),
+            balance: this.systemService.getAdminProfile(String(adminId)).subscribe({
+                next: (res) => {
+                  this.admin = res.subadmin;
+                  console.log(res.subadmin)
+                },
+                error: (error) => {
+                  console.error('Error loading profile:', error);
+                }
+              }),
             avatar:
                 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
             role: this.authService.getRole() ?? '',
