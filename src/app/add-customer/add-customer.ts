@@ -209,27 +209,59 @@ export class AddCustomerComponent {
             const data = this.customerForm.value;
             console.log('Saving customer:', data);
 
+            // Get the selected plan to show price in the success message
+            const selectedPlan = this.planOptions.find(plan => plan.id === data.plan_id);
+            const planPrice = selectedPlan ? selectedPlan.value : '0';
+
             if (this.role === 'subadmin') {
                 this.systemService.addMyCustomer(data).subscribe({
                     next: (res) => {
-                        alert('Customer saved successfully!');
+                        // Update the balance display
+                        if (res.subadmin && res.subadmin.balance !== undefined) {
+                            this.userBalance = res.subadmin.balance;
+                        }
+                        
+                        alert(`Customer saved successfully! Your balance has been decreased by ${planPrice}.`);
                         this.router.navigate(['/customers']);
                     },
                     error: (error) => {
                         console.error('Error saving customer:', error);
-                        alert('Error saving customer. Please try again.');
+                        if (error.error && error.error.message === 'Insufficient balance') {
+                            alert('Error: You do not have enough balance to add this customer.');
+                        } else {
+                            alert('Error saving customer. Please try again.');
+                        }
                         this.isSubmitting = false;
                     }
                 });
             } else {
                 this.systemService.addCustomer(data).subscribe({
                     next: (res) => {
-                        alert('Customer saved successfully!');
+                        // Update the balance display if admin is adding a customer for themselves
+                        if (this.role === 'admin' && res.admin && res.admin.balance !== undefined) {
+                            this.userBalance = res.admin.balance;
+                            alert(`Customer saved successfully! Your balance has been decreased by ${planPrice}.`);
+                        } 
+                        // If superadmin is adding a customer for an admin
+                        else if (this.role === 'superadmin' && data.admin_id) {
+                            alert(`Customer saved successfully! Admin's balance has been decreased by ${planPrice}.`);
+                        }
+                        // Default message
+                        else {
+                            alert('Customer saved successfully!');
+                        }
+                        
                         this.router.navigate(['/customers']);
                     },
                     error: (error) => {
                         console.error('Error saving customer:', error);
-                        alert('Error saving customer. Please try again.');
+                        if (error.error && error.error.message === 'Admin has insufficient balance') {
+                            alert('Error: The selected admin does not have enough balance.');
+                        } else if (error.error && error.error.message === 'Insufficient balance') {
+                            alert('Error: You do not have enough balance to add this customer.');
+                        } else {
+                            alert('Error saving customer. Please try again.');
+                        }
                         this.isSubmitting = false;
                     }
                 });
