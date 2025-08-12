@@ -167,7 +167,7 @@
                     </div>
                 </div>
 
-                <div class="form-group" *ngIf="role!=='subadmin'">
+                <div class="form-group" *ngIf="role==='superadmin'">
                     <label class="form-label">Admin</label>
                     <div class="payment-options position-relative">
                         <select formControlName="admin_id" class="form-select pe-5">
@@ -182,6 +182,14 @@
                         {{ getErrorMessage('admin_id') }}
                     </div>
                     }
+                </div>
+                
+                <!-- Display message for admin and subadmin users -->
+                <div class="form-group" *ngIf="role==='admin' || role==='subadmin'">
+                    <div class="hint-message">
+                        <i class="fa fa-info-circle"></i>
+                        This customer will be automatically assigned to your account.
+                    </div>
                 </div>
 
                 <!-- Action Buttons -->

@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SystemService } from '../services/system/system.service';
-import { ModalService } from '../services/modal.service';
 
 @Component({
     selector: 'app-add-subadmin',
@@ -43,8 +42,7 @@ export class AddSubAdminComponent implements OnInit {
 
     constructor(
         private router: Router,
-        private systemService: SystemService,
-        private modalService: ModalService
+        private systemService: SystemService
     ) { }
 
     ngOnInit(): void {
@@ -197,23 +195,42 @@ export class AddSubAdminComponent implements OnInit {
                 balance: parseInt(this.subAdminData.balance, 10)
             };
 
-            this.systemService.addSubAdmin(data).subscribe({
+            // Use addSubAdmin for admin users, addAdmin for superadmin users
+            const addMethod = this.isAdmin ? 
+                this.systemService.addSubAdmin(data) : 
+                this.systemService.addAdmin(data);
+
+            addMethod.subscribe({
                 next: (response: any) => {
                     // Get the balance that was added to the subadmin
                     const addedBalance = parseInt(this.subAdminData.balance, 10);
                     
-                    // Update the displayed balance for the admin
-                    if (response.admin && response.admin.balance !== undefined) {
-                        // Update the local balance display
-                        this.selectedAdminBalance = response.admin.balance;
-                        this.availableBalance = response.admin.balance;
-                        
-                        // Update the balance in the balance service
-                        this.systemService.balanceService.updateBalance(response.admin.balance);
-                        
-                        this.modalService.showSuccessMessage(`Sub-admin added successfully! Your balance decreased by ${addedBalance}.`);
+                    // Update the displayed balance based on the response
+                    if (this.isAdmin) {
+                        // Admin adding subadmin - balance decreased from admin's balance
+                        if (response.admin && response.admin.balance !== undefined) {
+                            // Update the local balance display
+                            this.selectedAdminBalance = response.admin.balance;
+                            this.availableBalance = response.admin.balance;
+                            
+                            // Update the balance in localStorage directly instead of using balanceService
+                            localStorage.setItem('balance', response.admin.balance.toString());
+                            
+                            alert(`Sub-admin added successfully! Your balance decreased by ${addedBalance}.`);
+                        } else {
+                            alert('Sub-admin added successfully!');
+                        }
                     } else {
-                        this.modalService.showSuccessMessage('Sub-admin added successfully!');
+                        // Superadmin adding subadmin - balance decreased from parent admin's balance
+                        if (response.parent_admin && response.parent_admin.balance !== undefined) {
+                            // Update the local balance display for the selected admin
+                            this.selectedAdminBalance = response.parent_admin.balance;
+                            this.availableBalance = response.parent_admin.balance;
+                            
+                            alert(`Sub-admin added successfully! Selected admin's balance decreased by ${addedBalance}.`);
+                        } else {
+                            alert('Sub-admin added successfully!');
+                        }
                     }
                     
                     this.router.navigate(['/subadmin']);
@@ -222,10 +239,12 @@ export class AddSubAdminComponent implements OnInit {
                     console.error('Error adding sub-admin:', error);
                     
                     // Check if the error is due to insufficient balance
-                    if (error.error && error.error.message && error.error.message.includes('insufficient balance')) {
-                        this.modalService.showErrorMessage('Error: You have insufficient balance to add this sub-admin.');
+                    if (error.error && error.error.message && 
+                        (error.error.message.includes('insufficient balance') || 
+                         error.error.message.includes('Insufficient balance'))) {
+                        alert('Error: There is insufficient balance to add this sub-admin.');
                     } else {
-                        this.modalService.showErrorMessage('Error adding sub-admin. Please try again.');
+                        alert('Error adding sub-admin. Please try again.');
                     }
                 }
             });

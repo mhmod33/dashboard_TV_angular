@@ -5,7 +5,6 @@ import { Router } from '@angular/router';
 import { SystemService } from '../services/system/system.service';
 import { AuthServiceService } from '../services/auth-service/auth-service.service';
 import { Period } from '../interfaces/period';
-import { ModalService } from '../services/modal.service';
 
 @Component({
     selector: 'app-add-customer',
@@ -40,7 +39,6 @@ export class AddCustomerComponent {
         private fb: FormBuilder,
         private systemService: SystemService,
         private authService: AuthServiceService,
-        private modalService: ModalService
     ) {
         this.role = this.authService.getRole();
         this.initForm();
@@ -106,8 +104,16 @@ export class AddCustomerComponent {
             admin_id: ['']
         });
 
-        // Add admin validation based on role
-        if (this.role !== 'subadmin') {
+        // If user is admin or subadmin, they don't need to select an admin
+        // The customer will be automatically linked to them
+        if (this.role === 'admin' || this.role === 'subadmin') {
+            // Set the admin_id to the current user's ID
+            const userId = localStorage.getItem('id');
+            if (userId) {
+                this.customerForm.patchValue({ admin_id: userId });
+            }
+        } else if (this.role === 'superadmin') {
+            // Only superadmin needs to select an admin
             this.customerForm.get('admin_id')?.setValidators([Validators.required]);
         }
 
@@ -206,69 +212,59 @@ export class AddCustomerComponent {
 
     // Form submission
     onSubmit(): void {
-        if (this.customerForm.valid && !this.isSubmitting) {
-            this.isSubmitting = true;
-            const data = this.customerForm.value;
-            console.log('Saving customer:', data);
+        if (this.isSubmitting) {
+            return; // Prevent multiple submissions
+        }
 
-            // Get the selected plan to show price in the success message
-            const selectedPlan = this.planOptions.find(plan => plan.id === data.plan_id);
-            const planPrice = selectedPlan ? selectedPlan.value : '0';
+        this.isSubmitting = true;
 
-            if (this.role === 'subadmin') {
-                this.systemService.addMyCustomer(data).subscribe({
-                    next: (res) => {
-                        // Update the balance display
-                        if (res.subadmin && res.subadmin.balance !== undefined) {
-                            this.userBalance = res.subadmin.balance;
+        if (this.customerForm.valid) {
+            const formData = this.customerForm.value;
+            console.log('Saving customer:', formData);
+            
+            // If user is admin or subadmin, use addMyCustomer to link customer directly to them
+            if (this.role === 'admin' || this.role === 'subadmin') {
+                this.systemService.addMyCustomer(formData).subscribe({
+                    next: (response) => {
+                        this.isSubmitting = false;
+                        if (response && response.balance !== undefined) {
+                            // Update the balance if returned in the response
+                            this.userBalance = response.balance;
+                            alert('Customer added successfully! Your balance has been updated.');
+                        } else {
+                            alert('Customer added successfully!');
                         }
-                        
-                        this.modalService.showSuccessMessage(`Customer saved successfully! Your balance has been decreased by ${planPrice}.`);
                         this.router.navigate(['/customers']);
                     },
                     error: (error) => {
-                        console.error('Error saving customer:', error);
-                        if (error.error && error.error.message === 'Insufficient balance') {
-                            this.modalService.showErrorMessage('Error: You do not have enough balance to add this customer.');
-                        } else {
-                            this.modalService.showErrorMessage('Error saving customer. Please try again.');
-                        }
                         this.isSubmitting = false;
+                        console.error('Error adding customer:', error);
+                        if (error.error && error.error.message && 
+                            (error.error.message.includes('insufficient balance') || 
+                             error.error.message.includes('Insufficient balance'))) {
+                            alert('Error: There is insufficient balance to add this customer.');
+                        } else {
+                            alert('Error adding customer. Please try again.');
+                        }
                     }
                 });
             } else {
-                this.systemService.addCustomer(data).subscribe({
-                    next: (res) => {
-                        // Update the balance display if admin is adding a customer for themselves
-                        if (this.role === 'admin' && res.admin && res.admin.balance !== undefined) {
-                            this.userBalance = res.admin.balance;
-                            alert(`Customer saved successfully! Your balance has been decreased by ${planPrice}.`);
-                        } 
-                        // If superadmin is adding a customer for an admin
-                        else if (this.role === 'superadmin' && data.admin_id) {
-                            this.modalService.showSuccessMessage(`Customer saved successfully! Admin's balance has been decreased by ${planPrice}.`);
-                        }
-                        // Default message
-                        else {
-                            this.modalService.showSuccessMessage('Customer saved successfully!');
-                        }
-                        
+                // For superadmin, use addCustomer with selected admin_id
+                this.systemService.addCustomer(formData).subscribe({
+                    next: (response) => {
+                        this.isSubmitting = false;
+                        alert('Customer added successfully!');
                         this.router.navigate(['/customers']);
                     },
                     error: (error) => {
-                        console.error('Error saving customer:', error);
-                        if (error.error && error.error.message === 'Admin has insufficient balance') {
-                            this.modalService.showErrorMessage('Error: The selected admin does not have enough balance.');
-                        } else if (error.error && error.error.message === 'Insufficient balance') {
-                            this.modalService.showErrorMessage('Error: You do not have enough balance to add this customer.');
-                        } else {
-                            this.modalService.showErrorMessage('Error saving customer. Please try again.');
-                        }
                         this.isSubmitting = false;
+                        console.error('Error adding customer:', error);
+                        alert('Error adding customer. Please try again.');
                     }
                 });
             }
         } else {
+            this.isSubmitting = false;
             this.markFormGroupTouched();
         }
     }

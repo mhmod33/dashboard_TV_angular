@@ -11,7 +11,6 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { SystemService } from '../services/system/system.service';
 import { AuthServiceService } from '../services/auth-service/auth-service.service';
 import { Period } from '../interfaces/period';
-import { ModalService } from '../services/modal.service';
 
 @Component({
   selector: 'app-edit-customer',
@@ -27,7 +26,6 @@ export class EditCustomerComponent {
   isSubmitting = false;
   customerId: string = '';
   isLoadingPlans = false;
-  originalPlanId: string = '';
 
   // Plan options - now loaded dynamically
   planOptions: any[] = [];
@@ -37,34 +35,16 @@ export class EditCustomerComponent {
     { id: 'unpaid', name: 'Unpaid' },
     { id: 'paid', name: 'Paid' },
   ];
-  
-  // User balance
-  userBalance = 0;
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private fb: FormBuilder,
     private systemService: SystemService,
-    private authService: AuthServiceService,
-    private modalService: ModalService
+    private authService: AuthServiceService
   ) {
     this.role = this.authService.getRole();
     this.initForm();
-    
-    // Load user balance if admin or subadmin
-    if (this.role === 'admin' || this.role === 'subadmin') {
-      this.systemService.getAdminBalance().subscribe({
-        next: (res) => {
-          if (res.balance !== undefined) {
-            this.userBalance = res.balance;
-          }
-        },
-        error: (error) => {
-          console.error('Error loading balance:', error);
-        }
-      });
-    }
   }
 
   ngOnInit() {
@@ -129,7 +109,6 @@ loadPlans() {
     this.systemService.getCustomerById(this.customerId).subscribe({
       next: (customer: Customer) => {
         if (customer) {
-          this.originalPlanId = String(customer.plan_id);
           this.customerForm.patchValue({
             serial_number: customer.serial_number,
             customer_name: customer.name || customer.customer_name,
@@ -276,74 +255,21 @@ loadPlans() {
         admin_id: Number(formData.admin_id), // Convert to number if backend expects it
         payment_status: formData.payment_status,
       };
-      
-      // Check if plan has changed
-      const planChanged = this.originalPlanId !== formData.plan_id;
-      
-      // Get the selected plan to show price in the success message
-      const selectedPlan = this.planOptions.find(plan => plan.id === formData.plan_id);
-      const originalPlan = this.planOptions.find(plan => plan.id === this.originalPlanId);
-      
+
       this.systemService.updateCustomer(this.customerId, data).subscribe({
         next: (res) => {
-          // Update the balance display if plan changed
-          if (planChanged && res.price_difference !== undefined) {
-            // If price difference is positive (plan upgrade)
-            if (res.price_difference > 0) {
-              // Update the balance display
-              if (this.role === 'admin' && res.admin && res.admin.balance !== undefined) {
-                this.userBalance = res.admin.balance;
-                this.systemService.balanceService.updateBalance(res.admin.balance);
-                this.modalService.showSuccessMessage(`Customer updated successfully! Your balance has been decreased by ${res.price_difference}.`);
-              } 
-              else if (this.role === 'subadmin' && res.subadmin && res.subadmin.balance !== undefined) {
-                this.userBalance = res.subadmin.balance;
-                this.systemService.balanceService.updateBalance(res.subadmin.balance);
-                this.modalService.showSuccessMessage(`Customer updated successfully! Your balance has been decreased by ${res.price_difference}.`);
-              }
-              else {
-                alert('Customer updated successfully! Admin balance has been adjusted.');
-              }
-            }
-            // If price difference is negative (plan downgrade)
-            else if (res.price_difference < 0) {
-              const refundAmount = Math.abs(res.price_difference);
-              
-              // Update the balance display
-              if (this.role === 'admin' && res.admin && res.admin.balance !== undefined) {
-                this.userBalance = res.admin.balance;
-                this.systemService.balanceService.updateBalance(res.admin.balance);
-                this.modalService.showSuccessMessage(`Customer updated successfully! Your balance has been increased by ${refundAmount}.`);
-              } 
-              else if (this.role === 'subadmin' && res.subadmin && res.subadmin.balance !== undefined) {
-                this.userBalance = res.subadmin.balance;
-                this.systemService.balanceService.updateBalance(res.subadmin.balance);
-                this.modalService.showSuccessMessage(`Customer updated successfully! Your balance has been increased by ${refundAmount}.`);
-              }
-              else {
-                alert('Customer updated successfully! Admin balance has been adjusted.');
-              }
-            }
-            else {
-              this.modalService.showSuccessMessage('Customer updated successfully!');
-            }
-          } else {
-            this.modalService.showSuccessMessage('Customer updated successfully!');
-          }
-          
+          alert('Customer updated successfully!');
           this.router.navigate(['/customers']);
         },
         error: (error) => {
           console.error('Full error object:', error);
           let errorMsg = 'Error updating customer.';
           if (error.error) {
-            if (error.error.message === 'Insufficient balance' || error.error.message === 'Admin has insufficient balance') {
-              errorMsg = 'Error: You do not have enough balance to upgrade this customer\'s plan.';
-            } else {
-              errorMsg += ` Server says: ${error.error.message || JSON.stringify(error.error)}`;
-            }
+            errorMsg += ` Server says: ${
+              error.error.message || JSON.stringify(error.error)
+            }`;
           }
-          this.modalService.showErrorMessage(errorMsg);
+          alert(errorMsg);
           this.isSubmitting = false;
         },
       });

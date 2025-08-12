@@ -29,13 +29,13 @@ export class SystemService {
   private getCustomerBySn = `${this.base}/api/getcustomerbysn`;
   private periods = `${this.base}/api/periods`;
   private getCustomersByAdminId = `${this.base}/api/customers/by-admin`;
-  private subadminEndpoint = `${this.base}/api/subadmins`;
+  private subadminEndpoint = `${this.base}/api/add-subadmin`;
   private getMySubadmins = `${this.base}/api/getMySubadmins`;
 
   constructor(
     private http: HttpClient,
     private authService: AuthServiceService,
-    public balanceService: BalanceService
+    private balanceService: BalanceService
   ) {}
 
   // In system.service.ts
@@ -164,15 +164,17 @@ export class SystemService {
       tap((response: any) => {
         const currentUserRole = localStorage.getItem('role');
         
-        // Only update the current user's balance if the backend actually changed it
+        // Update the current user's balance in the balance service after successful API call
         if (currentUserRole === 'superadmin' && response.superadmin) {
           // If superadmin increasing admin's balance, update superadmin's balance
           this.balanceService.updateBalance(parseFloat(response.superadmin.balance));
         } else if (currentUserRole === 'admin' && response.current_user) {
           // If admin increasing subadmin's balance, update admin's balance
           this.balanceService.updateBalance(parseFloat(response.current_user.balance));
+        } else if (response.admin && response.admin.balance) {
+          // Default case
+          this.balanceService.updateBalance(parseFloat(response.admin.balance));
         }
-        // Removed the fallback case that was incorrectly updating balance
       })
     );
   }
