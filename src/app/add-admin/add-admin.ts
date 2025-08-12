@@ -99,10 +99,36 @@ export class AddAdminComponent {
     saveAdmin(): void {
         if (this.validateForm()) {
             console.log('Saving admin:', this.adminData);
-            this.systemService.addAdmin(this.adminData).subscribe((res) => {
-                this.modalService.showSuccessMessage('Admin user saved successfully!');
-            })
-            this.router.navigate(['/admin-users']);
+            this.systemService.addAdmin(this.adminData).subscribe({
+                next: (res) => {
+                    // Get the balance that was added to the admin
+                    const addedBalance = parseFloat(this.adminData.balance);
+                    
+                    // Check if the response contains updated superadmin balance
+                    if (res.superadmin && res.superadmin.balance !== undefined) {
+                        // Update the balance in localStorage
+                        localStorage.setItem('balance', res.superadmin.balance.toString());
+                        
+                        this.modalService.showSuccessMessage(`Admin user saved successfully! Your balance decreased by ${addedBalance}.`);
+                    } else {
+                        this.modalService.showSuccessMessage('Admin user saved successfully!');
+                    }
+                    
+                    this.router.navigate(['/admin-users']);
+                },
+                error: (error) => {
+                    console.error('Error adding admin:', error);
+                    
+                    // Check if the error is due to insufficient balance
+                    if (error.error && error.error.message && 
+                        (error.error.message.includes('insufficient balance') || 
+                         error.error.message.includes('Insufficient balance'))) {
+                        this.modalService.showErrorMessage('Error: There is insufficient balance to add this admin.');
+                    } else {
+                        this.modalService.showErrorMessage('Error adding admin. Please try again.');
+                    }
+                }
+            });
         }
     }
 
@@ -120,4 +146,4 @@ export class AddAdminComponent {
     getSelectedUserType() {
         return this.userTypes.find(type => type.id === this.adminData.role);
     }
-} 
+}
